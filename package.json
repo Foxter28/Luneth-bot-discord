@@ -1,0 +1,17 @@
+{
+  "name": "discord-economy-bot",
+  "version": "1.0.0",
+  "description": "Starter Discord economy bot - balance, shop, gambling, leaderboard",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node --experimental-sqlite src/index.js",
+    "deploy": "node src/deploy-commands.js",
+    "build": "npm install && node src/deploy-commands.js"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.17.4",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.5"
+  }
+}
