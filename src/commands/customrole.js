@@ -88,18 +88,18 @@ module.exports = {
           .setColor(hex1)
           .setDescription(
             `Ada member yang baru saja membeli **Custom Role** dan menunggu dibuatkan oleh Staff/Owner!\n\n` +
-              `👤 **Pemesan:** <@${userId}> (\`${interaction.user.tag}\` | \`${userId}\`)\n` +
-              `🏷️ **Nama Role:** **${roleName}**\n` +
-              `🎨 **Warna 1:** \`${hex1}\`\n` +
-              `🎨 **Warna 2 (Gradient):** \`${hex2}\`\n` +
-              `💰 **Status Pembayaran:** ✅ **${price.toLocaleString()} ${config.currencyName} (Lunas)**\n\n` +
-              `*Mohon Staff/Owner membuatkan role dan memposisikannya di bawah role pembatas 🧁.*`
+            `👤 **Pemesan:** <@${userId}> (\`${interaction.user.tag}\` | \`${userId}\`)\n` +
+            `🏷️ **Nama Role:** **${roleName}**\n` +
+            `🎨 **Warna 1:** \`${hex1}\`\n` +
+            `🎨 **Warna 2 (Gradient):** \`${hex2}\`\n` +
+            `💰 **Status Pembayaran:** ✅ **${price.toLocaleString()} ${config.currencyName} (Lunas)**\n\n` +
+            `*Mohon Staff/Owner membuatkan role dan memposisikannya di bawah role pembatas Bot paling atas!.*`
           )
           .setThumbnail(interaction.user.displayAvatarURL())
           .setTimestamp();
 
         await staffChannel.send({
-          content: `🔔 **Pemberitahuan Staff:** <@&1539641300125491322> Pesanan custom role dari <@${userId}>!`,
+          content: `🔔 **Pemberitahuan Staff:** @here Pesanan custom role dari <@${userId}>!`,
           embeds: [staffEmbed],
         });
         staffSent = true;
@@ -117,11 +117,11 @@ module.exports = {
       .setColor(hex1)
       .setDescription(
         `Form pesanan Custom Role kamu telah berhasil dikirim ke Staff/Owner Server:\n\n` +
-          `🏷️ **Nama Role:** **${roleName}**\n` +
-          `🎨 **Warna 1:** \`${hex1}\`\n` +
-          `🎨 **Warna 2:** \`${hex2}\`\n` +
-          `💰 **Biaya:** **${price.toLocaleString()} ${config.currencyName}**\n\n` +
-          `⏳ *Pesananmu telah masuk antrean di channel staff. Role akan segera dibuatkan dan dipasangkan langsung ke profilmu oleh Staff/Owner!*`
+        `🏷️ **Nama Role:** **${roleName}**\n` +
+        `🎨 **Warna 1:** \`${hex1}\`\n` +
+        `🎨 **Warna 2:** \`${hex2}\`\n` +
+        `💰 **Biaya:** **${price.toLocaleString()} ${config.currencyName}**\n\n` +
+        `⏳ *Pesananmu telah masuk antrean di channel staff. Role akan segera dibuatkan dan dipasangkan langsung ke profilmu oleh Staff/Owner!*`
       )
       .setFooter({ text: `Sisa saldo: ${(user.balance - price).toLocaleString()} ${config.currencyName}` });
 
