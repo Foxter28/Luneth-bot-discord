@@ -118,6 +118,21 @@ async function ensureSchema() {
       guildId TEXT PRIMARY KEY,
       prefix TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS custom_roles (
+      userId TEXT NOT NULL,
+      guildId TEXT NOT NULL,
+      roleId TEXT NOT NULL,
+      roleName TEXT NOT NULL,
+      roleColor TEXT NOT NULL,
+      createdAt INTEGER NOT NULL,
+      PRIMARY KEY (userId, guildId)
+    );
+
+    CREATE TABLE IF NOT EXISTS global_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    );
   `);
 
   // Guarded column migrations (only act when a column is missing). Harmless on
@@ -436,6 +451,42 @@ async function setGuildPrefix(guildId, prefix) {
 }
 
 // ---------------------------------------------------------------------------
+// Custom role helpers
+// ---------------------------------------------------------------------------
+async function getCustomRole(userId, guildId) {
+  return await dbGet('SELECT * FROM custom_roles WHERE userId = ? AND guildId = ?', userId, guildId);
+}
+
+async function setCustomRole(userId, guildId, roleId, roleName, roleColor) {
+  const now = Date.now();
+  await dbRun(
+    'INSERT OR REPLACE INTO custom_roles (userId, guildId, roleId, roleName, roleColor, createdAt) VALUES (?, ?, ?, ?, ?, ?)',
+    userId,
+    guildId,
+    roleId,
+    roleName,
+    roleColor,
+    now
+  );
+}
+
+async function deleteCustomRole(userId, guildId) {
+  await dbRun('DELETE FROM custom_roles WHERE userId = ? AND guildId = ?', userId, guildId);
+}
+
+// ---------------------------------------------------------------------------
+// Global settings (e.g. maintenance)
+// ---------------------------------------------------------------------------
+async function getSetting(key, fallback = null) {
+  const row = await dbGet('SELECT value FROM global_settings WHERE key = ?', key);
+  return row ? row.value : fallback;
+}
+
+async function setSetting(key, value) {
+  await dbRun('INSERT OR REPLACE INTO global_settings (key, value) VALUES (?, ?)', key, String(value));
+}
+
+// ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
 // Every public function runs inside dbQueue() so that concurrent command
@@ -460,6 +511,11 @@ module.exports = {
   getGuildPrefix: (guildId, fallback) => dbQueue(() => getGuildPrefix(guildId, fallback)),
   getActivePrefixes: (guildId, p, aliases) => dbQueue(() => getActivePrefixes(guildId, p, aliases)),
   setGuildPrefix: (guildId, prefix) => dbQueue(() => setGuildPrefix(guildId, prefix)),
+  getCustomRole: (userId, guildId) => dbQueue(() => getCustomRole(userId, guildId)),
+  setCustomRole: (userId, guildId, roleId, roleName, roleColor) => dbQueue(() => setCustomRole(userId, guildId, roleId, roleName, roleColor)),
+  deleteCustomRole: (userId, guildId) => dbQueue(() => deleteCustomRole(userId, guildId)),
+  getSetting: (key, fallback) => dbQueue(() => getSetting(key, fallback)),
+  setSetting: (key, value) => dbQueue(() => setSetting(key, value)),
   // mining
   STAMINA_MAX,
   STAMINA_START,

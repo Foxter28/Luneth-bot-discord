@@ -10,16 +10,49 @@ function formatAmount(n) {
   return n.toLocaleString('en-US');
 }
 
+// Sync ⚜️ Luneth Patron role automatically to #1 top leaderboard user
+async function syncTopRole(guild, topUserId) {
+  if (!guild || !topUserId) return;
+  const patronRoleId = config.specialRoles?.lunethPatronRoleId;
+  if (!patronRoleId) return;
+
+  try {
+    const role = guild.roles.cache.get(patronRoleId);
+    if (!role) return;
+
+    // 1. Remove role from all other members currently holding it
+    for (const [memberId, member] of role.members) {
+      if (memberId !== topUserId) {
+        await member.roles.remove(patronRoleId, 'Lost #1 Leaderboard position').catch(() => {});
+      }
+    }
+
+    // 2. Grant role to #1 user if they don't have it
+    const topMember = await guild.members.fetch(topUserId).catch(() => null);
+    if (topMember && !topMember.roles.cache.has(patronRoleId)) {
+      await topMember.roles.add(patronRoleId, 'Ranked #1 on Luneth Economy Leaderboard');
+    }
+  } catch (err) {
+    console.error('❌ Failed to sync Luneth Patron top role:', err.message);
+  }
+}
+
 module.exports = {
   data: new SlashCommandBuilder().setName('leaderboard').setDescription('See the 10 richest users'),
   // Alias for prefix commands, so you don't have to type the long "lu leaderboard".
   // "lu" + "lb" = "lulb". Doesn't affect slash commands (still "/leaderboard").
   aliases: ['lb'],
+  syncTopRole,
 
   async execute(interaction) {
     const top = await getLeaderboard(10);
     if (top.length === 0) {
       return interaction.reply('📊 No data yet.');
+    }
+
+    // Trigger sync in the background for current guild
+    if (interaction.guild && top[0]?.userId) {
+      syncTopRole(interaction.guild, top[0].userId).catch(() => {});
     }
 
     // Use <@id> mentions directly, NOT manual username fetching.

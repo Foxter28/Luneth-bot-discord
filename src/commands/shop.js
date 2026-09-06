@@ -10,7 +10,7 @@ const shopItems = require('../shopItems');
 const { getUser, updateBalance, addItem } = require('../database');
 const config = require('../config');
 
-const CATEGORY_ORDER = ['common_weapon', 'rare_weapon', 'legendary_weapon', 'material', 'armor', 'offhand', 'relic', 'crate'];
+const CATEGORY_ORDER = ['common_weapon', 'rare_weapon', 'legendary_weapon', 'material', 'armor', 'offhand', 'relic', 'special_role', 'crate'];
 const CATEGORY_LABELS = {
   common_weapon: { label: '🟢 Common Weapons', emoji: '⚔️', role: '⚔️ Equip' },
   rare_weapon: { label: '🟣 Rare Weapons', emoji: '🗡️', role: '⚔️ Equip' },
@@ -19,11 +19,12 @@ const CATEGORY_LABELS = {
   armor: { label: '🛡️ Armor', emoji: '🛡️', role: '🛡️ Equip' },
   offhand: { label: '🛡️ Off-hand', emoji: '🛡️', role: '🛡️ Equip' },
   relic: { label: '💠 Relics', emoji: '💠', role: '💠 Material' },
+  special_role: { label: '👑 Special Roles', emoji: '👑', role: '🏷️ Server Role' },
   crate: { label: '🎁 Crates', emoji: '📦', role: '📦 Crate' },
 };
 
 // Legend explaining what each role means, shown in the shop overview.
-const ROLE_LEGEND = '**Role legend** · ⚔️ Equip = pasang di /equip · 🧪 Material = bahan /craft · 🎁 Crate = buka di /open';
+const ROLE_LEGEND = '**Role legend** · ⚔️ Equip = pasang di /equip · 🧪 Material = bahan /craft · 🏷️ Server Role = dapat role di Discord · 🎁 Crate = buka di /open';
 const CATEGORY_DESC = {
   common_weapon: 'Beginner weapons with rising power.',
   rare_weapon: 'Mid-tier weapons, better stats.',
@@ -32,6 +33,7 @@ const CATEGORY_DESC = {
   armor: 'Protective gear to equip.',
   offhand: 'Secondary gear / shields.',
   relic: 'Precious rare relics.',
+  special_role: 'Exclusive prestige roles applied directly to your server profile.',
   crate: 'Mystery boxes with random loot.',
 };
 
@@ -279,8 +281,33 @@ async function handleComponent(interaction) {
         return true;
       }
 
+      // Check if item is a special role and already owned
+      if (item.category === 'special_role' && item.roleId) {
+        if (interaction.member?.roles?.cache?.has(item.roleId)) {
+          await interaction.editReply({
+            content: `❌ Kamu sudah memiliki role <@&${item.roleId}>!`,
+          });
+          return true;
+        }
+      }
+
       await updateBalance(userId, -total);
       await addItem(userId, item.id, cart.qty);
+
+      let roleNotice = '';
+      if (item.category === 'special_role' && item.roleId && interaction.guild) {
+        try {
+          const member = await interaction.guild.members.fetch(userId);
+          if (member) {
+            await member.roles.add(item.roleId);
+            roleNotice = `\n🎉 **Role <@&${item.roleId}> telah berhasil dipasang ke akun Discord kamu!**`;
+          }
+        } catch (rErr) {
+          console.error('❌ Failed to assign role on purchase:', rErr);
+          roleNotice = `\n⚠️ Gagal memasang role secara otomatis (pastikan bot memiliki izin Manage Roles & posisi role bot di atas role tersebut). Silakan hubungi admin.`;
+        }
+      }
+
       const purchasedQty = cart.qty;
       const purchasedName = item.name;
       const purchasedEmoji = item.emoji;
@@ -291,7 +318,7 @@ async function handleComponent(interaction) {
         .setColor(0x2ecc71)
         .setDescription(
           `You bought **${purchasedQty}x ${purchasedEmoji} ${purchasedName}** for **${total} ${config.currencyName}**!\n\n` +
-            `It was added to your inventory. 🎒`
+            `It was added to your inventory. 🎒${roleNotice}`
         );
       await interaction.editReply({
         embeds: [doneEmbed],

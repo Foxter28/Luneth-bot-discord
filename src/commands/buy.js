@@ -110,16 +110,40 @@ module.exports = {
       });
     }
 
+    // Role check if buying special role
+    if (item.category === 'special_role' && item.roleId) {
+      if (interaction.member?.roles?.cache?.has(item.roleId)) {
+        return interaction.reply({
+          content: `❌ Kamu sudah memiliki role <@&${item.roleId}>!`,
+          flags: 64,
+        });
+      }
+    }
+
     await updateBalance(interaction.user.id, -total);
     await addItem(interaction.user.id, item.id, qty);
     const questProg = await incrementQuest(interaction.user.id, 'buy');
+
+    let roleNotice = '';
+    if (item.category === 'special_role' && item.roleId && interaction.guild) {
+      try {
+        const member = await interaction.guild.members.fetch(interaction.user.id);
+        if (member) {
+          await member.roles.add(item.roleId);
+          roleNotice = `\n🎉 **Role <@&${item.roleId}> telah berhasil dipasang ke akun Discord kamu!**`;
+        }
+      } catch (rErr) {
+        console.error('❌ Failed to assign role on /buy:', rErr);
+        roleNotice = `\n⚠️ Gagal memasang role secara otomatis (pastikan bot memiliki izin Manage Roles & posisi role bot di atas role tersebut).`;
+      }
+    }
 
     const embed = new EmbedBuilder()
       .setTitle('✅ Purchase Successful!')
       .setColor(0x2ecc71)
       .setDescription(
         `You bought **${qty}x ${item.emoji} ${item.name}** for **${total} ${config.currencyName}**!\n\n` +
-          `It was added to your inventory. 🎒` +
+          `It was added to your inventory. 🎒${roleNotice}` +
           (questProg ? `\n📜 **Quest:** ${questProg.label} — **${questProg.progress}/${questProg.goal}**` : '')
       )
       .setFooter({ text: `New balance: ${user.balance - total} ${config.currencyName}` });
@@ -152,9 +176,32 @@ module.exports = {
       return true;
     }
 
+    if (item.category === 'special_role' && item.roleId) {
+      if (interaction.member?.roles?.cache?.has(item.roleId)) {
+        await interaction.editReply({
+          content: `❌ Kamu sudah memiliki role <@&${item.roleId}>!`,
+        });
+        return true;
+      }
+    }
+
     await updateBalance(interaction.user.id, -price);
     await addItem(interaction.user.id, item.id, 1);
     const questProg = await incrementQuest(interaction.user.id, 'buy');
+
+    let roleNotice = '';
+    if (item.category === 'special_role' && item.roleId && interaction.guild) {
+      try {
+        const member = await interaction.guild.members.fetch(interaction.user.id);
+        if (member) {
+          await member.roles.add(item.roleId);
+          roleNotice = `\n🎉 **Role <@&${item.roleId}> telah berhasil dipasang ke akun Discord kamu!**`;
+        }
+      } catch (rErr) {
+        console.error('❌ Failed to assign role on dropdown buy:', rErr);
+        roleNotice = `\n⚠️ Gagal memasang role secara otomatis (pastikan bot memiliki izin Manage Roles & posisi role bot di atas role tersebut).`;
+      }
+    }
 
     await interaction.editReply({
       embeds: [
@@ -162,7 +209,7 @@ module.exports = {
           .setTitle('✅ Purchase Successful!')
           .setColor(0x2ecc71)
           .setDescription(
-            `You bought **1x ${item.emoji} ${item.name}** for **${price} ${config.currencyName}**!` +
+            `You bought **1x ${item.emoji} ${item.name}** for **${price} ${config.currencyName}**!${roleNotice}` +
               (questProg ? `\n📜 **Quest:** ${questProg.label} — **${questProg.progress}/${questProg.goal}**` : '')
           ),
       ],

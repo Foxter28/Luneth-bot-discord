@@ -87,6 +87,9 @@ module.exports = [
     craft: [{ id: 'moonstone', qty: 5 }, { id: 'starfall_guandao', qty: 1 }, { id: 'frost_crystal', qty: 8 }],
     equip: { slot: 'weapon', attack: 95, defense: 0, speed: 15, crit: 50 } },
 
+  // ── Special Server Roles ──
+  { id: 'mythic_hero', name: '👑 Mythic Hero Role', price: 50000, emoji: '👑', category: 'special_role', roleId: '1546026397472915487', description: 'Exclusive Discord role granted directly to your server profile!' },
+
   // ── Crates (mystery boxes) ──
   { id: 'crate_common', name: 'Common Crate', price: 350, emoji: '📦', category: 'crate', description: 'Contains a random COMMON material or weapon.' },
   { id: 'crate_rare', name: 'Rare Crate', price: 1500, emoji: '🎁', category: 'crate', description: 'Contains a random RARE weapon or relic.' },

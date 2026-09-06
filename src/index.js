@@ -3,7 +3,7 @@ const path = require('path');
 const { Client, GatewayIntentBits, Collection, Events, PermissionFlagsBits } = require('discord.js');
 require('dotenv').config();
 const config = require('./config');
-const { getActivePrefixes, getOrCreateUser } = require('./database');
+const { getActivePrefixes, getOrCreateUser, getSetting } = require('./database');
 const { buildFakeInteraction, hasRequiredPermission } = require('./prefixAdapter');
 const { buildEmbed: buildHelpEmbed, buildSelectRow: buildHelpSelectRow } = require('./commands/help');
 const { buildWelcomeEmbed, buildWelcomeSelect } = require('./onboarding');
@@ -16,6 +16,25 @@ const client = new Client({
   ],
 });
 client.commands = new Collection();
+
+// --- MAINTENANCE CHECK HELPER ---
+async function isMaintenanceBlocked(userId, channelId, memberPermissions, commandName) {
+  // Never block the maintenance toggle command itself
+  if (commandName === 'maintenance') return false;
+
+  const mode = await getSetting('maintenance_mode', 'off');
+  if (mode !== 'on') return false;
+
+  // Server administrators can always run commands
+  if (memberPermissions?.has(PermissionFlagsBits.Administrator)) return false;
+
+  // Whitelisted dev/testing channel can always run commands
+  if (channelId && String(channelId) === String(config.maintenance?.allowedChannelId)) return false;
+
+  return true;
+}
+const MAINTENANCE_MESSAGE = '🛠️ **Luneth sedang dalam proses maintenance.**\nMohon tunggu beberapa saat hingga pemeliharaan selesai.';
+// ---------------------------------
 
 // --- SISTEM ANTI-SPAM COOLDOWN ---
 const cooldowns = new Collection();
@@ -64,9 +83,30 @@ for (const file of commandFiles) {
   }
 }
 
-client.once(Events.ClientReady, (c) => {
+client.once(Events.ClientReady, async (c) => {
   console.log(`✅ Bot online as ${c.user.tag}`);
   console.log(`✅ Guilds: ${c.guilds.cache.size}`);
+
+  // Periodic check to keep Top 1 Leaderboard role synced
+  const { getLeaderboard } = require('./database');
+  const { syncTopRole } = require('./commands/leaderboard');
+
+  async function checkTop1() {
+    try {
+      const top = await getLeaderboard(1);
+      if (top.length > 0 && top[0]?.userId) {
+        for (const guild of c.guilds.cache.values()) {
+          await syncTopRole(guild, top[0].userId);
+        }
+      }
+    } catch (e) {
+      console.error('⚠️ Top role background sync error:', e.message);
+    }
+  }
+
+  // Initial sync & interval every 5 minutes
+  checkTop1();
+  setInterval(checkTop1, 5 * 60 * 1000);
 });
 
 client.on(Events.Error, (err) => {
@@ -104,6 +144,17 @@ client.on(Events.InteractionCreate, async (interaction) => {
   // never break the others (previously an error in any handler aborted the
   // whole block and made every button/menu unresponsive).
   if (interaction.isMessageComponent()) {
+    // Maintenance check for components
+    const blocked = await isMaintenanceBlocked(
+      interaction.user.id,
+      interaction.channelId,
+      interaction.memberPermissions,
+      interaction.customId
+    );
+    if (blocked) {
+      return interaction.reply({ content: MAINTENANCE_MESSAGE, flags: 64 }).catch(() => {});
+    }
+
     // Cegah user spam klik tombol/menu (cooldown 1.5 detik)
     const btnCdError = checkCooldown(interaction.user.id, 'component_interaction', 1.5);
     if (btnCdError) {
@@ -127,6 +178,17 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
   const command = client.commands.get(interaction.commandName);
   if (!command) return;
+
+  // Maintenance check for slash commands
+  const isBlocked = await isMaintenanceBlocked(
+    interaction.user.id,
+    interaction.channelId,
+    interaction.memberPermissions,
+    interaction.commandName
+  );
+  if (isBlocked) {
+    return interaction.reply({ content: MAINTENANCE_MESSAGE, flags: 64 }).catch(() => {});
+  }
 
   // Cegah spam slash command (cooldown 3 detik)
   const cdError = checkCooldown(interaction.user.id, command.data.name, 3);
@@ -207,6 +269,17 @@ client.on(Events.MessageCreate, async (message) => {
 
   const command = client.commands.get(commandName);
   if (!command) return; // not a recognized command, stay quiet (don't spam errors)
+
+  // Maintenance check for prefix commands
+  const isPrefixBlocked = await isMaintenanceBlocked(
+    message.author.id,
+    message.channel?.id,
+    message.member?.permissions,
+    command.data.name
+  );
+  if (isPrefixBlocked) {
+    return message.reply({ content: MAINTENANCE_MESSAGE }).catch(() => {});
+  }
 
   // Cegah spam prefix command (cooldown 3 detik)
   const cdError = checkCooldown(message.author.id, command.data.name, 3);

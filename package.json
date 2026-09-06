@@ -1,6 +1,6 @@
 {
   "name": "discord-economy-bot",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Starter Discord economy bot - balance, shop, gambling, leaderboard",
   "main": "src/index.js",
   "type": "commonjs",

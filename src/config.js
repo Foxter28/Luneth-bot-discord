@@ -31,4 +31,26 @@ module.exports = {
   // once customized, only that custom prefix works in that server (default aliases are no longer used).
   prefix: "lune",
   prefixAliases: ["lu"],
+
+  // Maintenance configuration
+  maintenance: {
+    // Only commands executed in this testing/dev channel bypass maintenance mode for regular users
+    allowedChannelId: "1546029883652837476",
+  },
+
+  // Special Server Roles configuration
+  specialRoles: {
+    // 👑 Mythic Hero role (buyable in shop for 50,000 coins)
+    mythicHeroRoleId: "1546026397472915487",
+    mythicHeroPrice: 50000,
+
+    // ⚜️ Luneth Patron role (automatically granted to Leaderboard #1 richest user)
+    lunethPatronRoleId: "1546025783682666539",
+
+    // Custom Role creation settings
+    customRolePrice: 250000,
+    // Role boundary anchors (custom roles are placed under topDivider and above bottomDivider)
+    topDividerRoleId: "1539641300125491322", // 🧁
+    bottomDividerRoleId: "1540916755520553060", // ༎ຶ‿༎ຶ
+  },
 };

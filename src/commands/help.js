@@ -78,6 +78,13 @@ const COMMAND_INFO = [
         desc: 'Buy an item instantly without opening the shop menu.',
     },
     {
+        name: 'customrole',
+        category: 'shop',
+        emoji: '✨',
+        usage: 'customrole <create|edit|info|delete>',
+        desc: 'Buat & atur role custom Discord kamu sendiri seharga **250.000 Coin**.',
+    },
+    {
         name: 'coinflip',
         category: 'gambling',
         emoji: '🪙',
