@@ -151,6 +151,7 @@ function buildFakeInteraction(message, command, parsedArgs = null) {
   const fakeInteraction = {
     user: message.author,
     member: message.member,
+    memberPermissions: message.member?.permissions,
     guild: message.guild,
     channel: message.channel,
     replied: false,

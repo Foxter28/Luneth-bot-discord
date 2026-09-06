@@ -19,8 +19,11 @@ module.exports = {
     ),
 
   async execute(interaction) {
-    // Only administrators or bot owners can control maintenance
-    if (!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator)) {
+    const isGuildOwner = interaction.guild && interaction.guild.ownerId === interaction.user.id;
+    const isAdmin = interaction.memberPermissions?.has(PermissionFlagsBits.Administrator) || isGuildOwner;
+
+    // Only administrators or server owners can control maintenance
+    if (!isAdmin) {
       return interaction.reply({
         content: '❌ Kamu tidak memiliki izin (Administrator) untuk menggunakan command ini.',
         flags: 64,

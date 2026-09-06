@@ -18,14 +18,15 @@ const client = new Client({
 client.commands = new Collection();
 
 // --- MAINTENANCE CHECK HELPER ---
-async function isMaintenanceBlocked(userId, channelId, memberPermissions, commandName) {
+async function isMaintenanceBlocked(userId, channelId, memberPermissions, guild, commandName) {
   // Never block the maintenance toggle command itself
   if (commandName === 'maintenance') return false;
 
   const mode = await getSetting('maintenance_mode', 'off');
   if (mode !== 'on') return false;
 
-  // Server administrators can always run commands
+  // Server owners or administrators can always run commands
+  if (guild && guild.ownerId === userId) return false;
   if (memberPermissions?.has(PermissionFlagsBits.Administrator)) return false;
 
   // Whitelisted dev/testing channel can always run commands
@@ -149,6 +150,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       interaction.user.id,
       interaction.channelId,
       interaction.memberPermissions,
+      interaction.guild,
       interaction.customId
     );
     if (blocked) {
@@ -184,6 +186,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
     interaction.user.id,
     interaction.channelId,
     interaction.memberPermissions,
+    interaction.guild,
     interaction.commandName
   );
   if (isBlocked) {
@@ -275,6 +278,7 @@ client.on(Events.MessageCreate, async (message) => {
     message.author.id,
     message.channel?.id,
     message.member?.permissions,
+    message.guild,
     command.data.name
   );
   if (isPrefixBlocked) {
