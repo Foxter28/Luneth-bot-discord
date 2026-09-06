@@ -34,7 +34,7 @@ async function isMaintenanceBlocked(userId, channelId, memberPermissions, guild,
 
   return true;
 }
-const MAINTENANCE_MESSAGE = '🛠️ **Luneth sedang dalam proses maintenance.**\nMohon tunggu beberapa saat hingga pemeliharaan selesai.';
+const MAINTENANCE_MESSAGE = '🛠️ **Luneth is currently under maintenance.**\nPlease check back shortly once maintenance is complete.';
 // ---------------------------------
 
 // --- SISTEM ANTI-SPAM COOLDOWN ---
@@ -163,7 +163,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       return interaction.reply({ content: "⏳ Please don't click too fast!", flags: 64 }).catch(() => {});
     }
 
-    const componentHandlers = ['equip', 'sell', 'trade', 'shop', 'giveaway', 'buy', 'bomber'];
+    const componentHandlers = ['equip', 'sell', 'trade', 'shop', 'giveaway', 'buy', 'bomber', 'customrole'];
     for (const name of componentHandlers) {
       const cmd = client.commands.get(name);
       if (!cmd?.handleComponent) continue;

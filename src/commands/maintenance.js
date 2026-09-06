@@ -25,7 +25,7 @@ module.exports = {
     // Only administrators or server owners can control maintenance
     if (!isAdmin) {
       return interaction.reply({
-        content: '❌ Kamu tidak memiliki izin (Administrator) untuk menggunakan command ini.',
+        content: '❌ You do not have permission (Administrator) to use this command.',
         flags: 64,
       });
     }
@@ -36,12 +36,12 @@ module.exports = {
     if (!chosenStatus) {
       // Just check status
       const embed = new EmbedBuilder()
-        .setTitle('🛠️ Status Maintenance Bot')
+        .setTitle('🛠️ Bot Maintenance Status')
         .setColor(currentStatus ? 0xe74c3c : 0x2ecc71)
         .setDescription(
-          `Status saat ini: **${currentStatus ? '🔴 AKTIF (Maintenance)' : '🟢 NONAKTIF (Online Normal)'}**\n\n` +
-            `Channel bypass dev/testing: <#${config.maintenance.allowedChannelId}>\n\n` +
-            `*Gunakan \`/maintenance status:on\` atau \`/maintenance status:off\` untuk mengubahnya.*`
+          `Current Status: **${currentStatus ? '🔴 ACTIVE (Maintenance)' : '🟢 INACTIVE (Online Normal)'}**\n\n` +
+            `Bypass testing channel: <#${config.maintenance.allowedChannelId}>\n\n` +
+            `*Use \`/maintenance status:on\` or \`/maintenance status:off\` to toggle.*`
         );
       return interaction.reply({ embeds: [embed], flags: 64 });
     }
@@ -50,14 +50,14 @@ module.exports = {
     await setSetting('maintenance_mode', newMode);
 
     const embed = new EmbedBuilder()
-      .setTitle('🛠️ Pengaturan Maintenance Diperbarui')
+      .setTitle('🛠️ Maintenance Settings Updated')
       .setColor(newMode === 'on' ? 0xe74c3c : 0x2ecc71)
       .setDescription(
         newMode === 'on'
-          ? `🔴 **Maintenance mode telah DIAKTIFKAN!**\n\n` +
-              `Semua player umum yang menggunakan bot akan mendapatkan pesan info maintenance.\n` +
-              `Bot hanya bisa digunakan secara bebas di channel: <#${config.maintenance.allowedChannelId}> dan oleh Server Administrator.`
-          : `🟢 **Maintenance mode telah DINONAKTIFKAN!**\n\nBot kini dapat digunakan kembali secara normal oleh semua member di semua channel.`
+          ? `🔴 **Maintenance mode has been ENABLED!**\n\n` +
+              `All regular players will see a maintenance notice when attempting to use the bot.\n` +
+              `Commands can only be run in the testing channel: <#${config.maintenance.allowedChannelId}> and by Server Administrators.`
+          : `🟢 **Maintenance mode has been DISABLED!**\n\nBot is now online and available for everyone in all channels.`
       );
 
     return interaction.reply({ embeds: [embed] });

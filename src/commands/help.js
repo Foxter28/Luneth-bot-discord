@@ -81,8 +81,8 @@ const COMMAND_INFO = [
         name: 'customrole',
         category: 'shop',
         emoji: '✨',
-        usage: 'customrole <create|edit|info|delete>',
-        desc: 'Buat & atur role custom Discord kamu sendiri seharga **250.000 Coin**.',
+        usage: 'customrole buy <name> <color1> <color2>',
+        desc: 'Order your custom server role for **250,000 Coins**.',
     },
     {
         name: 'coinflip',
