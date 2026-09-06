@@ -49,6 +49,7 @@ module.exports = {
 
     // Custom Role creation settings
     customRolePrice: 250000,
+    staffNotificationChannelId: "1546040608173465680",
     // Role boundary anchors (custom roles are placed under topDivider and above bottomDivider)
     topDividerRoleId: "1539641300125491322", // 🧁
     bottomDividerRoleId: "1540916755520553060", // ༎ຶ‿༎ຶ
