@@ -244,6 +244,11 @@ const ESSENTIAL_COMMANDS = [
     { emoji: '🪙', usage: 'coinflip <bet> <choice>', desc: 'Double your coins with a quick 50/50 flip.' },
 ];
 
+function formatCommandBlock(c, i) {
+    const note = c.note ? `\n> *${c.note}*` : '';
+    return `**${i + 1}.** ${c.emoji} **/${c.usage}**\n> ${c.desc}${note}`;
+}
+
 function buildEmbed(category, activePrefix, isAdmin = false) {
     const catMeta = CATEGORIES[category];
 
