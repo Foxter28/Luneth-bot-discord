@@ -15,6 +15,20 @@ function normalizeHex(hex) {
   return hex.startsWith('#') ? hex : `#${hex}`;
 }
 
+// Generate simple SVG linear gradient badge buffer for role icon
+function createGradientSvgBuffer(c1, c2) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="${c1}" />
+      <stop offset="100%" stop-color="${c2}" />
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="28" fill="url(#grad)" />
+</svg>`;
+  return Buffer.from(svg, 'utf-8');
+}
+
 // Position custom role safely between 🧁 (top anchor) and ༎ຶ‿༎ຶ (bottom anchor)
 async function positionRoleProperly(guild, role) {
   try {
@@ -50,7 +64,10 @@ module.exports = {
           opt.setName('name').setDescription('Name for your custom role').setRequired(true).setMaxLength(50)
         )
         .addStringOption((opt) =>
-          opt.setName('color').setDescription('Hex color code (e.g. #FF007F or #00F5D4)').setRequired(true)
+          opt.setName('color').setDescription('Hex color code (e.g. #FF007F)').setRequired(true)
+        )
+        .addStringOption((opt) =>
+          opt.setName('color2').setDescription('Second color for gradient badge (optional, e.g. #00F5D4)').setRequired(false)
         )
     )
     .addSubcommand((sub) =>
@@ -61,7 +78,10 @@ module.exports = {
           opt.setName('name').setDescription('New name for your custom role').setRequired(false).setMaxLength(50)
         )
         .addStringOption((opt) =>
-          opt.setName('color').setDescription('New hex color code (e.g. #FF007F)').setRequired(false)
+          opt.setName('color').setDescription('New primary hex color code (e.g. #FF007F)').setRequired(false)
+        )
+        .addStringOption((opt) =>
+          opt.setName('color2').setDescription('New second color for gradient badge (e.g. #00F5D4)').setRequired(false)
         )
     )
     .addSubcommand((sub) =>
@@ -97,6 +117,7 @@ module.exports = {
 
       const roleName = interaction.options.getString('name').trim();
       const rawColor = interaction.options.getString('color').trim();
+      const rawColor2 = interaction.options.getString('color2')?.trim();
 
       if (!isValidHex(rawColor)) {
         return interaction.reply({
@@ -104,7 +125,14 @@ module.exports = {
           flags: 64,
         });
       }
+      if (rawColor2 && !isValidHex(rawColor2)) {
+        return interaction.reply({
+          content: '❌ Format warna ke-2 (gradient) tidak valid! Gunakan format seperti `#00F5D4`.',
+          flags: 64,
+        });
+      }
       const hexColor = normalizeHex(rawColor);
+      const hexColor2 = rawColor2 ? normalizeHex(rawColor2) : null;
 
       const user = await getUser(userId);
       if (user.balance < price) {
@@ -126,13 +154,19 @@ module.exports = {
 
       try {
         // Create role without extra permissions/settings
-        const createdRole = await guild.roles.create({
+        const roleData = {
           name: roleName,
           color: hexColor,
           hoist: false,
           mentionable: false,
           reason: `Luneth Custom Role for ${interaction.user.tag} (${userId})`,
-        });
+        };
+
+        if (hexColor2) {
+          roleData.icon = createGradientSvgBuffer(hexColor, hexColor2);
+        }
+
+        const createdRole = await guild.roles.create(roleData);
 
         // Position role below 🧁 and above ༎ຶ‿༎ຶ
         await positionRoleProperly(guild, createdRole);
@@ -144,18 +178,19 @@ module.exports = {
         }
 
         // Deduct coins & save in database
+        const savedColor = hexColor2 ? `${hexColor}|${hexColor2}` : hexColor;
         await updateBalance(userId, -price);
-        await setCustomRole(userId, guild.id, createdRole.id, roleName, hexColor);
+        await setCustomRole(userId, guild.id, createdRole.id, roleName, savedColor);
 
         const embed = new EmbedBuilder()
           .setTitle('✨ Custom Role Berhasil Dibuat!')
           .setColor(hexColor)
           .setDescription(
             `Selamat! Custom role kamu telah resmi dibuat dan dipasang ke profilmu:\n\n` +
-              `🏷️ **Role:** <@&${createdRole.id}>\n` +
-              `🎨 **Color:** \`${hexColor}\`\n` +
-              `💰 **Biaya:** **${price.toLocaleString()} ${config.currencyName}**\n\n` +
-              `*Role diposisikan secara eksklusif di bawah pembatas 🧁.*`
+            `🏷️ **Role:** <@&${createdRole.id}>\n` +
+            `🎨 **Color:** \`${hexColor}\`${hexColor2 ? ` ➔ \`${hexColor2}\` *(Gradient Badge)*` : ''}\n` +
+            `💰 **Biaya:** **${price.toLocaleString()} ${config.currencyName}**\n\n` +
+            `*Role diposisikan secara eksklusif!.*`
           )
           .setFooter({ text: `Sisa saldo: ${(user.balance - price).toLocaleString()} ${config.currencyName}` });
 
@@ -189,15 +224,19 @@ module.exports = {
 
       const newName = interaction.options.getString('name')?.trim();
       const rawColor = interaction.options.getString('color')?.trim();
+      const rawColor2 = interaction.options.getString('color2')?.trim();
 
-      if (!newName && !rawColor) {
+      if (!newName && !rawColor && !rawColor2) {
         return interaction.reply({
-          content: `❌ Berikan setidaknya satu opsi (\`name\` atau \`color\`) untuk diedit.`,
+          content: `❌ Berikan setidaknya satu opsi (\`name\`, \`color\`, atau \`color2\`) untuk diedit.`,
           flags: 64,
         });
       }
 
-      let newColor = record.roleColor;
+      const [storedC1, storedC2] = (record.roleColor || '#ffffff').split('|');
+      let newColor = storedC1 || '#ffffff';
+      let newColor2 = storedC2 || null;
+
       if (rawColor) {
         if (!isValidHex(rawColor)) {
           return interaction.reply({
@@ -207,27 +246,43 @@ module.exports = {
         }
         newColor = normalizeHex(rawColor);
       }
+      if (rawColor2) {
+        if (!isValidHex(rawColor2)) {
+          return interaction.reply({
+            content: '❌ Format warna ke-2 hex tidak valid! Gunakan format seperti `#00F5D4`.',
+            flags: 64,
+          });
+        }
+        newColor2 = normalizeHex(rawColor2);
+      }
 
       const finalName = newName || record.roleName;
 
       await interaction.deferReply();
       try {
-        await role.edit({
+        const editData = {
           name: finalName,
           color: newColor,
-        });
+        };
+
+        if (newColor2) {
+          editData.icon = createGradientSvgBuffer(newColor, newColor2);
+        }
+
+        await role.edit(editData);
 
         await positionRoleProperly(guild, role);
-        await setCustomRole(userId, guild.id, role.id, finalName, newColor);
+        const savedColor = newColor2 ? `${newColor}|${newColor2}` : newColor;
+        await setCustomRole(userId, guild.id, role.id, finalName, savedColor);
 
         const embed = new EmbedBuilder()
           .setTitle('🎨 Custom Role Diperbarui!')
           .setColor(newColor)
           .setDescription(
             `Custom role kamu berhasil diperbarui:\n\n` +
-              `🏷️ **Role:** <@&${role.id}>\n` +
-              `📝 **Nama:** **${finalName}**\n` +
-              `🎨 **Warna:** \`${newColor}\``
+            `🏷️ **Role:** <@&${role.id}>\n` +
+            `📝 **Nama:** **${finalName}**\n` +
+            `🎨 **Warna:** \`${newColor}\`${newColor2 ? ` ➔ \`${newColor2}\` *(Gradient Badge)*` : ''}`
           );
 
         return interaction.editReply({ embeds: [embed] });
