@@ -1,20 +1,158 @@
 {
   "rules": {
-    "public": [
+    "flags": 32768,
+    "components": [
       {
-        "image": "https://file.garden/aeR7U68tEBuDFww4/rulesss.gif",
-        "color": "#5865F2"
+        "type": 17,
+        "components": [
+          {
+            "type": 12,
+            "items": [
+              {
+                "media": {
+                  "url": "https://file.garden/aeR7U68tEBuDFww4/rulesss.gif"
+                }
+              }
+            ]
+          },
+          {
+            "type": 14,
+            "divider": true,
+            "spacing": 1
+          },
+          {
+            "type": 9,
+            "components": [
+              {
+                "type": 10,
+                "content": "# **`📜 Rules Lunera`**\nSebelum nongkrong lebih jauh di Lunera, baca dulu rules di bawah ini ya. Ini bukan buat ngekang, tapi biar semua Lunarian bisa nyaman dan betah di sini."
+              }
+            ],
+            "accessory": {
+              "type": 11,
+              "media": {
+                "url": "https://file.garden/aeR7U68tEBuDFww4/82e2bd51f2828efb39af804af87f2dde.gif"
+              }
+            }
+          },
+          {
+            "type": 14,
+            "divider": true,
+            "spacing": 1
+          },
+          {
+            "type": 10,
+            "content": "**`01` Respect Sesama Member**\nNggak ada toleransi buat pelecehan, diskriminasi, rasisme, body shaming, doxxing, atau ujaran kebencian dalam bentuk apapun. Kita satu komunitas, jadi saling menghargai itu wajib, bukan opsional."
+          },
+          {
+            "type": 14,
+            "divider": true,
+            "spacing": 1
+          },
+          {
+            "type": 10,
+            "content": "**`02` Etika Berkomunikasi**\n* Dilarang pakai kata-kata kasar/tidak senonoh yang nggak pada tempatnya, baik di text maupun voice channel\n* Dilarang bahas topik sensitif yang gampang memicu perdebatan (SARA, politik, agama, dll) di luar channel yang emang disediakan buat itu\n* Dilarang bikin drama atau provokasi yang memicu keributan antar member\n* Dilarang earrape / nyalain volume kenceng banget di voice channel yang ganggu kenyamanan orang lain\n* Dilarang akal-akalan bypass auto-moderation (misal ganti huruf jadi simbol/unicode biar lolos filter kata terlarang)"
+          },
+          {
+            "type": 14,
+            "divider": true,
+            "spacing": 1
+          },
+          {
+            "type": 10,
+            "content": "**`03` Konten NSFW & Terlarang**\nDilarang share atau bahas konten NSFW (pornografi, gore, kekerasan ekstrem, senjata, dll) dalam bentuk apapun (text, gambar, video, maupun voice), Sudah pasti seksualisasi ke anak di bawah umur adalah pelanggaran berat dan langsung ban tanpa pertimbangan."
+          },
+          {
+            "type": 14,
+            "divider": true,
+            "spacing": 1
+          },
+          {
+            "type": 10,
+            "content": "**`04` Spamming & Mention**\n* Dilarang spam pesan, gambar, sticker, reaction, emoji, capslock, atau copy-paste berulang dalam waktu berdekatan\n* Dilarang ping role atau mention member tanpa keperluan jelas (ganggu notifikasi orang lain)\n* Dilarang self-bot / auto-chat / auto-reply / spam tool dalam bentuk apapun di server"
+          },
+          {
+            "type": 14,
+            "divider": true,
+            "spacing": 1
+          },
+          {
+            "type": 10,
+            "content": "**`05` Promosi & Iklan**\n* Dilarang promosi server Discord lain, grup, akun media sosial pribadi, atau jualan tanpa izin/di luar channel yang disediakan\n* Dilarang promosiin judi online yang pakai uang asli/fiat (kalau soal gambling di bot ekonomi Lunera (OwO/UwU/Luneth, dll) itu beda konteks karena emang fitur resmi server, jadi masih boleh selama pakai currency virtual bot, bukan uang sungguhan)"
+          },
+          {
+            "type": 14,
+            "divider": true,
+            "spacing": 1
+          },
+          {
+            "type": 10,
+            "content": "**`06` Identitas & Privasi**\n* Dilarang niru identitas member, staff, atau bot Lunera buat kepentingan pribadi/nipu orang lain\n* Dilarang sebar data pribadi orang lain (nomor HP, alamat, foto pribadi, dll) dalam bentuk apapun tanpa izin\n* Dilarang pakai nama/foto yang mengandung referensi nggak pantas"
+          }
+        ]
       },
       {
-        "title": "📜 Rules Lunera",
-        "description": "Sebelum nongkrong lebih jauh di Lunera, seluruh anggota diwajibkan membaca dan menaati peraturan di bawah ini demi kenyamanan, keamanan, dan keharmonisan bersama.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n**`01` Saling Menghargai Sesama Anggota**\nTidak ada toleransi terhadap pelecehan, diskriminasi, rasisme, perundungan (*body shaming*), penyebaran data pribadi (*doxxing*), maupun ujaran kebencian dalam bentuk apa pun. Saling menghargai adalah kewajiban utama seluruh anggota.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n**`02` Etika Berkomunikasi**\n• Dilarang menggunakan kata-kata kasar atau tidak senonoh di luar batas kewajaran pada seluruh *text* maupun *voice channel*.\n• Dilarang membahas topik sensitif yang berpotensi memicu perselisihan (SARA, politik, dll.) di luar channel yang telah disediakan.\n• Dilarang memicu provokasi, drama, atau perselisihan antarsesama anggota.\n• Dilarang menghasilkan suara berlebih (*earrape*) atau menyalakan audio yang mengganggu kenyamanan di *voice channel*.\n• Dilarang memanipulasi format teks/simbol (*unicode*) guna mengelabui sistem moderasi otomatis (*auto-moderation*).\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n**`03` Konten NSFW & Materi Terlarang**\nDilarang keras membagikan atau mendiskusikan konten NSFW (pornografi, materi kekerasan ekstrem/gore, senjata berbahaya, dll.) dalam bentuk teks, gambar, video, maupun suara. Pelanggaran terhadap materi seksual yang melibatkan anak di bawah umur akan langsung dikenakan sanksi *Permanent Ban* tanpa toleransi.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n**`04` Spamming & Penyalahgunaan Mention**\n• Dilarang mengirimkan pesan berulang, gambar, stiker, atau reaksi emoji secara berlebihan (*spamming*).\n• Dilarang melakukan *mention* role atau anggota tanpa urgensi dan keperluan yang jelas.\n• Dilarang menggunakan *self-bot*, *auto-chat*, *auto-reply*, atau alat otomatisasi serupa di server.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n**`05` Promosi & Iklan Komersial**\n• Dilarang mempromosikan server Discord lain, grup eksternal, akun media sosial pribadi, maupun penawaran jualan tanpa izin resmi dari Staff.\n• Dilarang mempromosikan segala bentuk perjudian dengan uang asli (fiat). Aktivitas permainan mata uang virtual pada bot resmi Lunera diperbolehkan selama tidak melibatkan uang sungguhan.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n**`06` Identitas & Perlindungan Privasi**\n• Dilarang meniru identitas anggota lain, Staff, maupun Bot resmi Lunera untuk kepentingan pribadi atau penipuan.\n• Dilarang menyebarkan data pribadi (*doxxing*) milik anggota lain tanpa persetujuan resmi (*consent*).\n• Dilarang menggunakan nama tampilan, foto profil, atau status yang mengandung referensi tidak pantas.",
-        "color": "#5865F2",
-        "thumbnail": "https://file.garden/aeR7U68tEBuDFww4/82e2bd51f2828efb39af804af87f2dde.gif"
-      },
-      {
-        "description": "**`07` Integritas Sistem & Bot**\nDilarang mengeksploitasi celah (*bug/glitch*) pada sistem bot maupun fitur server (termasuk Sistem Ekonomi Lunera) untuk keuntungan sepihak. Apabila menemukan kendala sistem, segera laporkan kepada Staff demi menjaga integritas server.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n**`08` Penggunaan Channel Sesuai Topik**\nPastikan membagikan pesan dan media sesuai dengan topik channel masing-masing. Silakan periksa deskripsi channel atau tanyakan langsung kepada Staff apabila membutuhkan arahan.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n**`09` Rekaman & Privasi di Voice Channel**\nDilarang merekam percakapan suara maupun tayangan layar (*screen recording*) anggota lain tanpa izin. Saat melakukan siaran langsung (*live streaming*), pastikan tidak menampilkan atau mengekspos data pribadi anggota lain tanpa persetujuan.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n**`10` Nonton Bareng (Nobar) & Program Resmi**\n• Kegiatan nonton bareng antar-anggota diperbolehkan secara bebas dengan tetap menjaga kenyamanan bersama.\n• Program *\"Nonton Bareng Resmi Lunera\"* merupakan agenda terstruktur yang diselenggarakan langsung oleh Luminary.\n• Selama agenda resmi berlangsung, peserta wajib mengikuti arahan Staff/Luminary dan dilarang membocorkan alur cerita (*spoiler*).\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n**`11` Penyalahgunaan Role & Status**\n• Dilarang memperjualbelikan role (Booster, Starlight Promoter, Lunarians, dll.) atau memanipulasi klaim status server.\n• Status dan wewenang yang dimiliki (termasuk Luminary) tidak diperkenankan untuk disalahgunakan, mengintimidasi, maupun merugikan anggota lain.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n**`12` Penegakan Regulasi & Sanksi**\nSetiap pelanggaran akan ditindaklanjuti secara berjenjang sesuai tingkat keparahan: *Peringatan (Warn)*, *Mute/Timeout*, *Kick*, hingga *Permanent Ban*. Anggota berhak mengajukan permohonan klarifikasi kepada Staff secara santun melalui Direct Message.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n*Terima kasih atas kerja sama Anda dalam menjaga kenyamanan dan ketertiban di Lunera. Selamat nongkrong dan menikmati waktu Anda bersama kami! 🌙*",
-        "color": "#5865F2",
-        "footer": "Lunera Community Guidelines · Silakan klik tombol di bawah untuk informasi tambahan"
+        "type": 17,
+        "components": [
+          {
+            "type": 10,
+            "content": "**`07` Penyalahgunaan Bot & Sistem**\nDilarang eksploitasi bug/celah sistem di bot atau fitur server (termasuk Economy System Lunera) buat keuntungan pribadi yang merugikan server atau member lain. Ketemu bug? Laporin ke staff, jangan disalah gunakan."
+          },
+          {
+            "type": 14,
+            "divider": true,
+            "spacing": 1
+          },
+          {
+            "type": 10,
+            "content": "**`08` Diskusi Sesuai Channel**\nPost sesuai topik channel-nya masing-masing. Kalau ragu mau nge-post di mana, cek deskripsi channel dulu atau tanya langsung ke staff Lunera."
+          },
+          {
+            "type": 14,
+            "divider": true,
+            "spacing": 1
+          },
+          {
+            "type": 10,
+            "content": "**`09` Rekaman & Privasi di Voice Channel**\nDilarang merekam suara atau screen record orang lain di voice channel tanpa izin, apalagi kalau hasilnya disebar ke luar server. Sama halnya kalau lagi live/streaming, pastiin nggak nampilin/nyebutin data pribadi member lain tanpa consent."
+          },
+          {
+            "type": 14,
+            "divider": true,
+            "spacing": 1
+          },
+          {
+            "type": 10,
+            "content": "**`10` Nonton Bareng & Event Resmi**\n* Nonton bareng antar member diperbolehkan dan tidak dibatasi, termasuk janjian menonton bersama teman di voice channel\n* \"Nonton Bareng Resmi Lunera\" (yang tercatat dalam rating film) merupakan program yang khusus diselenggarakan oleh Luminary\n* Selama Nonton Bareng Resmi berlangsung, seluruh peserta wajib menjaga sikap: tidak melakukan spoiler berlebihan, tidak mengganggu jalannya acara, dan mengikuti arahan Luminary yang bertugas\n* Apabila terjadi kendala teknis atau gangguan selama acara berlangsung, segera laporkan kepada Luminary yang bertugas, bukan diselesaikan sendiri di voice channel"
+          },
+          {
+            "type": 14,
+            "divider": true,
+            "spacing": 1
+          },
+          {
+            "type": 10,
+            "content": "**`11` Penyalahgunaan Role & Status**\n* Dilarang jual-beli role (Booster, Starlight Promoter, Lunarians, dll) atau server sendiri, atau minta role dengan cara curang (fake invite, laporan palsu, dll)\n* Role dan status yang dimiliki (termasuk Luminary) nggak boleh disalahgunain buat flexing berlebihan yang bikin member lain nggak nyaman atau buat intimidasi member lain"
+          },
+          {
+            "type": 14,
+            "divider": true,
+            "spacing": 1
+          },
+          {
+            "type": 10,
+            "content": "**`12` Sanksi & Penegakan Rules**\nPelanggaran rules bakal ditindak bertahap sesuai tingkat keseriusannya — mulai dari peringatan, mute/timeout, kick, sampai ban permanen buat pelanggaran berat atau berulang. Kalau ngerasa kena sanksi yang salah/nggak adil, silakan DM staff Lunera buat klarifikasi."
+          },
+          {
+            "type": 14,
+            "divider": true,
+            "spacing": 1
+          },
+          {
+            "type": 10,
+            "content": "*Terima kasih udah baca dan patuh sama rules ini. Selamat nongkrong di Lunera! 🌙*"
+          }
+        ]
       }
     ],
     "buttons": [

@@ -307,15 +307,20 @@ module.exports = {
         });
       }
 
-      const embeds = buildEmbedsList(panel.public);
       const rows = buildActionRows(panel.buttons);
+      let replyPayload = { flags: 64 };
 
-      return interaction.reply({
-        content: `👁️ **Preview Panel: \`${panelId}\`** *(Hanya terlihat oleh Anda)*`,
-        embeds,
-        components: rows,
-        flags: 64,
-      });
+      if (panel.components || panel.rawComponents) {
+        const rawComps = panel.components || panel.rawComponents;
+        replyPayload.flags = panel.flags || 32768;
+        replyPayload.components = [...rawComps, ...rows.map((r) => r.toJSON())];
+      } else {
+        const embeds = buildEmbedsList(panel.public);
+        replyPayload.embeds = embeds;
+        replyPayload.components = rows;
+      }
+
+      return interaction.reply(replyPayload);
     }
 
     if (subcommand === 'send') {
@@ -330,21 +335,31 @@ module.exports = {
         });
       }
 
-      const embeds = buildEmbedsList(panel.public);
       const rows = buildActionRows(panel.buttons);
+      let sendPayload = {};
 
-      if (embeds.length === 0 && rows.length === 0) {
-        return interaction.reply({
-          content: `❌ Panel **\`${panelId}\`** tidak memiliki konten embed publik atau tombol yang valid.`,
-          flags: 64,
-        });
+      if (panel.components || panel.rawComponents) {
+        const rawComps = panel.components || panel.rawComponents;
+        sendPayload = {
+          flags: panel.flags || 32768,
+          components: [...rawComps, ...rows.map((r) => r.toJSON())],
+        };
+      } else {
+        const embeds = buildEmbedsList(panel.public);
+        if (embeds.length === 0 && rows.length === 0) {
+          return interaction.reply({
+            content: `❌ Panel **\`${panelId}\`** tidak memiliki konten embed publik atau tombol yang valid.`,
+            flags: 64,
+          });
+        }
+        sendPayload = {
+          embeds,
+          components: rows,
+        };
       }
 
       try {
-        await targetChannel.send({
-          embeds,
-          components: rows,
-        });
+        await targetChannel.send(sendPayload);
 
         return interaction.reply({
           content: `✅ Panel **\`${panelId}\`** berhasil dikirim ke <#${targetChannel.id}>!`,
