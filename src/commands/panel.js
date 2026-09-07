@@ -208,7 +208,7 @@ module.exports = {
     const focusedValue = interaction.options.getFocused().toLowerCase();
     const panels = loadPanels();
     const choices = Object.entries(panels).map(([key, p]) => ({
-      name: `${key} — ${p.public?.title || 'No Title'}`.slice(0, 100),
+      name: `${key} — ${p.title || p.public?.title || 'No Title'}`.slice(0, 100),
       value: key,
     }));
     const filtered = choices.filter(
