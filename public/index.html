@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LUNERA ✦ Community & Hang Out Server</title>
-  <meta name="description" content="Lunera — Server Discord resmi tempat para Night Owls nongkrong, ngobrol santai, nobar film, mabar game, dan menikmati sistem RPG Economy bot Luneth." />
+  <meta name="description" content="Lunera — Server Discord resmi tempat para Night Owls nongkrong, ngobrol santai, nobar film, mabar game, dan menikmati keseruan komunitas malam hari." />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="alternate icon" href="/favicon-32.png" sizes="32x32" />
   <meta name="theme-color" content="#0d0818" />
@@ -183,7 +183,7 @@
     }
     .nav-links {
       display: flex;
-      gap: 20px;
+      gap: 18px;
       list-style: none;
     }
     .nav-links a {
@@ -593,189 +593,34 @@
     }
 
     /* -------------------------------------------------------------
-       INTERACTIVE LUNETH TERMINAL SIMULATOR
+       BOT HIGHLIGHT BANNER & GUIDE TEASER
        ------------------------------------------------------------- */
-    .terminal-container {
-      margin-top: 20px;
+    .bot-highlight-box {
+      margin: 60px 0 30px;
+      background: radial-gradient(circle at 20% 50%, #2a1147 0%, #150a29 60%, #0c071a 100%);
+      border: 2px solid var(--border-cyber);
+      border-radius: 16px;
+      padding: 36px 30px;
+      box-shadow: var(--y2k-shadow-lg);
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 28px;
+      align-items: center;
     }
-    .term-controls-bar {
+    .bot-feature-tags {
       display: flex;
       gap: 8px;
-      padding: 12px 16px;
-      background: rgba(23, 14, 46, 0.95);
-      border-bottom: 2px solid var(--border-cyber);
-      overflow-x: auto;
-      white-space: nowrap;
+      flex-wrap: wrap;
+      margin: 14px 0 20px;
     }
-    .term-tab-btn {
+    .bot-tag {
       background: rgba(43, 26, 84, 0.7);
       border: 1px solid var(--border-cyber);
-      color: #e9d5ff;
-      padding: 6px 14px;
-      border-radius: 6px;
-      font-family: var(--font-pixel);
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .term-tab-btn:hover, .term-tab-btn.active {
-      background: var(--purple-primary);
-      color: #ffffff;
-      border-color: #ffffff;
-      box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
-    }
-    .term-screen {
-      padding: 24px;
-      min-height: 270px;
-      background: #090514;
-      font-family: var(--font-pixel);
-      font-size: 1.05rem;
-      color: #f3e8ff;
-      line-height: 1.6;
-    }
-    .term-embed-box {
-      background: rgba(22, 13, 44, 0.95);
-      border: 2px solid var(--purple-primary);
-      border-left: 6px solid var(--purple-primary);
-      border-radius: 8px;
-      padding: 18px 20px;
-      margin-top: 12px;
-      max-width: 680px;
-      box-shadow: var(--y2k-shadow);
-    }
-    .term-embed-title {
-      font-size: 1.2rem;
       color: var(--moon-gold);
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .term-embed-desc {
-      font-family: var(--font-body);
-      font-size: 0.92rem;
-      color: #e9d5ff;
-      line-height: 1.5;
-    }
-    .term-card-render {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      background: rgba(14, 8, 28, 0.9);
-      border: 1px solid var(--border-cyber);
-      padding: 14px;
-      border-radius: 8px;
-      margin-top: 10px;
-    }
-    .term-progress-bar {
-      width: 100%;
-      height: 10px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 999px;
-      overflow: hidden;
-      margin-top: 6px;
-    }
-    .term-progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #a855f7, #fde047);
-      width: 70%;
-      border-radius: 999px;
-    }
-
-    /* -------------------------------------------------------------
-       WEAPON & CRATE SHOWCASE (Real Assets Display)
-       ------------------------------------------------------------- */
-    .showcase-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 18px;
-      margin-top: 24px;
-    }
-    .item-card {
-      background: var(--bg-card);
-      border: 2px solid var(--border-cyber);
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-      box-shadow: var(--y2k-shadow);
-      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-      position: relative;
-      overflow: hidden;
-    }
-    .item-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 6px 6px 0px #3b0764, 0 0 20px rgba(168, 85, 247, 0.35);
-      border-color: var(--purple-glow);
-      background: var(--bg-card-hover);
-    }
-    .item-card.tier-legend {
-      border-color: rgba(253, 224, 71, 0.5);
-    }
-    .item-card.tier-legend:hover {
-      box-shadow: 6px 6px 0px #713f12, 0 0 25px rgba(253, 224, 71, 0.4);
-      border-color: #fde047;
-    }
-    .item-tier-badge {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-family: var(--font-pixel);
-      font-size: 0.75rem;
-      padding: 3px 8px;
-      border-radius: 4px;
-      text-transform: uppercase;
-    }
-    .tier-legend .item-tier-badge {
-      background: rgba(253, 224, 71, 0.2);
-      color: #fde047;
-      border: 1px solid #fde047;
-    }
-    .tier-rare .item-tier-badge {
-      background: rgba(168, 85, 247, 0.2);
-      color: #c084fc;
-      border: 1px solid #c084fc;
-    }
-    .item-img-frame {
-      width: 100px;
-      height: 100px;
-      margin: 8px auto 12px;
-      background: radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, transparent 70%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-    }
-    .item-img-frame img {
-      max-width: 85px;
-      max-height: 85px;
-      object-fit: contain;
-      filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.5));
-      transition: transform 0.25s ease;
-    }
-    .item-card:hover .item-img-frame img {
-      transform: scale(1.1) rotate(4deg);
-    }
-    .item-name {
-      font-family: var(--font-display);
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 4px;
-    }
-    .item-desc {
-      font-size: 0.82rem;
-      color: #c4b5fd;
-      margin-bottom: 12px;
-      min-height: 38px;
-    }
-    .item-stats-chip {
-      display: inline-flex;
-      gap: 8px;
-      font-family: var(--font-pixel);
-      font-size: 0.85rem;
-      background: rgba(15, 8, 30, 0.8);
-      border: 1px solid var(--border-cyber);
       padding: 4px 10px;
       border-radius: 6px;
-      color: var(--moon-gold);
+      font-family: var(--font-pixel);
+      font-size: 0.82rem;
     }
 
     /* -------------------------------------------------------------
@@ -984,7 +829,7 @@
       .rules-grid {
         grid-template-columns: 1fr;
       }
-      .showcase-grid {
+      .bot-highlight-box {
         grid-template-columns: 1fr;
       }
       .hero-visual-card {
@@ -1009,7 +854,7 @@
   <!-- Top Y2K Ticker -->
   <div class="y2k-ticker" aria-hidden="true">
     <div class="ticker-content">
-      ✦ LUNERA | HANG OUT SERVER ✦ 800+ NIGHT OWLS ONLINE ✦ NOBAR FILM & GAMING ✦ BOT LUNETH RPG v1.5 ACTIVE ✦ MAX LV. 999 ✦ 16+ WEAPONS & CHESTS ✦ RULES RESMI ACTIVE ✦ JOIN US ON DISCORD ✦ LUNERA | HANG OUT SERVER ✦ 800+ NIGHT OWLS ONLINE ✦ NOBAR FILM & GAMING ✦ BOT LUNETH RPG v1.5 ACTIVE ✦
+      ✦ LUNERA | HANG OUT SERVER ✦ 800+ NIGHT OWLS ONLINE ✦ NOBAR FILM & GAMING ✦ BOT LUNETH RPG v1.5 ACTIVE ✦ MAX LV. 999 ✦ RULES RESMI ACTIVE ✦ JOIN US ON DISCORD ✦ LUNERA | HANG OUT SERVER ✦ 800+ NIGHT OWLS ONLINE ✦ NOBAR FILM & GAMING ✦
     </div>
   </div>
 
@@ -1026,9 +871,8 @@
         <li><a href="#rules">Rules</a></li>
         <li><a href="#info-nobar" onclick="openModal('nobar'); return false;">Nobar Info</a></li>
         <li><a href="#info-fjb" onclick="openModal('fjb'); return false;">Jual Beli</a></li>
-        <li><a href="#weapons">Senjata</a></li>
-        <li><a href="#terminal">Terminal</a></li>
         <li><a href="#rooms">Komunitas</a></li>
+        <li><a href="/guide" style="color: var(--moon-gold);">Bot Guide ↗</a></li>
       </ul>
 
       <div class="nav-right-actions">
@@ -1049,9 +893,9 @@
       <a href="#rules" onclick="toggleMobileMenu()">📜 Rules Lunera</a>
       <a href="#info-nobar" onclick="openModal('nobar'); toggleMobileMenu(); return false;">🎬 Info Nobar (Nonton Bareng)</a>
       <a href="#info-fjb" onclick="openModal('fjb'); toggleMobileMenu(); return false;">🛒 Ketentuan Jual Beli (FJB)</a>
-      <a href="#weapons" onclick="toggleMobileMenu()">⚔️ Senjata & Crate</a>
-      <a href="#terminal" onclick="toggleMobileMenu()">💻 Terminal Simulator</a>
       <a href="#rooms" onclick="toggleMobileMenu()">💬 Room Komunitas</a>
+      <a href="/guide" onclick="toggleMobileMenu()" style="color: var(--moon-gold);">📖 Panduan Lengkap Bot Luneth ↗</a>
+      <a href="https://discord.com/invite/zSc9VWE4" target="_blank">🚀 Join Discord Server</a>
     </div>
   </header>
 
@@ -1073,7 +917,7 @@
             Tempat Para Night Owls <span class="highlight-moon">Nongkrong & Seru-Seruan.</span>
           </h1>
           <p class="hero-desc">
-            Selamat datang di <strong>Lunera</strong> — server Discord resmi komunitas para night owls! Tempat santai untuk ngobrol bareng, nobar film seru, mabar game, sharing karya, serta berpetualang dengan sistem RPG Economy <strong>Luneth Bot v1.5</strong>.
+            Selamat datang di <strong>Lunera</strong> — server Discord resmi komunitas para night owls! Tempat santai untuk ngobrol bareng, nobar film seru, mabar game, sharing cerita harian, serta seru-seruan bareng ratusan Lunarians lainnya setiap malam.
           </p>
           <div class="hero-actions">
             <a href="https://discord.com/invite/zSc9VWE4" target="_blank" rel="noopener" class="btn-y2k" style="padding: 12px 22px; font-size: 1rem;">
@@ -1096,8 +940,8 @@
               <div class="stat-lbl">Active Hangout</div>
             </div>
             <div class="stat-pill">
-              <div class="stat-val">Lv. 999</div>
-              <div class="stat-lbl">Max RPG Level</div>
+              <div class="stat-val">Voice & Text</div>
+              <div class="stat-lbl">Active Rooms</div>
             </div>
           </div>
         </div>
@@ -1262,103 +1106,32 @@
       </div>
     </section>
 
-    <!-- Interactive Terminal Simulator -->
-    <section id="terminal">
-      <div class="section-head">
-        <div class="section-chip">⚡ INTERACTIVE BOT SIMULATOR</div>
-        <h2 class="section-title">Luneth Economy Bot Emulator</h2>
-        <p class="section-subtitle">Coba simulasi interaktif command bot Luneth yang terpasang di server Lunera.</p>
-      </div>
-
-      <div class="y2k-window terminal-container">
-        <div class="window-header">
-          <span>[☾ LUNETH_TERMINAL_EMULATOR.SH]</span>
-          <div class="window-controls">
-            <span class="win-btn win-min">_</span>
-            <span class="win-btn win-max">□</span>
-            <span class="win-btn win-close">✕</span>
+    <!-- -------------------------------------------------------------
+         BOT LUNETH HIGHLIGHT (Ringkas & Arahkan ke Page Panduan)
+         ------------------------------------------------------------- -->
+    <section>
+      <div class="bot-highlight-box">
+        <div>
+          <div class="section-chip" style="margin-bottom: 8px;">🎮 SERVER FEATURE</div>
+          <h2 style="font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.2rem); color: #fff; margin-bottom: 8px;">
+            Luneth RPG Economy Bot
+          </h2>
+          <p style="color: #c4b5fd; font-size: 0.95rem; line-height: 1.6;">
+            Server Lunera dilengkapi dengan bot RPG interaktif khusus <strong>Luneth v1.5</strong>. Kamu bisa mengumpulkan XP hingga Max Lv. 999, membuka peti Crate berhadiah senjata legendaris, dungeon battle, transfer koin, hingga kasino minigames.
+          </p>
+          <div class="bot-feature-tags">
+            <span class="bot-tag">⭐ Max Level 999</span>
+            <span class="bot-tag">🎁 Crate Rewards</span>
+            <span class="bot-tag">⚔️ 16+ Senjata Custom</span>
+            <span class="bot-tag">⛏️ Mining & Crafting</span>
+            <span class="bot-tag">💸 Transfer Koin</span>
           </div>
+          <a href="/guide" class="btn-y2k" style="padding: 12px 24px;">
+            📖 Buka Panduan Lengkap Bot Luneth ↗
+          </a>
         </div>
-        <div class="term-controls-bar">
-          <button class="term-tab-btn active" onclick="switchTerm('level')">⭐ /level</button>
-          <button class="term-tab-btn" onclick="switchTerm('open')">🎁 /open crate_legendary</button>
-          <button class="term-tab-btn" onclick="switchTerm('battle')">⚔️ /battle</button>
-          <button class="term-tab-btn" onclick="switchTerm('transfer')">💸 /transfer</button>
-          <button class="term-tab-btn" onclick="switchTerm('work')">🧭 /work</button>
-        </div>
-        <div class="term-screen" id="term-output">
-          <!-- Dynamic JS content renders here -->
-        </div>
-      </div>
-    </section>
-
-    <!-- Weapon & Crate Showcase -->
-    <section id="weapons">
-      <div class="section-head">
-        <div class="section-chip">⚔️ ARSENAL & LOOT</div>
-        <h2 class="section-title">Katalog Senjata & Mystery Chest</h2>
-        <p class="section-subtitle">Temukan senjata legendaris dan buka peti misterius di dalam game RPG Luneth.</p>
-      </div>
-
-      <div class="showcase-grid">
-        <div class="item-card tier-legend">
-          <span class="item-tier-badge">Legendary</span>
-          <div class="item-img-frame">
-            <img src="/asset/weapon/legend/starfall.png" alt="Starfall Guandao" loading="lazy" />
-          </div>
-          <h3 class="item-name">Starfall Guandao</h3>
-          <p class="item-desc">Polearm berkekuatan bintang jatuh dengan bonus damage tertinggi.</p>
-          <div class="item-stats-chip">🗡️ +72 ATK · 💨 +8 SPD · 💥 +35% CRIT</div>
-        </div>
-
-        <div class="item-card tier-legend">
-          <span class="item-tier-badge">Legendary</span>
-          <div class="item-img-frame">
-            <img src="/asset/weapon/legend/lunar-blade.png" alt="Lunar Blade" loading="lazy" />
-          </div>
-          <h3 class="item-name">Lunar Blade</h3>
-          <p class="item-desc">Pedang perak sakral yang diberkahi oleh sinar rembulan abadi.</p>
-          <div class="item-stats-chip">🗡️ +58 ATK · 💨 +10 SPD · 💥 +28% CRIT</div>
-        </div>
-
-        <div class="item-card tier-rare">
-          <span class="item-tier-badge">Rare</span>
-          <div class="item-img-frame">
-            <img src="/asset/weapon/rare/frost-blade.png" alt="Frost Blade" loading="lazy" />
-          </div>
-          <h3 class="item-name">Frost Blade</h3>
-          <p class="item-desc">Bilah es kristal dingin yang membekukan musuh saat serangan kritis.</p>
-          <div class="item-stats-chip">🗡️ +30 ATK · 💨 +2 SPD · 💥 +10% CRIT</div>
-        </div>
-
-        <div class="item-card tier-rare">
-          <span class="item-tier-badge">Rare</span>
-          <div class="item-img-frame">
-            <img src="/asset/weapon/rare/moon-bow.png" alt="Moon Bow" loading="lazy" />
-          </div>
-          <h3 class="item-name">Moon Bow</h3>
-          <p class="item-desc">Busur panah cahaya rembulan dengan kecepatan tembak sangat tinggi.</p>
-          <div class="item-stats-chip">🗡️ +22 ATK · 💨 +20 SPD · 💥 +15% CRIT</div>
-        </div>
-
-        <div class="item-card tier-legend">
-          <span class="item-tier-badge">Jackpot</span>
-          <div class="item-img-frame">
-            <img src="/asset/chest/legendary-chest.png" alt="Legendary Crate" loading="lazy" />
-          </div>
-          <h3 class="item-name">Legendary Crate</h3>
-          <p class="item-desc">Peti emas berkilau berisi senjata Legendary & jackpot koin ratusan ribu.</p>
-          <div class="item-stats-chip">👑 Buka via /open crate_legendary</div>
-        </div>
-
-        <div class="item-card tier-rare">
-          <span class="item-tier-badge">Rare Box</span>
-          <div class="item-img-frame">
-            <img src="/asset/chest/rare-chest.png" alt="Rare Crate" loading="lazy" />
-          </div>
-          <h3 class="item-name">Rare Crate</h3>
-          <p class="item-desc">Berisi material langka, relic berkekuatan tinggi, atau Rare Weapon.</p>
-          <div class="item-stats-chip">🎁 Buka via /open crate_rare</div>
+        <div style="text-align: center;">
+          <img src="/asset/levelup.png" alt="Luneth Bot Level Up" style="max-width: 180px; filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.5));" />
         </div>
       </div>
     </section>
@@ -1508,93 +1281,14 @@
       <a href="#rules">Rules</a>
       <a href="#info-nobar" onclick="openModal('nobar'); return false;">Nobar Info</a>
       <a href="#info-fjb" onclick="openModal('fjb'); return false;">Jual Beli</a>
-      <a href="#weapons">Senjata</a>
-      <a href="#terminal">Terminal</a>
+      <a href="/guide">Bot Guide</a>
       <a href="https://discord.com/invite/zSc9VWE4" target="_blank" rel="noopener">Discord Server</a>
     </div>
-    <div>✦ LUNERA | HANG OUT SERVER ✦ POWERED BY LUNETH BOT v1.5 ✦ ALL RIGHTS RESERVED ✦</div>
+    <div>✦ LUNERA | HANG OUT SERVER ✦ ALL RIGHTS RESERVED ✦</div>
   </footer>
 
-  <!-- Interactive Simulator & Modal Scripts -->
+  <!-- Modal & Dynamic Stats Scripts -->
   <script>
-    // Terminal Simulator Data
-    const termData = {
-      level: `
-        <div style="color: #a78bfa;">> Executing <strong>/level</strong>...</div>
-        <div class="term-embed-box">
-          <div class="term-embed-title">⭐ Level Card — Lunarian Knight</div>
-          <div class="term-card-render">
-            <div class="pixel-moon-icon" style="width: 44px; height: 44px;"></div>
-            <div style="flex: 1;">
-              <div style="font-family: var(--font-pixel); font-size: 1.1rem; color: #fff;"><strong>Level:</strong> 42/999 · <strong>XP:</strong> 8,420 / 12,000</div>
-              <div class="term-progress-bar">
-                <div class="term-progress-fill" style="width: 70%;"></div>
-              </div>
-              <div style="font-size: 0.8rem; color: #fde047; margin-top: 6px;">Next Milestone: Lv. 50 (🎁 1x Rare Crate + Coins!)</div>
-            </div>
-          </div>
-        </div>
-      `,
-      open: `
-        <div style="color: #a78bfa;">> Executing <strong>/open crate_legendary</strong>...</div>
-        <div class="term-embed-box" style="border-color: #fde047;">
-          <div class="term-embed-title">👑 Legendary Crate Opened!</div>
-          <div class="term-embed-desc">
-            Kamu membuka <strong>Legendary Crate</strong> dan mendapatkan:<br><br>
-            ✨ <strong>Starfall Guandao</strong> (Worth <strong>14,500 Coins</strong>)<br>
-            🗡️ <em>+72 ATK · 💨 +8 SPD · 💥 +35% CRIT</em><br><br>
-            Item telah berhasil dimasukkan ke inventory tas! 🎒
-          </div>
-        </div>
-      `,
-      battle: `
-        <div style="color: #a78bfa;">> Executing <strong>/battle</strong>...</div>
-        <div class="term-embed-box">
-          <div class="term-embed-title">⚔️ Battle Victory vs Void Stalker!</div>
-          <div class="term-embed-desc">
-            Kamu menyerang dengan <strong>Lunar Blade</strong> dan memberikan <strong>185 Critical Damage</strong>!<br><br>
-            💰 <strong>Hadiah:</strong> +1,250 Coins<br>
-            ⭐ <strong>XP Diperoleh:</strong> +55 XP<br>
-            🎁 <strong>Item Drop:</strong> 1x Frost Crystal
-          </div>
-        </div>
-      `,
-      transfer: `
-        <div style="color: #a78bfa;">> Executing <strong>/transfer user:@Alice amount:5000</strong>...</div>
-        <div class="term-embed-box" style="border-color: #22c55e;">
-          <div class="term-embed-title">💸 Transfer Berhasil!</div>
-          <div class="term-embed-desc">
-            Kamu berhasil mentransfer <strong>5,000 Coins</strong> kepada <strong>@Alice</strong>.<br><br>
-            💰 <strong>Sisa Saldo Kamu:</strong> 45,200 Coins<br>
-            📜 <em>Transaksi dicatat aman pada sistem database Luneth.</em>
-          </div>
-        </div>
-      `,
-      work: `
-        <div style="color: #a78bfa;">> Executing <strong>/work dungeon:forest</strong>...</div>
-        <div class="term-embed-box">
-          <div class="term-embed-title">🧭 Ekspedisi Hutan Rembulan Selesai</div>
-          <div class="term-embed-desc">
-            Kamu menjelajahi Hutan Rembulan dan mengumpulkan komoditas berharga:<br><br>
-            💰 <strong>Pendapatan:</strong> +420 Coins<br>
-            ⭐ <strong>XP:</strong> +28 XP<br>
-            🌿 <strong>Hasil Panen:</strong> 2x Moon Fern
-          </div>
-        </div>
-      `
-    };
-
-    function switchTerm(tab) {
-      document.querySelectorAll('.term-tab-btn').forEach(btn => btn.classList.remove('active'));
-      const activeBtn = Array.from(document.querySelectorAll('.term-tab-btn')).find(b => b.textContent.includes(tab));
-      if (activeBtn) activeBtn.classList.add('active');
-      
-      const out = document.getElementById('term-output');
-      if (out && termData[tab]) {
-        out.innerHTML = termData[tab];
-      }
-    }
-
     // Modal Control Functions
     function openModal(type) {
       const modal = document.getElementById(`modal-${type}`);
@@ -1634,11 +1328,8 @@
       }
     }
 
-    // Initialize Default
+    // Live Discord Widget stats update
     document.addEventListener('DOMContentLoaded', () => {
-      switchTerm('level');
-      
-      // Live Discord Widget stats update
       fetch('/api/widget')
         .then(res => res.json())
         .then(data => {

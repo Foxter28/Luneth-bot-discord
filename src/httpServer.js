@@ -103,6 +103,14 @@ const server = http.createServer(async (req, res) => {
     return serveIndex(res);
   }
 
+  // --- Bot Guide page route ---
+  if (pathname === '/guide' || pathname === '/guide.html' || pathname === '/luneth') {
+    const guidePath = path.join(PUBLIC_DIR, 'guide.html');
+    if (fs.existsSync(guidePath)) {
+      return serveFile(res, guidePath);
+    }
+  }
+
   // --- Static files from public/ (with path-traversal guard) ---
   const decoded = decodeURIComponent(pathname);
   // Strip leading slashes so the path is treated as relative to PUBLIC_DIR.
