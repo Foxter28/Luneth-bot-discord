@@ -690,6 +690,32 @@
       margin-top: 4px;
     }
 
+    /* Booster Hall (live) */
+    .booster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+    .booster-card {
+      background: rgba(24, 14, 44, 0.9);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: var(--y2k-shadow);
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .booster-card:hover { transform: translateY(-3px); border-color: var(--purple-glow); }
+    .booster-avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      object-fit: cover; display: block; margin: 0 auto 10px;
+      border: 2px solid #a855f7; background: #2e1065;
+    }
+    .booster-name { font-family: var(--font-display); font-size: 0.95rem; color: #fff; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .booster-since { font-family: var(--font-pixel); font-size: 0.75rem; color: #a78bfa; }
+    .booster-empty { color: #a78bfa; text-align: center; padding: 16px; font-family: var(--font-pixel); }
+
     /* -------------------------------------------------------------
        MODAL / BUBBLE POPUPS (Nobar & Jual Beli)
        ------------------------------------------------------------- */
@@ -1208,6 +1234,18 @@
       </div>
     </section>
 
+    <!-- Booster Hall — live from bot -->
+    <section id="boosters">
+      <div class="section-head">
+        <div class="section-chip">💜 BOOSTERS</div>
+        <h2 class="section-title">Hall of Luneth Boosters</h2>
+        <p class="section-subtitle">Terima kasih untuk para booster terkasih — kamu yang membuat Lunera tetap hidup. Sinkron realtime dari server.</p>
+      </div>
+      <div id="booster-grid" class="booster-grid">
+        <div class="booster-empty" id="booster-loading"><i data-lucide="loader-2" class="spin" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i> Memuat booster terbaru...</div>
+      </div>
+    </section>
+
     <!-- Final CTA Box -->
     <section class="final-cta-box">
       <div class="cta-moon-decor"></div>
@@ -1389,6 +1427,29 @@
           }
         })
         .catch(() => {});
+
+      // Live Booster wall
+      fetch('/api/boosters')
+        .then(r => r.json())
+        .then(j => {
+          const grid = document.getElementById('booster-grid');
+          if (!grid) return;
+          const list = Array.isArray(j.boosters) ? j.boosters : [];
+          if (j.count === 0 || list.length === 0) {
+            grid.innerHTML = '<div class="booster-empty">Belum ada booster saat ini — boost server-mu dan masuk Hall of Luneth!</div>';
+            return;
+          }
+          grid.innerHTML = list.map(b => {
+            const since = b.premiumSince ? new Date(b.premiumSince).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
+            const avatar = b.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
+            const name = (b.displayName || b.tag || b.id).replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            return `<div class="booster-card"><img class="booster-avatar" src="${avatar}" alt="${name}" loading="lazy" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'"/><div class="booster-name">${name}</div><div class="booster-since">${since ? 'Boosting sejak ' + since : '💜 Server Booster'}</div></div>`;
+          }).join('');
+        })
+        .catch(() => {
+          const el = document.getElementById('booster-loading');
+          if (el) el.textContent = 'Gagal memuat data booster.';
+        });
     });
   </script>
 </body>

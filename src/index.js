@@ -133,11 +133,43 @@ client.once(Events.ClientReady, async (c) => {
     }
   }
 
+  // Sync booster list into boosterStore for the website (/api/boosters)
+  async function syncBoosters() {
+    try {
+      const { setBoosters } = require('./boosterStore');
+      const collected = [];
+      for (const guild of c.guilds.cache.values()) {
+        // fetch to ensure cache is populated
+        await guild.members.fetch().catch(() => {});
+        for (const m of guild.members.cache.values()) {
+          if (m.premiumSince != null) {
+            collected.push({
+              id: m.id,
+              tag: m.user?.tag || m.user?.username || m.id,
+              displayName: m.displayName || m.user?.username || m.id,
+              avatar: m.user?.displayAvatarURL({ size: 128, extension: 'png' }) || null,
+              premiumSince: m.premiumSince ? m.premiumSince.toISOString() : null,
+              guildName: guild.name,
+            });
+          }
+        }
+      }
+      // deduplicate by id
+      const seen = new Set();
+      const unique = collected.filter(b => { if (seen.has(b.id)) return false; seen.add(b.id); return true; });
+      require('./boosterStore').setBoosters(unique);
+    } catch (e) {
+      console.error('⚠️ Booster sync error:', e.message);
+    }
+  }
+
   cleanupDepartedMembers();
 
-  // Initial sync & interval every 5 minutes
+  // Initial sync & intervals
   checkTop1();
+  syncBoosters();
   setInterval(checkTop1, 5 * 60 * 1000);
+  setInterval(syncBoosters, 10 * 60 * 1000);
 });
 
 // Auto-delete user from database when they leave the server
@@ -164,6 +196,24 @@ client.on(Events.GuildMemberRemove, async (member) => {
   } catch (err) {
     console.error('❌ Failed to auto-delete departed member from database:', err);
   }
+});
+
+// Keep website booster list in sync in real time
+client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
+  if (oldMember?.premiumSince === newMember?.premiumSince) return;
+  // re-run full scan (cheap vs complex delta logic)
+  try {
+    const collected = [];
+    for (const guild of client.guilds.cache.values()) {
+      for (const m of guild.members.cache.values()) {
+        if (m.premiumSince != null) {
+          collected.push({ id: m.id, tag: m.user?.tag || m.user?.username || m.id, displayName: m.displayName || m.user?.username || m.id, avatar: m.user?.displayAvatarURL({ size: 128, extension: 'png' }) || null, premiumSince: m.premiumSince.toISOString(), guildName: guild.name });
+        }
+      }
+    }
+    const seen = new Set();
+    require('./boosterStore').setBoosters(collected.filter(b => { if (seen.has(b.id)) return false; seen.add(b.id); return true; }));
+  } catch {}
 });
 
 client.on(Events.Error, (err) => {

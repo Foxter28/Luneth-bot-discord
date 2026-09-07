@@ -98,6 +98,20 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // --- Boosters API — live data from bot via boosterStore ---
+  if (pathname === '/api/boosters') {
+    try {
+      const { getBoosters } = require('./boosterStore');
+      const data = getBoosters();
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-cache' });
+      res.end(JSON.stringify(data));
+    } catch {
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-cache' });
+      res.end(JSON.stringify({ boosters: [], count: 0, updatedAt: 0 }));
+    }
+    return;
+  }
+
   // --- Root route ---
   if (pathname === '/' || pathname === '/index.html') {
     return serveIndex(res);
