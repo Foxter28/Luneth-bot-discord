@@ -57,6 +57,14 @@ const COMMAND_INFO = [
         desc: 'View your RPG level, XP progress card, and milestone crate rewards.',
     },
     {
+        name: 'transfer',
+        category: 'economy',
+        emoji: '💸',
+        usage: 'transfer user:<@user> amount:<n>',
+        desc: 'Transfer coins from your balance to another member.',
+        note: 'Aliases: "pay", "tf", "send"',
+    },
+    {
         name: 'shop',
         category: 'shop',
         emoji: '🛒',

@@ -305,6 +305,17 @@ async function getLeaderboard(limit = 10) {
   return dbAll('SELECT * FROM users ORDER BY balance DESC LIMIT ?', limit);
 }
 
+async function deleteUser(userId) {
+  await dbRun('DELETE FROM users WHERE userId = ?', userId);
+  await dbRun('DELETE FROM inventory WHERE userId = ?', userId);
+  await dbRun('DELETE FROM custom_roles WHERE userId = ?', userId);
+  return true;
+}
+
+async function getAllUserIds() {
+  return dbAll('SELECT userId FROM users');
+}
+
 // ---------------------------------------------------------------------------
 // Inventory helpers
 // ---------------------------------------------------------------------------
@@ -593,6 +604,8 @@ module.exports = {
   setLastBattle: (userId, ts) => dbQueue(() => setLastBattle(userId, ts)),
   incrementBattleWin: (userId) => dbQueue(() => incrementBattleWin(userId)),
   getLeaderboard: (limit = 10) => dbQueue(() => getLeaderboard(limit)),
+  deleteUser: (userId) => dbQueue(() => deleteUser(userId)),
+  getAllUserIds: () => dbQueue(() => getAllUserIds()),
   addItem: (userId, itemId, qty = 1) => dbQueue(() => addItem(userId, itemId, qty)),
   getInventory: (userId) => dbQueue(() => getInventory(userId)),
   removeItem: (userId, itemId, qty = 1) => dbQueue(() => removeItem(userId, itemId, qty)),

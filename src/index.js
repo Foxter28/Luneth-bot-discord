@@ -3,7 +3,7 @@ const path = require('path');
 const { Client, GatewayIntentBits, Collection, Events, PermissionFlagsBits } = require('discord.js');
 require('dotenv').config();
 const config = require('./config');
-const { getActivePrefixes, getOrCreateUser, getSetting } = require('./database');
+const { getActivePrefixes, getOrCreateUser, getSetting, deleteUser, getAllUserIds } = require('./database');
 const { buildFakeInteraction, hasRequiredPermission } = require('./prefixAdapter');
 const { buildEmbed: buildHelpEmbed, buildSelectRow: buildHelpSelectRow } = require('./commands/help');
 const { buildWelcomeEmbed, buildWelcomeSelect } = require('./onboarding');
@@ -11,6 +11,7 @@ const { buildWelcomeEmbed, buildWelcomeSelect } = require('./onboarding');
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers, // required to detect member leave and sync roster
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent, // required to read prefix command message content
   ],
@@ -105,9 +106,64 @@ client.once(Events.ClientReady, async (c) => {
     }
   }
 
+  // Cleanup any members in the database who are no longer in any server
+  async function cleanupDepartedMembers() {
+    try {
+      const allUsers = await getAllUserIds();
+      let purged = 0;
+      for (const row of allUsers) {
+        let isPresent = false;
+        for (const guild of c.guilds.cache.values()) {
+          const member = await guild.members.fetch(row.userId).catch(() => null);
+          if (member) {
+            isPresent = true;
+            break;
+          }
+        }
+        if (!isPresent) {
+          await deleteUser(row.userId);
+          purged++;
+        }
+      }
+      if (purged > 0) {
+        console.log(`🧹 Auto-cleaned ${purged} departed member(s) from database.`);
+      }
+    } catch (err) {
+      console.error('⚠️ Error during departed members cleanup:', err.message);
+    }
+  }
+
+  cleanupDepartedMembers();
+
   // Initial sync & interval every 5 minutes
   checkTop1();
   setInterval(checkTop1, 5 * 60 * 1000);
+});
+
+// Auto-delete user from database when they leave the server
+client.on(Events.GuildMemberRemove, async (member) => {
+  try {
+    const userId = member.id || member.user?.id;
+    if (!userId) return;
+
+    // Check if the user is still in any other guild the bot is in
+    let inOtherGuild = false;
+    for (const guild of client.guilds.cache.values()) {
+      if (guild.id === member.guild?.id) continue;
+      const otherMember = await guild.members.fetch(userId).catch(() => null);
+      if (otherMember) {
+        inOtherGuild = true;
+        break;
+      }
+    }
+
+    if (!inOtherGuild) {
+      await deleteUser(userId);
+      console.log(`🗑️ Member left (${member.guild?.name || 'server'}): Purged user ${userId} (${member.user?.tag || 'unknown'}) from database.`);
+    }
+  } catch (err) {
+    console.error('❌ Failed to auto-delete departed member from database:', err);
+  }
 });
 
 client.on(Events.Error, (err) => {

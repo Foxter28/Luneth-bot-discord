@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { getLeaderboard } = require('../database');
+const { getLeaderboard, deleteUser } = require('../database');
 const config = require('../config');
 
 // Emoji ranks: top rank uses custom crown emote <:crown:1546422532117102593>, followed by medals and chip numbers
@@ -44,7 +44,24 @@ module.exports = {
   syncTopRole,
 
   async execute(interaction) {
-    const top = await getLeaderboard(10);
+    let top = [];
+
+    if (interaction.guild) {
+      const candidates = await getLeaderboard(50);
+      for (const u of candidates) {
+        if (top.length >= 10) break;
+        const member = await interaction.guild.members.fetch(u.userId).catch(() => null);
+        if (!member) {
+          // If member is no longer in the guild, auto-purge from DB
+          deleteUser(u.userId).catch(() => {});
+          continue;
+        }
+        top.push(u);
+      }
+    } else {
+      top = await getLeaderboard(10);
+    }
+
     if (top.length === 0) {
       return interaction.reply('📊 No data yet.');
     }
