@@ -11,6 +11,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
   <style>
     @font-face { font-family: 'Porao Grottesche'; src: local('Syne'); font-display: swap; }
@@ -79,8 +81,11 @@
     }
     .brand-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--moon-silver); }
     .pixel-moon-icon {
-      width: 28px; height: 28px; background: #fde047; border-radius: 50%;
-      box-shadow: 0 0 12px #fde047, inset -7px -2px 0 #ca8a04; flex-shrink: 0;
+      width: 34px;
+      height: 34px;
+      display: inline-block;
+      flex-shrink: 0;
+      filter: drop-shadow(0 0 8px rgba(253, 224, 71, 0.7));
     }
     .brand-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; letter-spacing: 1px; color: #fff; text-shadow: 0 0 10px rgba(168,85,247,.8); }
     .nav-links { display: flex; gap: 16px; list-style: none; }
@@ -290,7 +295,7 @@
   <header class="header-nav">
     <div class="nav-box">
       <a href="/" class="brand-logo">
-        <span class="pixel-moon-icon"></span>
+        <img src="/asset/logo/lunera-logo.webp" alt="Lunera" class="pixel-moon-icon" />
         <span class="brand-title">LUNERA</span>
       </a>
       <ul class="nav-links">
@@ -777,5 +782,11 @@
     </div>
     <div>✦ LUNERA | HANG OUT SERVER ✦ LUNETH BOT v1.5 ECONOMY RPG GUIDE ✦</div>
   </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
+  </script>
 </body>
 </html>
