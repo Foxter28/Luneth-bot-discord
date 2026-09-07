@@ -41,10 +41,6 @@ async function renderLevelCard({ username, avatarUrl, level, currentXp, neededXp
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext('2d');
 
-  // Background
-  ctx.fillStyle = '#06040a';
-  ctx.fillRect(0, 0, width, height);
-
   // 1. Draw Template Frame
   if (template) {
     ctx.drawImage(template, 0, 0);

@@ -37,10 +37,13 @@ module.exports = {
     const file = new AttachmentBuilder(cardBuffer, { name: 'level-card.png' });
 
     // Calculate next milestone
-    const nextMilestone = Math.ceil((level + 0.1) / 10) * 10;
+    const next10 = Math.ceil((level + 0.1) / 10) * 10;
+    const isCentennial = next10 % 100 === 0;
     const milestoneText = level >= MAX_LEVEL
       ? '🏆 **MAX LEVEL REACHED!**'
-      : `Next Milestone: **Lv. ${nextMilestone}** (🎁 **1x Legendary Crate** + Big Coins!)`;
+      : isCentennial
+      ? `Next Major Milestone: **Lv. ${next10}** (👑 **1x Legendary Crate** + Big Coins!)`
+      : `Next Milestone: **Lv. ${next10}** (🎁 **1x Rare Crate** + Coins!)`;
 
     const embed = new EmbedBuilder()
       .setColor(0x8e44ad)

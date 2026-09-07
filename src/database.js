@@ -537,15 +537,15 @@ async function addXp(userId, amount) {
     const levelCoins = baseCoins + randomBonus;
     totalCoinsReward += levelCoins;
 
-    // Crate reward:
-    // Milestone kelipatan 10 -> crate_legendary
-    // Level 2 - 25 -> crate_common
-    // Level 26 - 999 -> crate_rare
-    let crateId = 'crate_rare';
-    if (currentLevel % 10 === 0) {
+    // Crate reward per level:
+    // Kelipatan 100 (Level 100, 200, 300, ...) -> crate_legendary
+    // Kelipatan 10 (Level 10, 20, 30, ...) -> crate_rare
+    // Level biasa (Level 2, 3, 4, 5, ...) -> crate_common
+    let crateId = 'crate_common';
+    if (currentLevel % 100 === 0) {
       crateId = 'crate_legendary';
-    } else if (currentLevel <= 25) {
-      crateId = 'crate_common';
+    } else if (currentLevel % 10 === 0) {
+      crateId = 'crate_rare';
     }
     cratesReward.push(crateId);
     await addItem(userId, crateId, 1);
