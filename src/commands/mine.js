@@ -122,6 +122,7 @@ module.exports = {
     // Grant XP (20 - 40 XP)
     const xpGain = Math.floor(Math.random() * 21) + 20;
     const { addXp } = require('../database');
+    const { createLevelUpEmbed } = require('../levelHelper');
     const levelResult = await addXp(interaction.user.id, xpGain);
 
     const stamina = await getStamina(interaction.user.id);
@@ -135,11 +136,18 @@ module.exports = {
           (dropItem ? `**${dropQty}x ${dropItem.emoji} ${dropItem.name}**\n` : 'nothing else...\n') +
           `\n⛽ **Stamina left:** ${fmtStamina(stamina)}\n` +
           (quest ? `📜 **Quest progress:** ${quest.label} — **${quest.progress}/${quest.goal}**\n` : '') +
-          (levelResult.leveledUp ? `\n🎉 **LEVEL UP!** You reached **Level ${levelResult.newLevel}**!\n╰ 💰 +${levelResult.totalCoinsReward.toLocaleString()} ${config.currencyName}${levelResult.cratesReward?.length ? `, 🎁 **${levelResult.cratesReward.length}x Crate**` : ''}!\n` : '') +
           `\n> Mined materials are crafting ingredients — use \`/craft\` or \`/sell\`.`
       );
 
-    await interaction.reply({ embeds: [embed] });
+    const embeds = [embed];
+    const files = [];
+    const levelUp = createLevelUpEmbed(levelResult);
+    if (levelUp) {
+      embeds.push(levelUp.embed);
+      if (levelUp.file) files.push(levelUp.file);
+    }
+
+    await interaction.reply({ embeds, files });
   },
 
   STAMINA_COST,

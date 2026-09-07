@@ -85,29 +85,33 @@ module.exports = {
     // XP Reward (50 - 100 XP)
     const xpGain = Math.floor(Math.random() * 51) + 50;
     const { addXp } = require('../database');
+    const { createLevelUpEmbed } = require('../levelHelper');
     const levelResult = await addXp(interaction.user.id, xpGain);
-    const levelUpNotice = levelResult.leveledUp
-      ? `\n\n🎉 **LEVEL UP!** You reached **Level ${levelResult.newLevel}**!\n╰ 💰 +${levelResult.totalCoinsReward.toLocaleString()} ${curName}${levelResult.cratesReward?.length ? `, 🎁 **${levelResult.cratesReward.length}x Crate**` : ''}!`
-      : '';
 
+    let content;
     if (reached) {
-      return interaction.reply(
-        `🎉 **Streak complete!** You claimed your daily **7 days in a row** and earned a bonus of **${bonus} ${curName}** ${curSym}!\n` +
-          `(Base **${config.dailyAmount}** + bonus **${bonus}**)\n` +
-          `⭐ **+${xpGain} XP** (Level ${levelResult.newLevel})\n` +
-          `Your streak restarts — keep it going! 🔥\n\n` +
-          `**📅 7-Day Streak — COMPLETE** 🏆\n` +
-          buildStreakDisplay(STREAK_DAYS) +
-          levelUpNotice
-      );
-    }
-
-    return interaction.reply(
-      `✅ You received **${config.dailyAmount} ${curName}** ${curSym}!\n` +
+      content =
+        `🎉 **Streak complete!** You claimed your daily **7 days in a row** and earned a bonus of **${bonus} ${config.currencyName}**!\n` +
+        `(Base **${config.dailyAmount}** + bonus **${bonus}**)\n` +
+        `⭐ **+${xpGain} XP** (Level ${levelResult.newLevel})\n` +
+        `Your streak restarts — keep it going! 🔥\n\n` +
+        `**📅 7-Day Streak — COMPLETE** 🏆\n` +
+        buildStreakDisplay(STREAK_DAYS);
+    } else {
+      content =
+        `✅ You received **${config.dailyAmount} ${config.currencyName}**!\n` +
         `⭐ **+${xpGain} XP** (Level ${levelResult.newLevel})\n\n` +
         `**📅 Daily Streak — ${streak}/${STREAK_DAYS}** 🔥\n` +
-        buildStreakDisplay(streak) +
-        levelUpNotice
-    );
+        buildStreakDisplay(streak);
+    }
+
+    const replyPayload = { content };
+    const levelUp = createLevelUpEmbed(levelResult);
+    if (levelUp) {
+      replyPayload.embeds = [levelUp.embed];
+      if (levelUp.file) replyPayload.files = [levelUp.file];
+    }
+
+    return interaction.reply(replyPayload);
   },
 };

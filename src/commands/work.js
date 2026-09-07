@@ -128,6 +128,7 @@ module.exports = {
     // Grant XP (15 - 35 XP)
     const xpEarned = Math.floor(Math.random() * 21) + 15;
     const { addXp } = require('../database');
+    const { createLevelUpEmbed } = require('../levelHelper');
     const levelResult = await addXp(interaction.user.id, xpEarned);
 
     const embed = new EmbedBuilder()
@@ -139,12 +140,19 @@ module.exports = {
           `⭐ **+${xpEarned} XP** (Level ${levelResult.newLevel})\n\n` +
           (droppedItem ? `🎁 **Loot:** ${droppedItem.emoji} **${droppedItem.name}**\n` : '') +
           (questProg ? `📜 **Quest:** ${questProg.label} — **${questProg.progress}/${questProg.goal}**\n` : '') +
-          (levelResult.leveledUp ? `\n🎉 **LEVEL UP!** You reached **Level ${levelResult.newLevel}**!\n╰ 💰 +${formatNumber(levelResult.totalCoinsReward)} ${config.currencyName}${levelResult.cratesReward?.length ? `, 🎁 **${levelResult.cratesReward.length}x Crate** (check \`/inventory\`)` : ''}!\n\n` : '') +
           `⚔️ Gear: 🗡️ATK ${stats.attack} · 🛡️DEF ${stats.defense}`
       )
       .setFooter({ text: `💼 Daily income expedition · Cooldown ${config.workCooldownMinutes} min · Check level: /level` });
 
-    await interaction.reply({ embeds: [embed] });
+    const embeds = [embed];
+    const files = [];
+    const levelUp = createLevelUpEmbed(levelResult);
+    if (levelUp) {
+      embeds.push(levelUp.embed);
+      if (levelUp.file) files.push(levelUp.file);
+    }
+
+    await interaction.reply({ embeds, files });
   },
 
   DUNGEONS,

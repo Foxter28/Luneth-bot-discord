@@ -262,6 +262,7 @@ module.exports = {
       // Grant XP (30 - 60 XP on win, 15 XP on defeat)
       const xpEarned = playerWon ? Math.floor(Math.random() * 31) + 30 : 15;
       const { addXp } = require('../database');
+      const { createLevelUpEmbed } = require('../levelHelper');
       const levelResult = await addXp(interaction.user.id, xpEarned);
 
       // Phase 4 — result
@@ -274,22 +275,24 @@ module.exports = {
         finalLog.lines.push(`💰 **Reward:** +**${reward} ${config.currencyName}** · ⭐ **+${xpEarned} XP** (Lv. ${levelResult.newLevel})`);
         if (didDrop) finalLog.lines.push(`🎁 **Loot:** ${droppedItem.emoji} **${droppedItem.name}**`);
         if (questProg) finalLog.lines.push(`📜 **Quest:** ${questProg.label} — **${questProg.progress}/${questProg.goal}**`);
-        if (levelResult.leveledUp) {
-          finalLog.lines.push(`🎉 **LEVEL UP!** Level **${levelResult.newLevel}**! (+${levelResult.totalCoinsReward.toLocaleString()} ${config.currencyName}${levelResult.cratesReward?.length ? `, 🎁 **${levelResult.cratesReward.length}x Crate**` : ''})`);
-        }
       } else {
         finalLog.lines.push('');
         finalLog.lines.push(`⭐ **+${xpEarned} XP** (Lv. ${levelResult.newLevel})`);
         finalLog.lines.push(`😵 Defeated! You have **${user.battleWins || 0} wins**. Upgrade your gear (🔨 craft / 🛒 shop) to push further!`);
-        if (levelResult.leveledUp) {
-          finalLog.lines.push(`🎉 **LEVEL UP!** Level **${levelResult.newLevel}**! (+${levelResult.totalCoinsReward.toLocaleString()} ${config.currencyName})`);
-        }
       }
 
       const finalEmbed = buildSceneEmbed({
         player: user, monster, p: finalP, m: finalM, stats, log: { ...finalLog, won: playerWon }, phase: 'end',
       });
-      await interaction.editReply({ embeds: [finalEmbed] });
+
+      const replyPayload = { embeds: [finalEmbed] };
+      const levelUp = createLevelUpEmbed(levelResult);
+      if (levelUp) {
+        replyPayload.embeds.push(levelUp.embed);
+        if (levelUp.file) replyPayload.files = [levelUp.file];
+      }
+
+      await interaction.editReply(replyPayload);
     } catch (err) {
       console.error('❌ Battle animation error:', err);
       // Fallback: if animation fails, still reply with the result

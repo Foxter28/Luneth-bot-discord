@@ -77,6 +77,7 @@ module.exports = {
       // Grant XP (100 - 200 XP)
       const xpGain = Math.floor(Math.random() * 101) + 100;
       const { addXp } = require('../database');
+      const { createLevelUpEmbed } = require('../levelHelper');
       const levelResult = await addXp(interaction.user.id, xpGain);
 
       const claimEmbed = new EmbedBuilder()
@@ -84,8 +85,7 @@ module.exports = {
         .setTitle('<:quest:1546426070771834880> Quest Complete!')
         .setDescription(
           `✅ You claimed **${formatNumber(quest.reward)} ${config.currencyName}**${item ? ` and **${item.emoji} ${item.name}**` : ''}!\n` +
-            `⭐ **+${xpGain} XP** (Level ${levelResult.newLevel})\n` +
-            (levelResult.leveledUp ? `\n🎉 **LEVEL UP!** You reached **Level ${levelResult.newLevel}**!\n╰ 💰 +${levelResult.totalCoinsReward.toLocaleString()} ${config.currencyName}${levelResult.cratesReward?.length ? `, 🎁 **${levelResult.cratesReward.length}x Crate**` : ''}!` : '')
+            `⭐ **+${xpGain} XP** (Level ${levelResult.newLevel})`
         )
         .setFooter({ text: 'Come back tomorrow for a new quest!' });
 
@@ -93,7 +93,16 @@ module.exports = {
         claimEmbed.setThumbnail('attachment://quest.png');
       }
 
-      return interaction.reply({ embeds: [claimEmbed], files });
+      const embeds = [claimEmbed];
+      const replyFiles = [...files];
+
+      const levelUp = createLevelUpEmbed(levelResult);
+      if (levelUp) {
+        embeds.push(levelUp.embed);
+        if (levelUp.file) replyFiles.push(levelUp.file);
+      }
+
+      return interaction.reply({ embeds, files: replyFiles });
     }
 
     // ── View defaults ──
