@@ -1,0 +1,71 @@
+{
+  "rules": {
+    "public": {
+      "title": "📜 Rules & Information Server",
+      "description": "Selamat datang di server! Silakan baca peraturan dan informasi penting dengan menekan tombol interaktif di bawah.",
+      "color": "#5865F2",
+      "footer": "Luneth Interactive Panel System",
+      "thumbnail": ""
+    },
+    "buttons": [
+      {
+        "custom_id": "panel_rules_view",
+        "label": "Lihat Peraturan",
+        "emoji": "📜",
+        "style": "Primary",
+        "reply": {
+          "title": "📜 Peraturan Komunitas",
+          "description": "1. **Saling Menghargai**: Perlakukan sesama anggota dengan sopan dan ramah.\n2. **No Spam / Flooding**: Dilarang mengirim spam teks, stiker, atau mention berlebihan.\n3. **Konten Positif**: Hindari konten NSFW, diskriminatif, atau SARA.\n4. **Ikuti Panduan Discord**: Patuhi Discord Terms of Service & Community Guidelines.",
+          "color": "#5865F2",
+          "footer": "Hanya Anda yang dapat melihat pesan ini."
+        }
+      },
+      {
+        "custom_id": "panel_rules_faq",
+        "label": "FAQ & Panduan",
+        "emoji": "❓",
+        "style": "Secondary",
+        "reply": {
+          "title": "❓ Frequently Asked Questions (FAQ)",
+          "description": "• **Bagaimana cara mulai bermain?**\nKetik `/start` untuk panduan pemula dan starter balance.\n\n• **Bagaimana cara melihat daftar command?**\nGunakan `/help`.\n\n• **Butuh bantuan admin?**\nSilakan mention role Staff atau buka tiket bantuan.",
+          "color": "#3498DB",
+          "footer": "Hanya Anda yang dapat melihat pesan ini."
+        }
+      },
+      {
+        "custom_id": "panel_rules_links",
+        "label": "Official Links",
+        "emoji": "🔗",
+        "style": "Success",
+        "reply": {
+          "title": "🔗 Link Resmi Komunitas",
+          "description": "Ikuti update terbaru server melalui pengumuman dan channel resmi kami!",
+          "color": "#2ECC71",
+          "footer": "Hanya Anda yang dapat melihat pesan ini."
+        }
+      }
+    ]
+  },
+  "verification": {
+    "public": {
+      "title": "🛡️ Verifikasi Member",
+      "description": "Untuk membuka akses penuh ke seluruh channel dan event server, silakan pelajari panduan verifikasi.",
+      "color": "#2ECC71",
+      "footer": "Luneth Verification Panel"
+    },
+    "buttons": [
+      {
+        "custom_id": "panel_verify_guide",
+        "label": "Panduan Verifikasi",
+        "emoji": "✅",
+        "style": "Success",
+        "reply": {
+          "title": "✅ Panduan Verifikasi Akun",
+          "description": "Pastikan akun Discord Anda telah memverifikasi email dan nomor telepon untuk keamanan komunitas.",
+          "color": "#2ECC71",
+          "footer": "Hanya Anda yang dapat melihat pesan ini."
+        }
+      }
+    ]
+  }
+}
