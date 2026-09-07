@@ -45,10 +45,15 @@ async function renderLevelCard({ username, avatarUrl, level, currentXp, neededXp
   ctx.fillStyle = '#06040a';
   ctx.fillRect(0, 0, width, height);
 
-  // 1. Draw avatar inside circle
+  // 1. Draw Template Frame
+  if (template) {
+    ctx.drawImage(template, 0, 0);
+  }
+
+  // 2. Draw avatar inside circle (drawn ON TOP so solid inner circles never hide it)
   const circleCenterX = 422;
   const circleCenterY = 360;
-  const circleRadius = 136;
+  const circleRadius = 130;
 
   ctx.save();
   ctx.beginPath();
@@ -90,7 +95,16 @@ async function renderLevelCard({ username, avatarUrl, level, currentXp, neededXp
   }
   ctx.restore();
 
-  // 2. Draw Progress Bar (Layer underneath the semi-transparent frame)
+  // Draw smooth border around avatar to blend with pixel frame
+  ctx.save();
+  ctx.strokeStyle = '#b894ff';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.arc(circleCenterX, circleCenterY, circleRadius, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+
+  // 3. Draw Progress Bar
   const isMaxLevel = level >= 999;
   const safeNeeded = isMaxLevel ? currentXp : Math.max(1, neededXp);
   const ratio = isMaxLevel ? 1 : Math.min(1, Math.max(0, currentXp / safeNeeded));
@@ -117,11 +131,6 @@ async function renderLevelCard({ username, avatarUrl, level, currentXp, neededXp
   ctx.closePath();
   ctx.fill();
   ctx.restore();
-
-  // 3. Draw Template Frame
-  if (template) {
-    ctx.drawImage(template, 0, 0);
-  }
 
   // 4. Draw Typography
   // Level Text
