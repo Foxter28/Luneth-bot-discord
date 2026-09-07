@@ -137,6 +137,7 @@ module.exports = {
           opt
             .setName('panel_id')
             .setDescription('ID panel dari konfigurasi panels.json')
+            .setAutocomplete(true)
             .setRequired(true)
         )
         .addChannelOption((opt) =>
@@ -160,6 +161,7 @@ module.exports = {
           opt
             .setName('panel_id')
             .setDescription('ID panel yang ingin di-preview')
+            .setAutocomplete(true)
             .setRequired(true)
         )
     )
@@ -168,6 +170,19 @@ module.exports = {
         .setName('reload')
         .setDescription('Muat ulang konfigurasi panel dari panels.json')
     ),
+
+  async autocomplete(interaction) {
+    const focusedValue = interaction.options.getFocused().toLowerCase();
+    const panels = loadPanels();
+    const choices = Object.entries(panels).map(([key, p]) => ({
+      name: `${key} — ${p.public?.title || 'No Title'}`.slice(0, 100),
+      value: key,
+    }));
+    const filtered = choices.filter(
+      (c) => c.name.toLowerCase().includes(focusedValue) || c.value.toLowerCase().includes(focusedValue)
+    );
+    await interaction.respond(filtered.slice(0, 25)).catch(() => {});
+  },
 
   // Component handler triggered when a user clicks a panel button
   async handleComponent(interaction) {
