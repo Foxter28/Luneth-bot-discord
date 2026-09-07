@@ -67,6 +67,10 @@ module.exports = {
     await removeItem(interaction.user.id, crateId, 1);
     await addItem(interaction.user.id, reward.id, 1);
 
+    const path = require('path');
+    const fs = require('fs');
+    const { AttachmentBuilder } = require('discord.js');
+
     const embed = new EmbedBuilder()
       .setColor(0xf1c40f)
       .setTitle(`${crate.emoji} ${crate.label} Crate Opened!`)
@@ -78,6 +82,13 @@ module.exports = {
       )
       .setFooter({ text: `Use ${config.prefixAliases[0] || 'lu'}open ${crateId} to open more` });
 
-    await interaction.reply({ embeds: [embed] });
+    const files = [];
+    if (reward.assetPath && fs.existsSync(reward.assetPath)) {
+      const fileName = path.basename(reward.assetPath);
+      files.push(new AttachmentBuilder(reward.assetPath, { name: fileName }));
+      embed.setThumbnail(`attachment://${fileName}`);
+    }
+
+    await interaction.reply({ embeds: [embed], files });
   },
 };

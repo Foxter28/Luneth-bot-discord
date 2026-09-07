@@ -105,6 +105,10 @@ module.exports = {
       statsStr = parts.join(' · ');
     }
 
+    const path = require('path');
+    const fs = require('fs');
+    const { AttachmentBuilder } = require('discord.js');
+
     const embed = new EmbedBuilder()
       .setColor(0x3498db)
       .setTitle(`${item.emoji || '📦'} ${item.name}`)
@@ -117,6 +121,13 @@ module.exports = {
         `📍 **How to get:**\n${sources.length > 0 ? sources.join('\n') : '- Unknown origin'}`
       );
 
-    await interaction.reply({ embeds: [embed] });
+    const files = [];
+    if (item.assetPath && fs.existsSync(item.assetPath)) {
+      const fileName = path.basename(item.assetPath);
+      files.push(new AttachmentBuilder(item.assetPath, { name: fileName }));
+      embed.setThumbnail(`attachment://${fileName}`);
+    }
+
+    await interaction.reply({ embeds: [embed], files });
   }
 };

@@ -51,6 +51,10 @@ module.exports = {
     }
     await addItem(interaction.user.id, recipe.item.id, 1);
 
+    const path = require('path');
+    const fs = require('fs');
+    const { AttachmentBuilder } = require('discord.js');
+
     const embed = new EmbedBuilder()
       .setTitle(`⚒️ Craft Successful!`)
       .setColor(0x95a5a6)
@@ -60,6 +64,13 @@ module.exports = {
           `It was added to your inventory. 🎒`
       );
 
-    await interaction.reply({ embeds: [embed] });
+    const files = [];
+    if (recipe.item.assetPath && fs.existsSync(recipe.item.assetPath)) {
+      const fileName = path.basename(recipe.item.assetPath);
+      files.push(new AttachmentBuilder(recipe.item.assetPath, { name: fileName }));
+      embed.setThumbnail(`attachment://${fileName}`);
+    }
+
+    await interaction.reply({ embeds: [embed], files });
   },
 };

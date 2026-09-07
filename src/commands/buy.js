@@ -138,6 +138,10 @@ module.exports = {
       }
     }
 
+    const path = require('path');
+    const fs = require('fs');
+    const { AttachmentBuilder } = require('discord.js');
+
     const embed = new EmbedBuilder()
       .setTitle('✅ Purchase Successful!')
       .setColor(0x2ecc71)
@@ -148,7 +152,14 @@ module.exports = {
       )
       .setFooter({ text: `New balance: ${user.balance - total} ${config.currencyName}` });
 
-    await interaction.reply({ embeds: [embed] });
+    const files = [];
+    if (item.assetPath && fs.existsSync(item.assetPath)) {
+      const fileName = path.basename(item.assetPath);
+      files.push(new AttachmentBuilder(item.assetPath, { name: fileName }));
+      embed.setThumbnail(`attachment://${fileName}`);
+    }
+
+    await interaction.reply({ embeds: [embed], files });
   },
 
   // Dropdown handler (choosing an item from the browse list)
@@ -203,18 +214,30 @@ module.exports = {
       }
     }
 
-    await interaction.editReply({
-      embeds: [
-        new EmbedBuilder()
-          .setTitle('✅ Purchase Successful!')
-          .setColor(0x2ecc71)
-          .setDescription(
-            `You bought **1x ${item.emoji} ${item.name}** for **${price} ${config.currencyName}**!${roleNotice}` +
-              (questProg ? `\n📜 **Quest:** ${questProg.label} — **${questProg.progress}/${questProg.goal}**` : '')
-          ),
-      ],
+    const path = require('path');
+    const fs = require('fs');
+    const { AttachmentBuilder } = require('discord.js');
+
+    const resultEmbed = new EmbedBuilder()
+      .setTitle('✅ Purchase Successful!')
+      .setColor(0x2ecc71)
+      .setDescription(
+        `You bought **1x ${item.emoji} ${item.name}** for **${price} ${config.currencyName}**!${roleNotice}` +
+          (questProg ? `\n📜 **Quest:** ${questProg.label} — **${questProg.progress}/${questProg.goal}**` : '')
+      );
+
+    const replyPayload = {
+      embeds: [resultEmbed],
       components: [],
-    });
+    };
+
+    if (item.assetPath && fs.existsSync(item.assetPath)) {
+      const fileName = path.basename(item.assetPath);
+      resultEmbed.setThumbnail(`attachment://${fileName}`);
+      replyPayload.files = [new AttachmentBuilder(item.assetPath, { name: fileName })];
+    }
+
+    await interaction.editReply(replyPayload);
     return true;
   },
 
