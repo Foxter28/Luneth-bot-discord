@@ -24,7 +24,14 @@ function createLevelUpEmbed(levelResult) {
   ];
 
   if (levelResult.cratesReward && levelResult.cratesReward.length > 0) {
-    lines.push(`╰ 🎁 **${levelResult.cratesReward.length}x Crate**`);
+    const shopItems = require('./shopItems');
+    const crateDesc = levelResult.cratesReward
+      .map((cId) => {
+        const it = shopItems.find((i) => i.id === cId);
+        return `${it ? it.emoji : '🎁'} **${it ? it.name : 'Crate'}**`;
+      })
+      .join(', ');
+    lines.push(`╰ ${crateDesc}`);
   }
 
   const embed = new EmbedBuilder()

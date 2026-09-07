@@ -6,9 +6,9 @@ const { resolveItem } = require('../resolveItem');
 
 // Map crate id -> what it can drop (pools of shop categories)
 const CRATE_CONTENTS = {
-  crate_common: { categories: ['material', 'common_weapon'], emoji: '📦', label: 'Common' },
-  crate_rare: { categories: ['rare_weapon', 'relic', 'offhand'], emoji: '🎁', label: 'Rare' },
-  crate_legendary: { categories: ['legendary_weapon'], emoji: '👑', label: 'Legendary' },
+  crate_common: { categories: ['material', 'common_weapon'], emoji: '<:commonchest:1546531615180595270>', label: 'Common' },
+  crate_rare: { categories: ['rare_weapon', 'relic', 'offhand'], emoji: '<:rarechest:1546531721133162536>', label: 'Rare' },
+  crate_legendary: { categories: ['legendary_weapon'], emoji: '<:legendarychest:1546531659917033562>', label: 'Legendary' },
 };
 
 function resolveCrateId(query) {

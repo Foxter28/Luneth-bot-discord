@@ -109,7 +109,10 @@ module.exports = [
   { id: 'mythic_hero', name: '👑 Mythic Hero Role', price: 50000, emoji: '👑', category: 'special_role', roleId: '1546026397472915487', description: 'Exclusive Discord role granted directly to your server profile!' },
 
   // ── Crates (mystery boxes) ──
-  { id: 'crate_common', name: 'Common Crate', price: 350, emoji: '📦', category: 'crate', description: 'Contains a random COMMON material or weapon.' },
-  { id: 'crate_rare', name: 'Rare Crate', price: 1500, emoji: '🎁', category: 'crate', description: 'Contains a random RARE weapon or relic.' },
-  { id: 'crate_legendary', name: 'Legendary Crate', price: 7500, emoji: '👑', category: 'crate', description: 'Contains a random LEGENDARY weapon.' },
+  { id: 'crate_common', name: 'Common Crate', price: 350, emoji: '<:commonchest:1546531615180595270>', category: 'crate', description: 'Contains a random COMMON material or weapon.',
+    assetPath: path.resolve(__dirname, '../public/asset/chest/common-chest.png') },
+  { id: 'crate_rare', name: 'Rare Crate', price: 1500, emoji: '<:rarechest:1546531721133162536>', category: 'crate', description: 'Contains a random RARE weapon or relic.',
+    assetPath: path.resolve(__dirname, '../public/asset/chest/rare-chest.png') },
+  { id: 'crate_legendary', name: 'Legendary Crate', price: 7500, emoji: '<:legendarychest:1546531659917033562>', category: 'crate', description: 'Contains a random LEGENDARY weapon.',
+    assetPath: path.resolve(__dirname, '../public/asset/chest/legendary-chest.png') },
 ];
