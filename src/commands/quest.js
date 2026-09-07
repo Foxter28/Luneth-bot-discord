@@ -74,11 +74,18 @@ module.exports = {
       if (item) await addItem(interaction.user.id, item.id, 1);
       await setQuestClaimed(interaction.user.id);
 
+      // Grant XP (100 - 200 XP)
+      const xpGain = Math.floor(Math.random() * 101) + 100;
+      const { addXp } = require('../database');
+      const levelResult = await addXp(interaction.user.id, xpGain);
+
       const claimEmbed = new EmbedBuilder()
         .setColor(0x2ecc71)
         .setTitle('<:quest:1546426070771834880> Quest Complete!')
         .setDescription(
-          `✅ You claimed **${formatNumber(quest.reward)} ${config.currencyName}**${item ? ` and **${item.emoji} ${item.name}**` : ''}!`
+          `✅ You claimed **${formatNumber(quest.reward)} ${config.currencyName}**${item ? ` and **${item.emoji} ${item.name}**` : ''}!\n` +
+            `⭐ **+${xpGain} XP** (Level ${levelResult.newLevel})\n` +
+            (levelResult.leveledUp ? `\n🎉 **LEVEL UP!** You reached **Level ${levelResult.newLevel}**!\n╰ 💰 +${levelResult.totalCoinsReward.toLocaleString()} ${config.currencyName}${levelResult.cratesReward?.length ? `, 🎁 **${levelResult.cratesReward.length}x Crate**` : ''}!` : '')
         )
         .setFooter({ text: 'Come back tomorrow for a new quest!' });
 

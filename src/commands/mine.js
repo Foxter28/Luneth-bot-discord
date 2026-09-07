@@ -119,17 +119,24 @@ module.exports = {
     // Progress quest if today's quest is mining
     const quest = await incrementQuest(interaction.user.id, 'mine');
 
+    // Grant XP (20 - 40 XP)
+    const xpGain = Math.floor(Math.random() * 21) + 20;
+    const { addXp } = require('../database');
+    const levelResult = await addXp(interaction.user.id, xpGain);
+
     const stamina = await getStamina(interaction.user.id);
     const embed = new EmbedBuilder()
       .setColor(0x8b5a2b)
       .setTitle('⛏️ You mine the Vein!')
       .setDescription(
         `🗻 You swung your pick and found **${coins} ${config.currencyName}**!\n` +
+          `⭐ **+${xpGain} XP** (Level ${levelResult.newLevel})\n` +
           (targetInfo ? `🎯 Targeted: **${targetInfo.label}** — ` : '💎 Found: ') +
           (dropItem ? `**${dropQty}x ${dropItem.emoji} ${dropItem.name}**\n` : 'nothing else...\n') +
-          `\n⛽ **Stamina left:** ${fmtStamina(stamina)}\n\n` +
+          `\n⛽ **Stamina left:** ${fmtStamina(stamina)}\n` +
           (quest ? `📜 **Quest progress:** ${quest.label} — **${quest.progress}/${quest.goal}**\n` : '') +
-          `> Mined materials are crafting ingredients — use \`/craft\` or \`/sell\`.`
+          (levelResult.leveledUp ? `\n🎉 **LEVEL UP!** You reached **Level ${levelResult.newLevel}**!\n╰ 💰 +${levelResult.totalCoinsReward.toLocaleString()} ${config.currencyName}${levelResult.cratesReward?.length ? `, 🎁 **${levelResult.cratesReward.length}x Crate**` : ''}!\n` : '') +
+          `\n> Mined materials are crafting ingredients — use \`/craft\` or \`/sell\`.`
       );
 
     await interaction.reply({ embeds: [embed] });

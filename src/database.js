@@ -104,7 +104,9 @@ async function ensureSchema() {
       questProgress INTEGER NOT NULL DEFAULT 0,
       questGoal INTEGER NOT NULL DEFAULT 0,
       questClaimed TEXT,
-      lastQuestReset INTEGER NOT NULL DEFAULT 0
+      lastQuestReset INTEGER NOT NULL DEFAULT 0,
+      level INTEGER NOT NULL DEFAULT 1,
+      xp INTEGER NOT NULL DEFAULT 0
     );
 
     CREATE TABLE IF NOT EXISTS inventory (
@@ -159,6 +161,8 @@ async function ensureSchema() {
   await addIfMissing('questGoal', 'questGoal INTEGER NOT NULL DEFAULT 0');
   await addIfMissing('questClaimed', 'questClaimed TEXT');
   await addIfMissing('lastQuestReset', 'lastQuestReset INTEGER NOT NULL DEFAULT 0');
+  await addIfMissing('level', 'level INTEGER NOT NULL DEFAULT 1');
+  await addIfMissing('xp', 'xp INTEGER NOT NULL DEFAULT 0');
 }
 
 // Kick off schema creation. Every dbQueue operation awaits this, so no query
@@ -487,6 +491,90 @@ async function setSetting(key, value) {
 }
 
 // ---------------------------------------------------------------------------
+// RPG Leveling & XP Progression
+// ---------------------------------------------------------------------------
+const MAX_LEVEL = 999;
+
+function getXpForLevel(level) {
+  if (level >= MAX_LEVEL) return Infinity;
+  return Math.floor(100 * Math.pow(level, 1.6));
+}
+
+async function getLevelLeaderboard(limit = 10) {
+  return dbAll('SELECT userId, level, xp FROM users ORDER BY level DESC, xp DESC LIMIT ?', limit);
+}
+
+async function addXp(userId, amount) {
+  const user = await getUser(userId);
+  let currentLevel = Math.max(1, user.level || 1);
+  let currentXp = Math.max(0, user.xp || 0);
+
+  if (currentLevel >= MAX_LEVEL) {
+    return {
+      leveledUp: false,
+      oldLevel: MAX_LEVEL,
+      newLevel: MAX_LEVEL,
+      currentXp: 0,
+      neededXp: getXpForLevel(MAX_LEVEL),
+      totalCoinsReward: 0,
+      cratesReward: [],
+    };
+  }
+
+  const oldLevel = currentLevel;
+  let remainingXp = currentXp + amount;
+  let neededXp = getXpForLevel(currentLevel);
+  let totalCoinsReward = 0;
+  const cratesReward = [];
+
+  while (currentLevel < MAX_LEVEL && remainingXp >= neededXp) {
+    remainingXp -= neededXp;
+    currentLevel += 1;
+
+    // Coins reward: (1,000 * level) + random (200 - 500 * level)
+    const baseCoins = 1000 * currentLevel;
+    const randomBonus = Math.floor(Math.random() * (300 * currentLevel) + (200 * currentLevel));
+    const levelCoins = baseCoins + randomBonus;
+    totalCoinsReward += levelCoins;
+
+    // Crate reward:
+    // Milestone kelipatan 10 -> crate_legendary
+    // Level 2 - 25 -> crate_common
+    // Level 26 - 999 -> crate_rare
+    let crateId = 'crate_rare';
+    if (currentLevel % 10 === 0) {
+      crateId = 'crate_legendary';
+    } else if (currentLevel <= 25) {
+      crateId = 'crate_common';
+    }
+    cratesReward.push(crateId);
+    await addItem(userId, crateId, 1);
+
+    neededXp = getXpForLevel(currentLevel);
+  }
+
+  if (currentLevel >= MAX_LEVEL) {
+    remainingXp = 0;
+  }
+
+  if (totalCoinsReward > 0) {
+    await updateBalance(userId, totalCoinsReward);
+  }
+
+  await dbRun('UPDATE users SET level = ?, xp = ? WHERE userId = ?', currentLevel, remainingXp, userId);
+
+  return {
+    leveledUp: currentLevel > oldLevel,
+    oldLevel,
+    newLevel: currentLevel,
+    currentXp: remainingXp,
+    neededXp: getXpForLevel(currentLevel),
+    totalCoinsReward,
+    cratesReward,
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
 // Every public function runs inside dbQueue() so that concurrent command
@@ -528,4 +616,9 @@ module.exports = {
   setQuestClaimed: (userId) => dbQueue(() => setQuestClaimed(userId)),
   DAILY_QUESTS,
   questForDay: (dayIndex) => dbQueue(() => questForDay(dayIndex)),
+  // leveling
+  MAX_LEVEL,
+  getXpForLevel,
+  getLevelLeaderboard: (limit = 10) => dbQueue(() => getLevelLeaderboard(limit)),
+  addXp: (userId, amount) => dbQueue(() => addXp(userId, amount)),
 };

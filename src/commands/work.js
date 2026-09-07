@@ -125,17 +125,24 @@ module.exports = {
     await setLastWork(interaction.user.id, now);
     const questProg = await incrementQuest(interaction.user.id, 'work');
 
+    // Grant XP (15 - 35 XP)
+    const xpEarned = Math.floor(Math.random() * 21) + 15;
+    const { addXp } = require('../database');
+    const levelResult = await addXp(interaction.user.id, xpEarned);
+
     const embed = new EmbedBuilder()
       .setColor(0x5865f2)
       .setTitle(`🧭 Expedition: ${dungeon.name}`)
       .setDescription(
         `> ${dungeon.desc}\n\n` +
-          `🧑‍🚀 You explored and gathered **${formatNumber(earned)} ${config.currencyName}**${bonusPct > 0 ? ` _(incl. **+${Math.round(bonusPct * 100)}%** gear bonus)_` : ''}!\n\n` +
+          `🧑‍🚀 You explored and gathered **${formatNumber(earned)} ${config.currencyName}**${bonusPct > 0 ? ` _(incl. **+${Math.round(bonusPct * 100)}%** gear bonus)_` : ''}!\n` +
+          `⭐ **+${xpEarned} XP** (Level ${levelResult.newLevel})\n\n` +
           (droppedItem ? `🎁 **Loot:** ${droppedItem.emoji} **${droppedItem.name}**\n` : '') +
           (questProg ? `📜 **Quest:** ${questProg.label} — **${questProg.progress}/${questProg.goal}**\n` : '') +
+          (levelResult.leveledUp ? `\n🎉 **LEVEL UP!** You reached **Level ${levelResult.newLevel}**!\n╰ 💰 +${formatNumber(levelResult.totalCoinsReward)} ${config.currencyName}${levelResult.cratesReward?.length ? `, 🎁 **${levelResult.cratesReward.length}x Crate** (check \`/inventory\`)` : ''}!\n\n` : '') +
           `⚔️ Gear: 🗡️ATK ${stats.attack} · 🛡️DEF ${stats.defense}`
       )
-      .setFooter({ text: `💼 Daily income expedition · Cooldown ${config.workCooldownMinutes} min · want a fight? try /battle` });
+      .setFooter({ text: `💼 Daily income expedition · Cooldown ${config.workCooldownMinutes} min · Check level: /level` });
 
     await interaction.reply({ embeds: [embed] });
   },

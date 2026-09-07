@@ -82,24 +82,32 @@ module.exports = {
     await setLastDailyDate(interaction.user.id, today);
     await setLastDaily(interaction.user.id, now);
 
-    // --- Reply ---
-    const curName = config.currencyName;
-    const curSym = config.currencySymbol;
+    // XP Reward (50 - 100 XP)
+    const xpGain = Math.floor(Math.random() * 51) + 50;
+    const { addXp } = require('../database');
+    const levelResult = await addXp(interaction.user.id, xpGain);
+    const levelUpNotice = levelResult.leveledUp
+      ? `\n\n🎉 **LEVEL UP!** You reached **Level ${levelResult.newLevel}**!\n╰ 💰 +${levelResult.totalCoinsReward.toLocaleString()} ${curName}${levelResult.cratesReward?.length ? `, 🎁 **${levelResult.cratesReward.length}x Crate**` : ''}!`
+      : '';
 
     if (reached) {
       return interaction.reply(
         `🎉 **Streak complete!** You claimed your daily **7 days in a row** and earned a bonus of **${bonus} ${curName}** ${curSym}!\n` +
           `(Base **${config.dailyAmount}** + bonus **${bonus}**)\n` +
+          `⭐ **+${xpGain} XP** (Level ${levelResult.newLevel})\n` +
           `Your streak restarts — keep it going! 🔥\n\n` +
           `**📅 7-Day Streak — COMPLETE** 🏆\n` +
-          buildStreakDisplay(STREAK_DAYS)
+          buildStreakDisplay(STREAK_DAYS) +
+          levelUpNotice
       );
     }
 
     return interaction.reply(
-      `✅ You received **${config.dailyAmount} ${curName}** ${curSym}!\n\n` +
+      `✅ You received **${config.dailyAmount} ${curName}** ${curSym}!\n` +
+        `⭐ **+${xpGain} XP** (Level ${levelResult.newLevel})\n\n` +
         `**📅 Daily Streak — ${streak}/${STREAK_DAYS}** 🔥\n` +
-        buildStreakDisplay(streak)
+        buildStreakDisplay(streak) +
+        levelUpNotice
     );
   },
 };

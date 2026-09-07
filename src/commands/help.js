@@ -50,6 +50,13 @@ const COMMAND_INFO = [
         desc: 'See the top 10 users with the highest balance in the server.',
     },
     {
+        name: 'level',
+        category: 'economy',
+        emoji: '⭐',
+        usage: 'level [user]',
+        desc: 'View your RPG level, XP progress card, and milestone crate rewards.',
+    },
+    {
         name: 'shop',
         category: 'shop',
         emoji: '🛒',
