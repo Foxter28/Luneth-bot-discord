@@ -25,10 +25,10 @@ module.exports = {
 
   // Custom emotes
   emojis: {
-    warning: ':warning~1:',
-    crown: ':crown~1:',
-    cannot: ':cannot:',
-    quest: ':quest:',
+    warning: '<:warning:1546422653420830842>',
+    crown: '<:crown:1546422532117102593>',
+    cannot: '<:cannot:1546422441125879818>',
+    quest: '<:quest:1546426070771834880>',
   },
 
   // DEFAULT prefix for plain text commands. "prefix" is the main one,

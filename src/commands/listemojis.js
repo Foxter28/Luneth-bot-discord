@@ -11,7 +11,7 @@ module.exports = {
     const emojis = interaction.guild?.emojis.cache;
     if (!emojis || emojis.size === 0) {
       return interaction.reply({
-        content: ':cannot: Tidak ada custom emoji yang ditemukan di server ini. Silakan upload dulu di Server Settings -> Emoji.',
+        content: '<:cannot:1546422441125879818> Tidak ada custom emoji yang ditemukan di server ini. Silakan upload dulu di Server Settings -> Emoji.',
         flags: 64,
       });
     }

@@ -2,8 +2,8 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { getLeaderboard } = require('../database');
 const config = require('../config');
 
-// Emoji ranks: top rank uses custom crown emote :crown~1:, followed by medals and chip numbers
-const RANK_EMOJI = [':crown~1:', '🥈', '🥉', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+// Emoji ranks: top rank uses custom crown emote <:crown:1546422532117102593>, followed by medals and chip numbers
+const RANK_EMOJI = ['<:crown:1546422532117102593>', '🥈', '🥉', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
 
 function formatAmount(n) {
   return n.toLocaleString('en-US');
@@ -87,7 +87,7 @@ module.exports = {
     }
 
     const description = [
-      `# :crown~1: Richest Leaderboard`,
+      `# <:crown:1546422532117102593> Richest Leaderboard`,
       `Player rankings by ${config.currencyName} balance`,
       '',
       lines.join('\n\n'),

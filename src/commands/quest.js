@@ -40,7 +40,7 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor(0xf1c40f)
-      .setTitle(':quest: Daily Quest')
+      .setTitle('<:quest:1546426070771834880> Daily Quest')
       .setDescription(
         `**${quest.label}**\n\n` +
           `${progressBar(quest.progress, quest.goal)} **${quest.progress}/${quest.goal}**\n\n` +
@@ -63,7 +63,7 @@ module.exports = {
       }
       if (quest.progress < quest.goal) {
         return interaction.reply({
-          content: `:cannot: Quest not complete yet! Progress: **${quest.progress}/${quest.goal}**.`,
+          content: `<:cannot:1546422441125879818> Quest not complete yet! Progress: **${quest.progress}/${quest.goal}**.`,
           flags: 64,
         });
       }
@@ -76,7 +76,7 @@ module.exports = {
 
       const claimEmbed = new EmbedBuilder()
         .setColor(0x2ecc71)
-        .setTitle(':quest: Quest Complete!')
+        .setTitle('<:quest:1546426070771834880> Quest Complete!')
         .setDescription(
           `✅ You claimed **${formatNumber(quest.reward)} ${config.currencyName}**${item ? ` and **${item.emoji} ${item.name}**` : ''}!`
         )
