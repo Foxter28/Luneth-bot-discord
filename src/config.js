@@ -23,6 +23,14 @@ module.exports = {
   // Animation delay before revealing the result (ms)
   coinflipAnimationDelay: 1500,
 
+  // Custom emotes
+  emojis: {
+    warning: ':warning~1:',
+    crown: ':crown~1:',
+    cannot: ':cannot:',
+    quest: ':quest:',
+  },
+
   // DEFAULT prefix for plain text commands. "prefix" is the main one,
   // "prefixAliases" is a list of other short forms that ALSO work for the same commands.
   // Example: "lunecoin" and "lucoin" both run the /coin command.

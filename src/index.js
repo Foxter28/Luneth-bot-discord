@@ -34,7 +34,7 @@ async function isMaintenanceBlocked(userId, channelId, memberPermissions, guild,
 
   return true;
 }
-const MAINTENANCE_MESSAGE = '🛠️ **Luneth is currently under maintenance.**\nPlease check back shortly once maintenance is complete.';
+const MAINTENANCE_MESSAGE = ':warning~1: **Luneth is currently under maintenance.**\nPlease check back shortly once maintenance is complete.';
 // ---------------------------------
 
 // --- SISTEM ANTI-SPAM COOLDOWN ---
@@ -244,7 +244,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
 
     try {
-      const reply = { content: '❌ An error occurred while running this command.', flags: 64 };
+      const reply = { content: ':cannot: An error occurred while running this command.', flags: 64 };
       if (interaction.replied || interaction.deferred) {
         await interaction.followUp(reply);
       } else {
@@ -304,7 +304,7 @@ client.on(Events.MessageCreate, async (message) => {
   }
 
   if (!hasRequiredPermission(message, command)) {
-    await message.reply('❌ You don\'t have permission to use this command.').catch(() => { });
+    await message.reply(':cannot: You don\'t have permission to use this command.').catch(() => { });
     return;
   }
 
@@ -313,12 +313,12 @@ client.on(Events.MessageCreate, async (message) => {
     await command.execute(fakeInteraction);
   } catch (err) {
     // Argument validation errors (from prefixAdapter) are sent back as-is to the user.
-    if (err instanceof Error && err.message.startsWith('❌')) {
+    if (err instanceof Error && (err.message.startsWith('❌') || err.message.startsWith(':cannot:'))) {
       await message.reply(err.message).catch(() => { });
       return;
     }
     console.error(`❌ Error in prefix command ${matchedPrefix}${commandName}:`, err);
-    await message.reply('❌ An error occurred while running this command.').catch(() => { });
+    await message.reply(':cannot: An error occurred while running this command.').catch(() => { });
   }
 
   // On a brand-new player's first prefix command, greet them with a tutorial.

@@ -1,4 +1,6 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const path = require('path');
+const fs = require('fs');
+const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder } = require('discord.js');
 const { getQuest, setQuestClaimed, updateBalance, addItem } = require('../database');
 const shopItems = require('../shopItems');
 const config = require('../config');
@@ -6,11 +8,12 @@ const { formatNumber } = require('../util');
 
 // Bonus item given when claiming a daily quest (small reward).
 const QUEST_BONUS_ITEM = 'silver_ingot';
+const QUEST_IMAGE_PATH = path.resolve(__dirname, '../../public/asset/quest.png');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('quest')
-    .setDescription('📜 View & claim your daily quest')
+    .setDescription(':quest: View & claim your daily quest')
     .addStringOption((opt) =>
       opt
         .setName('action')
@@ -21,6 +24,7 @@ module.exports = {
           { name: '🎁 Claim', value: 'claim' }
         )
     ),
+  aliases: ['q', 'quest'],
 
   async execute(interaction) {
     const action = interaction.options.getString('action') || 'view';
@@ -31,9 +35,12 @@ module.exports = {
       return '▰'.repeat(filled) + '▱'.repeat(10 - filled);
     };
 
+    const hasQuestImage = fs.existsSync(QUEST_IMAGE_PATH);
+    const files = hasQuestImage ? [new AttachmentBuilder(QUEST_IMAGE_PATH, { name: 'quest.png' })] : [];
+
     const embed = new EmbedBuilder()
       .setColor(0xf1c40f)
-      .setTitle('📜 Daily Quest')
+      .setTitle(':quest: Daily Quest')
       .setDescription(
         `**${quest.label}**\n\n` +
           `${progressBar(quest.progress, quest.goal)} **${quest.progress}/${quest.goal}**\n\n` +
@@ -45,14 +52,18 @@ module.exports = {
       )
       .setFooter({ text: `Resets daily · use /quest claim to collect` });
 
+    if (hasQuestImage) {
+      embed.setThumbnail('attachment://quest.png');
+    }
+
     // ── Claim logic ──
     if (action === 'claim') {
       if (quest.claimed) {
-        return interaction.reply({ embeds: [embed.setFooter({ text: 'Quest already claimed today.' })], flags: 64 });
+        return interaction.reply({ embeds: [embed.setFooter({ text: 'Quest already claimed today.' })], files, flags: 64 });
       }
       if (quest.progress < quest.goal) {
         return interaction.reply({
-          content: `❌ Quest not complete yet! Progress: **${quest.progress}/${quest.goal}**.`,
+          content: `:cannot: Quest not complete yet! Progress: **${quest.progress}/${quest.goal}**.`,
           flags: 64,
         });
       }
@@ -65,16 +76,21 @@ module.exports = {
 
       const claimEmbed = new EmbedBuilder()
         .setColor(0x2ecc71)
-        .setTitle('🎉 Quest Complete!')
+        .setTitle(':quest: Quest Complete!')
         .setDescription(
           `✅ You claimed **${formatNumber(quest.reward)} ${config.currencyName}**${item ? ` and **${item.emoji} ${item.name}**` : ''}!`
         )
         .setFooter({ text: 'Come back tomorrow for a new quest!' });
-      return interaction.reply({ embeds: [claimEmbed] });
+
+      if (hasQuestImage) {
+        claimEmbed.setThumbnail('attachment://quest.png');
+      }
+
+      return interaction.reply({ embeds: [claimEmbed], files });
     }
 
     // ── View defaults ──
-    return interaction.reply({ embeds: [embed] });
+    return interaction.reply({ embeds: [embed], files });
   },
 
   QUEST_BONUS_ITEM,

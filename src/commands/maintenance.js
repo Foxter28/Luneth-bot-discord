@@ -25,7 +25,7 @@ module.exports = {
     // Only administrators or server owners can control maintenance
     if (!isAdmin) {
       return interaction.reply({
-        content: '❌ You do not have permission (Administrator) to use this command.',
+        content: ':cannot: You do not have permission (Administrator) to use this command.',
         flags: 64,
       });
     }
@@ -36,10 +36,10 @@ module.exports = {
     if (!chosenStatus) {
       // Just check status
       const embed = new EmbedBuilder()
-        .setTitle('🛠️ Bot Maintenance Status')
+        .setTitle(':warning~1: Bot Maintenance Status')
         .setColor(currentStatus ? 0xe74c3c : 0x2ecc71)
         .setDescription(
-          `Current Status: **${currentStatus ? '🔴 ACTIVE (Maintenance)' : '🟢 INACTIVE (Online Normal)'}**\n\n` +
+          `Current Status: **${currentStatus ? ':warning~1: ACTIVE (Maintenance)' : '🟢 INACTIVE (Online Normal)'}**\n\n` +
             `Bypass testing channel: <#${config.maintenance.allowedChannelId}>\n\n` +
             `*Use \`/maintenance status:on\` or \`/maintenance status:off\` to toggle.*`
         );
@@ -50,11 +50,11 @@ module.exports = {
     await setSetting('maintenance_mode', newMode);
 
     const embed = new EmbedBuilder()
-      .setTitle('🛠️ Maintenance Settings Updated')
+      .setTitle(':warning~1: Maintenance Settings Updated')
       .setColor(newMode === 'on' ? 0xe74c3c : 0x2ecc71)
       .setDescription(
         newMode === 'on'
-          ? `🔴 **Maintenance mode has been ENABLED!**\n\n` +
+          ? `:warning~1: **Maintenance mode has been ENABLED!**\n\n` +
               `All regular players will see a maintenance notice when attempting to use the bot.\n` +
               `Commands can only be run in the testing channel: <#${config.maintenance.allowedChannelId}> and by Server Administrators.`
           : `🟢 **Maintenance mode has been DISABLED!**\n\nBot is now online and available for everyone in all channels.`
