@@ -167,6 +167,30 @@ module.exports = {
     )
     .addSubcommand((sub) =>
       sub
+        .setName('attach')
+        .setDescription('Ambil embed pesan yang ada (Foxhook/Webhook) lalu pasangkan tombol panel')
+        .addStringOption((opt) =>
+          opt
+            .setName('message_id')
+            .setDescription('ID pesan Discord yang ingin dipasangi tombol (Copy Message ID)')
+            .setRequired(true)
+        )
+        .addStringOption((opt) =>
+          opt
+            .setName('panel_id')
+            .setDescription('ID tombol dari panels.json yang ingin dipasang')
+            .setAutocomplete(true)
+            .setRequired(true)
+        )
+        .addBooleanOption((opt) =>
+          opt
+            .setName('delete_original')
+            .setDescription('Hapus pesan lama setelah diganti? (Default: false)')
+            .setRequired(false)
+        )
+    )
+    .addSubcommand((sub) =>
+      sub
         .setName('reload')
         .setDescription('Muat ulang konfigurasi panel dari panels.json')
     ),
@@ -320,6 +344,87 @@ module.exports = {
       } catch (err) {
         return interaction.reply({
           content: `❌ Gagal mengirim panel ke <#${targetChannel.id}>: ${err.message}`,
+          flags: 64,
+        });
+      }
+    }
+
+    if (subcommand === 'attach') {
+      const messageId = interaction.options.getString('message_id').trim();
+      const panelId = interaction.options.getString('panel_id');
+      const deleteOriginal = interaction.options.getBoolean('delete_original') || false;
+      const panel = panels[panelId];
+
+      if (!panel) {
+        return interaction.reply({
+          content: `❌ Panel tombol **\`${panelId}\`** tidak ditemukan di \`src/panels.json\`.\nGunakan \`/panel list\` untuk melihat daftar panel tombol.`,
+          flags: 64,
+        });
+      }
+
+      let targetMessage;
+      try {
+        targetMessage = await interaction.channel.messages.fetch(messageId);
+      } catch (e) {
+        return interaction.reply({
+          content: `❌ Gagal menemukan pesan dengan ID **\`${messageId}\`** di channel ini.\nPastikan Anda menjalankan command di channel yang sama dengan pesan tersebut.`,
+          flags: 64,
+        });
+      }
+
+      const rows = buildActionRows(panel.buttons);
+      if (rows.length === 0) {
+        return interaction.reply({
+          content: `❌ Panel **\`${panelId}\`** tidak memiliki tombol yang terkonfigurasi di \`src/panels.json\`.`,
+          flags: 64,
+        });
+      }
+
+      // Jika pesan tersebut dibuat oleh bot ini sendiri, bot bisa langsung edit pesannya
+      if (targetMessage.author.id === interaction.client.user.id) {
+        try {
+          await targetMessage.edit({ components: rows });
+          return interaction.reply({
+            content: `✅ Tombol dari panel **\`${panelId}\`** berhasil ditempelkan langsung ke pesan bot!`,
+            flags: 64,
+          });
+        } catch (err) {
+          return interaction.reply({
+            content: `❌ Gagal mengedit pesan bot: ${err.message}`,
+            flags: 64,
+          });
+        }
+      }
+
+      // Jika pesan dibuat oleh Webhook (Foxhook/Discohook), clone embednya & tempelkan tombolnya
+      try {
+        const payload = {
+          content: targetMessage.content || undefined,
+          embeds: targetMessage.embeds.map((emb) => EmbedBuilder.from(emb)),
+          components: rows,
+          files: targetMessage.attachments.map((a) => a.url),
+        };
+
+        if (!payload.content && payload.embeds.length === 0 && payload.files.length === 0) {
+          return interaction.reply({
+            content: `❌ Pesan tersebut tidak memiliki konten atau embed untuk diduplikasi.`,
+            flags: 64,
+          });
+        }
+
+        await interaction.channel.send(payload);
+
+        if (deleteOriginal) {
+          await targetMessage.delete().catch(() => {});
+        }
+
+        return interaction.reply({
+          content: `✅ Berhasil mengambil embed dari pesan Foxhook & mengirimkannya dengan tombol interaktif!${deleteOriginal ? ' *(Pesan lama dihapus)*' : ''}`,
+          flags: 64,
+        });
+      } catch (err) {
+        return interaction.reply({
+          content: `❌ Gagal memproses pesan: ${err.message}`,
           flags: 64,
         });
       }

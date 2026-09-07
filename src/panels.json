@@ -1,69 +1,28 @@
 {
   "rules": {
-    "public": {
-      "title": "📜 Rules & Information Server",
-      "description": "Selamat datang di server! Silakan baca peraturan dan informasi penting dengan menekan tombol interaktif di bawah.",
-      "color": "#5865F2",
-      "footer": "Luneth Interactive Panel System",
-      "thumbnail": ""
-    },
     "buttons": [
       {
-        "custom_id": "panel_rules_view",
-        "label": "Lihat Peraturan",
-        "emoji": "📜",
+        "custom_id": "panel_nobar_info",
+        "label": "Nobar Info",
+        "emoji": "🎬",
         "style": "Primary",
         "reply": {
-          "title": "📜 Peraturan Komunitas",
-          "description": "1. **Saling Menghargai**: Perlakukan sesama anggota dengan sopan dan ramah.\n2. **No Spam / Flooding**: Dilarang mengirim spam teks, stiker, atau mention berlebihan.\n3. **Konten Positif**: Hindari konten NSFW, diskriminatif, atau SARA.\n4. **Ikuti Panduan Discord**: Patuhi Discord Terms of Service & Community Guidelines.",
+          "title": "🎬 Informasi Nonton Bareng (Nobar) — Lunera",
+          "description": "Kegiatan nonton bareng (*nobar*) antar-anggota di luar program resmi Lunera dapat diselenggarakan kapan saja tanpa memerlukan izin atau permohonan khusus.\n\n### Ketentuan Kenyamanan Bersama:\n* **Kesepakatan Jadwal & Judul**: Pastikan judul tayangan dan waktu pelaksanaan telah disepakati bersama oleh seluruh peserta.\n* **Bebas Spoiler**: Dilarang membocorkan alur cerita (*spoiler*) bagi anggota yang belum menyaksikan tayangan tersebut.\n* **Pengaturan Audio**: Mohon menjaga dan menyesuaikan volume audio saat melakukan *screen share* agar tidak mengganggu pendengaran anggota lain.",
           "color": "#5865F2",
-          "footer": "Hanya Anda yang dapat melihat pesan ini."
+          "footer": "Hanya Anda yang dapat melihat pesan ini · Lunera Community"
         }
       },
       {
-        "custom_id": "panel_rules_faq",
-        "label": "FAQ & Panduan",
-        "emoji": "❓",
-        "style": "Secondary",
-        "reply": {
-          "title": "❓ Frequently Asked Questions (FAQ)",
-          "description": "• **Bagaimana cara mulai bermain?**\nKetik `/start` untuk panduan pemula dan starter balance.\n\n• **Bagaimana cara melihat daftar command?**\nGunakan `/help`.\n\n• **Butuh bantuan admin?**\nSilakan mention role Staff atau buka tiket bantuan.",
-          "color": "#3498DB",
-          "footer": "Hanya Anda yang dapat melihat pesan ini."
-        }
-      },
-      {
-        "custom_id": "panel_rules_links",
-        "label": "Official Links",
-        "emoji": "🔗",
+        "custom_id": "panel_jualbeli_info",
+        "label": "Sistem Jual Beli",
+        "emoji": "🛒",
         "style": "Success",
         "reply": {
-          "title": "🔗 Link Resmi Komunitas",
-          "description": "Ikuti update terbaru server melalui pengumuman dan channel resmi kami!",
+          "title": "🛒 Ketentuan & Regulasi Jual Beli — Lunera",
+          "description": "Sebelum melakukan transaksi jual maupun beli di server ini, seluruh anggota diwajibkan membaca dan mematuhi ketentuan berikut demi keamanan dan kenyamanan bersama.\n\n### 1. Ketentuan Umum\n* Cakupan transaksi meliputi: item/akun game, jasa (joki, desain grafis, dan sejenisnya), serta barang fisik.\n* Seluruh interaksi wajib dimulai melalui channel jual-beli resmi, bukan melalui *Direct Message* (DM), agar riwayat kesepakatan tercatat secara transparan.\n* Dilarang memperjualbelikan barang ilegal, barang hasil curian (*black market*), data pribadi, jasa yang melanggar ketentuan pihak ketiga, serta hal yang berkaitan dengan perjudian uang asli (fiat).\n\n### 2. Format Wajib Posting Listing\nSetiap postingan listing jual/beli wajib menyertakan format berikut:\n> **Jenis:** *(Item / Akun / Jasa / Fisik)*\n> **Nama Barang/Jasa:**\n> **Harga:**\n> **Deskripsi:** *(Kondisi, spesifikasi, dan kelengkapan)*\n> **Bukti Kepemilikan:** *(Foto / Screenshot orisinal)*\n> **Metode Pembayaran:**\n*(Listing tanpa format resmi berhak dihapus oleh Staff tanpa pemberitahuan sebelumnya).*\n\n### 3. Ketentuan Layanan Perantara (Middleman)\n* Transaksi dengan nominal **di atas Rp50.000 wajib menggunakan Staff atau Luminary** sebagai perantara (*middleman*).\n* **Alur Transaksi**: Pembeli mengirimkan dana ke Middleman ➔ Middleman konfirmasi ke Penjual ➔ Penjual mengirimkan barang/jasa ke Pembeli ➔ Pembeli konfirmasi penerimaan ➔ Middleman meneruskan dana ke Penjual.\n* Layanan *middleman* resmi **tidak dikenakan biaya (Gratis)**. Transaksi tanpa perantara resmi sepenuhnya menjadi risiko dan tanggung jawab pribadi.\n\n### 4. Larangan & Keamanan\n* Dilarang meminta atau membagikan kode OTP, kata sandi, maupun akses akun penuh kepada pihak manapun.\n* Dilarang melakukan segala bentuk penipuan, pengiriman barang fiktif, atau memberikan informasi yang menyesatkan.\n\n### 5. Bukti Transaksi & Reputasi\n* Anggota wajib menyimpan bukti percakapan dan bukti transfer minimal **3 (tiga) hari** setelah transaksi selesai.\n* Memberikan testimoni (*vouch*) pada channel yang telah disediakan sangat dianjurkan setelah transaksi selesai.\n\n### 6. Sanksi\nPelanggaran berupa penipuan akan ditindak tegas dengan **Sanksi Pemblokiran Permanen (Permanent Ban)** dan pencatatan identitas pelaku pada channel peringatan (*warning channel*).",
           "color": "#2ECC71",
-          "footer": "Hanya Anda yang dapat melihat pesan ini."
-        }
-      }
-    ]
-  },
-  "verification": {
-    "public": {
-      "title": "🛡️ Verifikasi Member",
-      "description": "Untuk membuka akses penuh ke seluruh channel dan event server, silakan pelajari panduan verifikasi.",
-      "color": "#2ECC71",
-      "footer": "Luneth Verification Panel"
-    },
-    "buttons": [
-      {
-        "custom_id": "panel_verify_guide",
-        "label": "Panduan Verifikasi",
-        "emoji": "✅",
-        "style": "Success",
-        "reply": {
-          "title": "✅ Panduan Verifikasi Akun",
-          "description": "Pastikan akun Discord Anda telah memverifikasi email dan nomor telepon untuk keamanan komunitas.",
-          "color": "#2ECC71",
-          "footer": "Hanya Anda yang dapat melihat pesan ini."
+          "footer": "Hanya Anda yang dapat melihat pesan ini · Lunera Trade Compliance"
         }
       }
     ]
