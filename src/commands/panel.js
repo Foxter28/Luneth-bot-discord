@@ -81,6 +81,15 @@ function buildEmbedFromData(data) {
   return embed;
 }
 
+function buildEmbedsList(data) {
+  if (!data) return [];
+  if (Array.isArray(data)) {
+    return data.map(buildEmbedFromData).filter(Boolean);
+  }
+  const single = buildEmbedFromData(data);
+  return single ? [single] : [];
+}
+
 function buildActionRows(buttons) {
   if (!Array.isArray(buttons) || buttons.length === 0) return [];
 
@@ -298,12 +307,12 @@ module.exports = {
         });
       }
 
-      const embed = buildEmbedFromData(panel.public);
+      const embeds = buildEmbedsList(panel.public);
       const rows = buildActionRows(panel.buttons);
 
       return interaction.reply({
         content: `👁️ **Preview Panel: \`${panelId}\`** *(Hanya terlihat oleh Anda)*`,
-        embeds: embed ? [embed] : [],
+        embeds,
         components: rows,
         flags: 64,
       });
@@ -321,10 +330,10 @@ module.exports = {
         });
       }
 
-      const embed = buildEmbedFromData(panel.public);
+      const embeds = buildEmbedsList(panel.public);
       const rows = buildActionRows(panel.buttons);
 
-      if (!embed && rows.length === 0) {
+      if (embeds.length === 0 && rows.length === 0) {
         return interaction.reply({
           content: `❌ Panel **\`${panelId}\`** tidak memiliki konten embed publik atau tombol yang valid.`,
           flags: 64,
@@ -333,7 +342,7 @@ module.exports = {
 
       try {
         await targetChannel.send({
-          embeds: embed ? [embed] : [],
+          embeds,
           components: rows,
         });
 
