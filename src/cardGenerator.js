@@ -5,6 +5,15 @@ const { createCanvas, loadImage } = require('@napi-rs/canvas');
 const TEMPLATE_PATH = path.resolve(__dirname, '../public/asset/blank-levelup.png');
 let cachedTemplate = null;
 
+// Warm-up cache on startup
+if (fs.existsSync(TEMPLATE_PATH)) {
+  loadImage(TEMPLATE_PATH)
+    .then((img) => {
+      cachedTemplate = img;
+    })
+    .catch(() => {});
+}
+
 async function getTemplateImage() {
   if (!cachedTemplate) {
     if (fs.existsSync(TEMPLATE_PATH)) {

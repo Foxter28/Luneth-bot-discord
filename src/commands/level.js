@@ -13,6 +13,9 @@ module.exports = {
   aliases: ['lvl', 'rank', 'xp'],
 
   async execute(interaction) {
+    // Acknowledge interaction immediately to prevent 3-second timeout on slower hosts
+    await interaction.deferReply();
+
     const targetUser = interaction.options.getUser('user') || interaction.user;
     const user = await getUser(targetUser.id);
 
@@ -50,6 +53,6 @@ module.exports = {
       .setFooter({ text: `Requested by ${interaction.user.username}` })
       .setTimestamp();
 
-    return interaction.reply({ embeds: [embed], files: [file] });
+    return interaction.editReply({ embeds: [embed], files: [file] });
   },
 };
