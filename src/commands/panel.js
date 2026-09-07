@@ -336,8 +336,37 @@ module.exports = {
       }
 
       const rows = buildActionRows(panel.buttons);
-      let sendPayload = {};
 
+      // Support multi-message Components V2 panels (e.g. Message 1 = Part 1, Message 2 = Part 2 + Buttons)
+      if (Array.isArray(panel.messages)) {
+        try {
+          for (let i = 0; i < panel.messages.length; i++) {
+            const msg = panel.messages[i];
+            const isLast = i === panel.messages.length - 1;
+            const msgComponents = [...(msg.components || [])];
+            if (isLast && rows.length > 0) {
+              msgComponents.push(...rows.map((r) => r.toJSON()));
+            }
+            await targetChannel.send({
+              flags: msg.flags || 32768,
+              content: msg.content || undefined,
+              components: msgComponents,
+            });
+          }
+
+          return interaction.reply({
+            content: `✅ Panel **\`${panelId}\`** (Components V2) berhasil dikirim ke <#${targetChannel.id}>!`,
+            flags: 64,
+          });
+        } catch (err) {
+          return interaction.reply({
+            content: `❌ Gagal mengirim panel ke <#${targetChannel.id}>: ${err.message}`,
+            flags: 64,
+          });
+        }
+      }
+
+      let sendPayload = {};
       if (panel.components || panel.rawComponents) {
         const rawComps = panel.components || panel.rawComponents;
         sendPayload = {
