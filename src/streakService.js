@@ -84,6 +84,7 @@ async function getReminderChannel(client, guildId) {
 }
 
 async function sendReminder(client, config) {
+  const path = require('path');
   const { getAllStreakUsers } = require('./database');
   const users = await getAllStreakUsers();
 
@@ -110,7 +111,10 @@ async function sendReminder(client, config) {
       `\n\nCek status: \`/register streak\` · Pulihkan yang hangus: \`/restore streak\` (5.000 🪙)`;
 
     try {
-      await channel.send(text);
+      await channel.send({
+        content: text,
+        files: [{ attachment: path.join(__dirname, '..', 'public', 'asset', 'streak.png'), name: 'streak.png' }],
+      });
     } catch (err) {
       console.error(`⚠️ Streak reminder failed in guild ${guildId}:`, err.message);
     }

@@ -647,6 +647,14 @@ async function getAllStreakUsers() {
   return dbAll('SELECT * FROM streak_registered WHERE frozen = 0');
 }
 
+// Top streak holders (active, not frozen)
+async function getStreakLeaderboard(limit = 10) {
+  return dbAll(
+    'SELECT * FROM streak_registered WHERE frozen = 0 ORDER BY streak DESC, lastHeartbeat ASC LIMIT ?',
+    limit
+  );
+}
+
 async function getStreakSetting(key, fallback = null) {
   const row = await dbGet('SELECT value FROM streak_settings WHERE key = ?', key);
   return row ? row.value : fallback;
@@ -717,6 +725,7 @@ module.exports = {
   unfreezeStreak: (userId) => dbQueue(() => unfreezeStreak(userId)),
   freezeStreak: (userId) => dbQueue(() => freezeStreak(userId)),
   getAllStreakUsers: () => dbQueue(() => getAllStreakUsers()),
+  getStreakLeaderboard: (limit = 10) => dbQueue(() => getStreakLeaderboard(limit)),
   getStreakSetting: (key, fallback) => dbQueue(() => getStreakSetting(key, fallback)),
   setStreakSetting: (key, value) => dbQueue(() => setStreakSetting(key, value)),
   deleteStreakUser: (userId) => dbQueue(() => deleteStreakUser(userId)),

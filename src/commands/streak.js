@@ -6,7 +6,7 @@ const SETTING_KEY = (guildId) => `reminder_channel:${guildId}`;
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('streak')
-    .setDescription('Streak system management')
+    .setDescription('[ADMIN] Streak system management')
     .addSubcommand(sub =>
       sub
         .setName('setchannel')
