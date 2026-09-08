@@ -67,6 +67,7 @@ module.exports = {
   streak: {
     restoreCost: 5000,
     checkIntervalMs: 15 * 60 * 1000, // background check every 15 minutes
+    reminderIntervalMs: 12 * 60 * 60 * 1000, // reminder to 3-day role every 12 hours
     reminderRoleIds: ['1521728913376804955'],
     milestoneRoles: [
       { days: 3,  roleId: '1521728913376804955' },

@@ -140,7 +140,7 @@ async function ensureSchema() {
       userId TEXT PRIMARY KEY,
       streak INTEGER NOT NULL DEFAULT 1,
       lastHeartbeat INTEGER NOT NULL DEFAULT 0,
-      fireChannelId TEXT,
+      streakUpdatedAt INTEGER NOT NULL DEFAULT 0,
       guildId TEXT,
       frozen INTEGER NOT NULL DEFAULT 0
     );
@@ -602,13 +602,13 @@ async function addXp(userId, amount) {
 // -------------------------------------------------------------------
 // Streak system helpers
 // -------------------------------------------------------------------
-async function registerStreak(userId, guildId, channelId) {
+async function registerStreak(userId, guildId) {
   const now = Date.now();
   await dbRun(
-    'INSERT OR REPLACE INTO streak_registered (userId, streak, lastHeartbeat, fireChannelId, guildId, frozen) VALUES (?, 1, ?, ?, ?, 0)',
-    userId, now, channelId, guildId
+    'INSERT OR REPLACE INTO streak_registered (userId, streak, lastHeartbeat, streakUpdatedAt, guildId, frozen) VALUES (?, 1, ?, ?, ?, 0)',
+    userId, now, now, guildId
   );
-  return { userId, streak: 1, lastHeartbeat: now, fireChannelId: channelId, guildId, frozen: 0 };
+  return { userId, streak: 1, lastHeartbeat: now, streakUpdatedAt: now, guildId, frozen: 0 };
 }
 
 async function getStreakUser(userId) {
@@ -620,24 +620,31 @@ async function heartbeatStreak(userId) {
   await dbRun('UPDATE streak_registered SET lastHeartbeat = ? WHERE userId = ?', now, userId);
 }
 
+// Streak +1 day, then stamp the +1 so the next rollover waits for the next full day.
+async function bumpStreak(userId) {
+  const now = Date.now();
+  await dbRun(
+    'UPDATE streak_registered SET streak = streak + 1, streakUpdatedAt = ? WHERE userId = ?',
+    now, userId
+  );
+}
+
+// Restore: clear frozen AND re-light the fire (reset 24h window + day counter)
+// so the user isn't instantly re-frozen/rolled-over next maintenance cycle.
 async function unfreezeStreak(userId) {
-  await dbRun('UPDATE streak_registered SET frozen = 0 WHERE userId = ?', userId);
+  const now = Date.now();
+  await dbRun(
+    'UPDATE streak_registered SET frozen = 0, lastHeartbeat = ?, streakUpdatedAt = ? WHERE userId = ?',
+    now, now, userId
+  );
 }
 
 async function freezeStreak(userId) {
   await dbRun('UPDATE streak_registered SET frozen = 1 WHERE userId = ?', userId);
 }
 
-async function setStreak(userId, days) {
-  await dbRun('UPDATE streak_registered SET streak = ? WHERE userId = ?', days, userId);
-}
-
 async function getAllStreakUsers() {
   return dbAll('SELECT * FROM streak_registered WHERE frozen = 0');
-}
-
-async function getAllStreakUsersFrozen() {
-  return dbAll('SELECT * FROM streak_registered');
 }
 
 async function getStreakSetting(key, fallback = null) {
@@ -703,14 +710,13 @@ module.exports = {
   getLevelLeaderboard: (limit = 10) => dbQueue(() => getLevelLeaderboard(limit)),
   addXp: (userId, amount) => dbQueue(() => addXp(userId, amount)),
   // streak
-  registerStreak: (userId, guildId, channelId) => dbQueue(() => registerStreak(userId, guildId, channelId)),
+  registerStreak: (userId, guildId) => dbQueue(() => registerStreak(userId, guildId)),
   getStreakUser: (userId) => dbQueue(() => getStreakUser(userId)),
   heartbeatStreak: (userId) => dbQueue(() => heartbeatStreak(userId)),
+  bumpStreak: (userId) => dbQueue(() => bumpStreak(userId)),
   unfreezeStreak: (userId) => dbQueue(() => unfreezeStreak(userId)),
   freezeStreak: (userId) => dbQueue(() => freezeStreak(userId)),
-  setStreak: (userId, days) => dbQueue(() => setStreak(userId, days)),
   getAllStreakUsers: () => dbQueue(() => getAllStreakUsers()),
-  getAllStreakUsersFrozen: () => dbQueue(() => getAllStreakUsersFrozen()),
   getStreakSetting: (key, fallback) => dbQueue(() => getStreakSetting(key, fallback)),
   setStreakSetting: (key, value) => dbQueue(() => setStreakSetting(key, value)),
   deleteStreakUser: (userId) => dbQueue(() => deleteStreakUser(userId)),

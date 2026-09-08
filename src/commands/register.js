@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { registerStreak, getStreakUser } = require('../database');
+const { cacheAddUser } = require('../streakService');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -7,7 +8,7 @@ module.exports = {
     .setDescription('Register for systems')
     .addSubcommand(sub =>
       sub.setName('streak').setDescription('Register for the streak system')),
-  aliases: ['luregister'],
+  aliases: ['reg'],
 
   async execute(interaction) {
     if (interaction.options.getSubcommand() !== 'streak') {
@@ -25,8 +26,8 @@ module.exports = {
     if (!guildId) {
       return interaction.reply({ content: '❌ This command can only be used in a server.', ephemeral: true });
     }
-    const channelId = interaction.channel.id;
-    await registerStreak(userId, guildId, channelId);
+    await registerStreak(userId, guildId);
+    cacheAddUser(userId);
     return interaction.reply({
       content: '🔥 You have registered for the streak system! Keep chatting to maintain your streak.',
     });

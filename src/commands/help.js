@@ -243,6 +243,30 @@ const COMMAND_INFO = [
         usage: 'trade create | list | cancel | offer',
         desc: 'Marketplace pemain: jual beli item ke player lain, pasang listing, atau tawarkan item langsung.',
     },
+    {
+        name: 'register',
+        category: 'economy',
+        emoji: '🔥',
+        usage: 'register streak',
+        desc: '🔥 **Streak** — daftar ke sistem streak. Tiap chat menghidupkan apimu; 24 jam gak chat = hangus.',
+        note: 'Alias prefix: lureg streak / lu reg streak',
+    },
+    {
+        name: 'restore',
+        category: 'economy',
+        emoji: '💸',
+        usage: 'restore streak',
+        desc: `💸 Tebus streak yang hangus seharga **${config.streak.restoreCost.toLocaleString()} ${config.currencyName}** — streak balik, role dikembalikan.`,
+        note: 'Alias prefix: lurestore streak / lu restore streak',
+    },
+    {
+        name: 'streak',
+        category: 'admin',
+        emoji: '📣',
+        usage: 'streak setchannel | channel',
+        desc: '📣 Set channel reminder streak (role 3-hari) atau lihat channel yang aktif.',
+        note: 'Admin only',
+    },
 ];
 
 const CATEGORIES = {

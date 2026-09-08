@@ -165,6 +165,12 @@ client.once(Events.ClientReady, async (c) => {
 
   cleanupDepartedMembers();
 
+  // Streak system: daily rollover + 24h expiry + reminders
+  const { heartbeatIfActive, refreshCache, runStreakMaintenance } = require('./streakService');
+  refreshCache();
+  runStreakMaintenance(c, config).catch(() => {});
+  setInterval(() => runStreakMaintenance(c, config).catch(() => {}), config.streak.checkIntervalMs);
+
   // Initial sync & intervals
   checkTop1();
   syncBoosters();
@@ -368,6 +374,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
 // If an admin has set a custom prefix via "/prefix", only that custom prefix is active in that server.
 client.on(Events.MessageCreate, async (message) => {
   if (message.author.bot) return;
+
+  // Streak: any chat feeds the fire (rolling 24h)
+  const { heartbeatIfActive } = require('./streakService');
+  heartbeatIfActive(message.author.id).catch(() => {});
 
   const activePrefixes = await getActivePrefixes(message.guild?.id, config.prefix, config.prefixAliases);
   const matchedPrefix = activePrefixes.find((p) => message.content.toLowerCase().startsWith(p.toLowerCase()));
