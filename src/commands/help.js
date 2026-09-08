@@ -252,6 +252,14 @@ const COMMAND_INFO = [
         note: 'Alias prefix: luslb',
     },
     {
+        name: 'register',
+        category: 'admin',
+        emoji: '🛡️',
+        usage: 'register streak user:<@member>',
+        desc: '🛡️ **(ADMIN)** — daftarkan member lain ke sistem streak.',
+        note: 'Admin only · Alias: lureg streak / lu reg streak',
+    },
+    {
         name: 'restore',
         category: 'economy',
         emoji: '💸',
@@ -264,7 +272,7 @@ const COMMAND_INFO = [
         category: 'economy',
         emoji: '🔥',
         usage: 'streak register | setchannel | channel',
-        desc: '🔥 Sistem streak.\n> • **register** — daftar sendiri (semua orang)\n> • **setchannel** — **(ADMIN)** pilih channel reminder\n> • **channel** — **(ADMIN)** lihat channel aktif',
+        desc: '🔥 Sistem streak.\n> • **register** — daftar sendiri (semua member)\n> • **setchannel** — **(ADMIN)** pilih channel reminder\n> • **channel** — **(ADMIN)** lihat channel aktif',
         note: 'Alias prefix: lustreak / lu streak',
     },
 ];
