@@ -161,7 +161,9 @@
     .brand img {
       width: 32px;
       height: 32px;
-      object-fit: contain;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 1px solid rgba(168, 85, 247, .35);
       filter: drop-shadow(0 0 8px rgba(168, 85, 247, .7))
     }
 
@@ -693,62 +695,41 @@
       filter: drop-shadow(0 0 22px rgba(168, 85, 247, .6))
     }
 
-    /* gallery activity — floating memories */
+    /* gallery activity — floating video memories */
     .gallery-list {
       display: flex;
       flex-direction: column;
-      gap: 40px
+      gap: 46px
     }
 
     .gallery-item {
       display: grid;
-      grid-template-columns: 1fr 1.2fr 1fr;
+      grid-template-columns: 1.2fr 1.4fr 1.2fr;
       align-items: center;
-      gap: 20px;
-      min-height: 220px;
+      gap: 16px;
+      min-height: 240px;
       position: relative
     }
 
-    .gallery-item .g-photo {
+    .gallery-item video.g-video {
       width: 100%;
-      max-width: 200px;
+      max-width: 260px;
       border-radius: 14px;
       border: 2px solid rgba(168, 85, 247, .35);
       box-shadow: 0 8px 30px rgba(168, 85, 247, .25), 0 2px 8px rgba(0, 0, 0, .4);
       object-fit: cover;
-      aspect-ratio: 3/4;
-      transition: transform .4s ease, box-shadow .4s ease;
+      aspect-ratio: 16/9;
+      opacity: .45;
+      background: #0d0820;
+      transition: transform .4s ease, box-shadow .4s ease, opacity .4s ease;
       position: relative;
       z-index: 2
     }
 
-    .gallery-item:nth-child(odd) .g-photo:first-child {
-      transform: rotate(-4deg) translateY(-8px)
-    }
-
-    .gallery-item:nth-child(odd) .g-photo:last-child {
-      transform: rotate(3deg) translateY(10px)
-    }
-
-    .gallery-item:nth-child(even) .g-photo:first-child {
-      transform: rotate(5deg) translateY(10px)
-    }
-
-    .gallery-item:nth-child(even) .g-photo:last-child {
-      transform: rotate(-3deg) translateY(-12px)
-    }
-
-    .gallery-item:hover .g-photo {
-      transform: rotate(0deg) translateY(-4px) scale(1.04);
-      box-shadow: 0 12px 40px rgba(168, 85, 247, .4), 0 4px 12px rgba(0, 0, 0, .5)
-    }
-
     .gallery-item .g-icon {
       width: 100%;
-      max-width: 130px;
-      border-radius: 16px;
-      border: 2px solid rgba(56, 189, 248, .4);
-      box-shadow: 0 8px 30px rgba(56, 189, 248, .3), 0 2px 8px rgba(0, 0, 0, .4);
+      max-width: 120px;
+      border-radius: 14px;
       object-fit: cover;
       aspect-ratio: 1;
       animation: iconFloat 3s ease-in-out infinite;
@@ -761,15 +742,33 @@
       50% { transform: translateY(-10px) rotate(-2deg) }
     }
 
+    .gallery-item:nth-child(odd) video.g-video:first-child {
+      transform: rotate(-4deg) translateY(-8px)
+    }
+
+    .gallery-item:nth-child(odd) video.g-video:last-child {
+      transform: rotate(3deg) translateY(10px)
+    }
+
+    .gallery-item:nth-child(even) video.g-video:first-child {
+      transform: rotate(5deg) translateY(10px)
+    }
+
+    .gallery-item:nth-child(even) video.g-video:last-child {
+      transform: rotate(-3deg) translateY(-12px)
+    }
+
+    .gallery-item:hover video.g-video {
+      transform: rotate(0deg) translateY(-4px) scale(1.04);
+      box-shadow: 0 12px 40px rgba(168, 85, 247, .4), 0 4px 12px rgba(0, 0, 0, .5);
+      opacity: .8
+    }
+
     .gallery-item .g-text {
       text-align: center;
-      padding: 24px 16px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
+      padding: 12px;
       position: relative;
-      z-index: 3;
-      box-shadow: var(--sh)
+      z-index: 3
     }
 
     .gallery-item .g-text .g-label {
@@ -783,15 +782,17 @@
 
     .gallery-item .g-text h3 {
       font-family: var(--fd);
-      font-size: 1.15rem;
+      font-size: 1.25rem;
       color: #fff;
+      text-shadow: 0 0 16px rgba(168, 85, 247, .6), 0 2px 8px rgba(0, 0, 0, .8);
       margin-bottom: 8px
     }
 
     .gallery-item .g-text p {
-      font-size: .88rem;
-      color: #c4b5fd;
-      line-height: 1.6
+      font-size: .9rem;
+      color: #e9d5ff;
+      line-height: 1.6;
+      text-shadow: 0 0 12px rgba(0, 0, 0, .8), 0 2px 6px rgba(0, 0, 0, .9)
     }
 
     @keyframes gFloat1 {
@@ -804,20 +805,20 @@
       50% { transform: rotate(3deg) translateY(-2px) }
     }
 
-    .gallery-item:nth-child(odd) .g-photo:first-child {
-      animation: gFloat1 5s ease-in-out infinite
+    .gallery-item:nth-child(odd) video.g-video:first-child {
+      animation: gFloat1 6s ease-in-out infinite
     }
 
-    .gallery-item:nth-child(odd) .g-photo:last-child {
-      animation: gFloat2 5.5s ease-in-out infinite
+    .gallery-item:nth-child(odd) video.g-video:last-child {
+      animation: gFloat2 6.4s ease-in-out infinite
     }
 
-    .gallery-item:nth-child(even) .g-photo:first-child {
-      animation: gFloat2 4.8s ease-in-out infinite
+    .gallery-item:nth-child(even) video.g-video:first-child {
+      animation: gFloat2 5.6s ease-in-out infinite
     }
 
-    .gallery-item:nth-child(even) .g-photo:last-child {
-      animation: gFloat1 5.2s ease-in-out infinite
+    .gallery-item:nth-child(even) video.g-video:last-child {
+      animation: gFloat1 6.2s ease-in-out infinite
     }
 
     /* booster — constellation / ticker distinct */
@@ -1100,20 +1101,23 @@
         border-top: 1px solid var(--border)
       }
 
-      .gallery-item .g-photo {
-        max-width: 140px
+      .gallery-item {
+        grid-template-columns: 1fr;
+        gap: 14px
       }
 
-      .gallery-item .g-icon {
-        max-width: 100px
+      .gallery-item video.g-video {
+        max-width: 220px;
+        justify-self: center;
+        aspect-ratio: 9/16
       }
 
-      .gallery-item .g-text h3 {
-        font-size: 1rem
+      .gallery-item .g-text {
+        order: 0
       }
 
-      .gallery-item .g-text p {
-        font-size: .82rem
+      .gallery-item video.g-video {
+        order: -1
       }
     }
 
@@ -1389,31 +1393,31 @@
       </div>
       <div class="gallery-list">
         <div class="gallery-item">
-          <img class="g-photo" src="/asset/activity/obrolan.jpg" alt="Obrolan Santai" loading="lazy" />
+          <video class="g-video" src="/asset/activity/2.webm" alt="General Chat" autoplay muted loop playsinline preload="metadata"></video>
           <div class="g-text">
             <div class="g-label"># obrolan-santai</div>
             <h3>Ruang Bercengkrama</h3>
             <p>Berbagi cerita harian, meme, dan obrolan ringan hingga larut malam. Selalu ada teman mengobrol.</p>
           </div>
-          <img class="g-photo" src="/asset/activity/gaming.jpg" alt="Gaming" loading="lazy" />
+          <video class="g-video" src="/asset/activity/1.webm" alt="Luneth Bot" autoplay muted loop playsinline preload="metadata"></video>
         </div>
         <div class="gallery-item">
-          <img class="g-photo" src="/asset/activity/nobar.jpg" alt="Nonton Bareng" loading="lazy" />
+          <video class="g-video" src="/asset/activity/2.webm" alt="General Chat" autoplay muted loop playsinline preload="metadata"></video>
           <div class="g-text">
             <div class="g-label">🔊 voice & nobar</div>
             <h3>Nobar & Mabar</h3>
             <p>Voice 24/7 untuk menonton film atau bermain gim bersama teman-teman sepanjang malam.</p>
           </div>
-          <img class="g-icon" src="/asset/activity/icon.jpg" alt="Activity Icon" loading="lazy" />
+          <img class="g-icon" src="/asset/activity/moon.gif" alt="Moon" />
         </div>
         <div class="gallery-item">
-          <img class="g-photo" src="/asset/activity/gaming.jpg" alt="Arena RPG" loading="lazy" />
+          <video class="g-video" src="/asset/activity/3.webm" alt="Voice Chat" autoplay muted loop playsinline preload="metadata"></video>
           <div class="g-text">
             <div class="g-label"># bot-economy</div>
             <h3>Arena RPG</h3>
             <p>Pamer kartu level, adu dungeon, dan berburu peti misteri bersama Luneth bot.</p>
           </div>
-          <img class="g-photo" src="/asset/activity/obrolan.jpg" alt="Komunitas" loading="lazy" />
+          <video class="g-video" src="/asset/activity/2.webm" alt="General Chat" autoplay muted loop playsinline preload="metadata"></video>
         </div>
       </div>
     </section>
