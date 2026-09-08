@@ -108,7 +108,7 @@ async function sendReminder(client, config) {
       `🔥 **REMINDER STREAK** 🔥\n` +
       `${roleMention} — Jangan sampai api streakmu padam! Chat di channel mana pun dalam 24 jam terakhir untuk menjaga streakmu tetap hidup.\n` +
       (mentions ? `\nBeberapa bear yang masih aktif: ${mentions}` : '') +
-      `\n\nCek status: \`/register streak\` · Pulihkan yang hangus: \`/restore streak\` (5.000 🪙)`;
+      `\n\nCek status: \`/streak register\` · Pulihkan yang hangus: \`/restore streak\` (5.000 🪙)`;
 
     try {
       await channel.send({

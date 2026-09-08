@@ -14,7 +14,7 @@ module.exports = {
   async execute(interaction) {
     const top = await getStreakLeaderboard(10);
     if (top.length === 0) {
-      return interaction.reply('🔥 No streaks yet. Register with `/register streak`!');
+      return interaction.reply('🔥 No streaks yet. Register with `/streak register`!');
     }
 
     const lines = top.map((u, i) => {
@@ -36,7 +36,7 @@ module.exports = {
       selfLine =
         selfIndex !== -1
           ? `-# Your position: #${selfIndex + 1} • ${wider[selfIndex].streak} hari`
-          : `-# You're not registered yet. Try \`/register streak\`!`;
+          : `-# You're not registered yet. Try \`/streak register\`!`;
     }
 
     const description = [

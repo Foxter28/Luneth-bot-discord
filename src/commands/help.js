@@ -244,14 +244,6 @@ const COMMAND_INFO = [
         desc: 'Marketplace pemain: jual beli item ke player lain, pasang listing, atau tawarkan item langsung.',
     },
     {
-        name: 'register',
-        category: 'economy',
-        emoji: '🔥',
-        usage: 'streak register [user]',
-        desc: '🔥 **Streak (ADMIN juga bisa daftarkan orang lain)** — daftar ke sistem streak. Admin bisa pakai opsi `user:` untuk daftarkan member lain.',
-        note: 'Admin only · Alias: lureg streak / lu reg streak',
-    },
-    {
         name: 'streakleaderboard',
         category: 'economy',
         emoji: '🏆',
@@ -269,10 +261,10 @@ const COMMAND_INFO = [
     },
     {
         name: 'streak',
-        category: 'admin',
+        category: 'economy',
         emoji: '🔥',
         usage: 'streak register | setchannel | channel',
-        desc: '🔥 Sistem streak: register, set reminder channel, atau cek konfigurasi.\n> • **register** — daftar sendiri (semua orang)\n> • **setchannel** — **(ADMIN)** pilih channel reminder\n> • **channel** — **(ADMIN)** lihat channel aktif',
+        desc: '🔥 Sistem streak.\n> • **register** — daftar sendiri (semua orang)\n> • **setchannel** — **(ADMIN)** pilih channel reminder\n> • **channel** — **(ADMIN)** lihat channel aktif',
         note: 'Alias prefix: lustreak / lu streak',
     },
 ];

@@ -9,21 +9,19 @@ const STREAK_IMAGE = path.join(__dirname, '..', '..', 'public', 'asset', 'streak
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('streak')
-    .setDescription('🔥 Streak system — register, manage channel, and more')
-    // ── register (everyone) ──────────────────────────────────────────
+    .setDescription('🔥 Streak system — register, manage, and more')
     .addSubcommand(sub =>
       sub
         .setName('register')
-        .setDescription('Register yourself for the streak system')
-        .addUserOption(opt =>
-          opt.setName('user').setDescription('Register another user (admin only)').setRequired(false)))
-    // ── admin commands ───────────────────────────────────────────────
+        .setDescription('Register yourself for the streak system'))
     .addSubcommand(sub =>
       sub
         .setName('setchannel')
         .setDescription('[ADMIN] Set this channel as the streak reminder channel'))
     .addSubcommand(sub =>
-      sub.setName('channel').setDescription('[ADMIN] Show the current streak reminder channel')),
+      sub
+        .setName('channel')
+        .setDescription('[ADMIN] Show the current streak reminder channel')),
   aliases: ['streak'],
 
   async execute(interaction) {
@@ -33,24 +31,13 @@ module.exports = {
       return interaction.reply({ content: '❌ This command can only be used in a server.', ephemeral: true });
     }
 
-    // ── /streak register ──────────────────────────────────────────────
+    // ── /streak register (everyone) ───────────────────────────────────
     if (sub === 'register') {
-      const target = interaction.options.getUser('user');
-      const isRegisteringOther = !!target;
-      const isAdmin = !!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator);
-
-      // Admin can register other users; non-admin can only self-register
-      if (isRegisteringOther && !isAdmin) {
-        return interaction.reply({ content: '❌ Only administrators can register other users.', ephemeral: true });
-      }
-
-      const userId = target ? target.id : interaction.user.id;
+      const userId = interaction.user.id;
       const existing = await getStreakUser(userId);
       if (existing) {
         return interaction.reply({
-          content: isRegisteringOther
-            ? `✅ <@${userId}> is already registered in the streak system!`
-            : '✅ You are already registered in the streak system!',
+          content: '✅ You are already registered in the streak system!',
           ephemeral: true,
         });
       }
@@ -59,17 +46,14 @@ module.exports = {
       cacheAddUser(userId);
 
       return interaction.reply({
-        content: isRegisteringOther
-          ? `🔥 <@${userId}> has been registered for the streak system by admin!`
-          : '🔥 You have registered for the streak system! Keep chatting to maintain your streak.',
+        content: '🔥 You have registered for the streak system! Keep chatting to maintain your streak.',
         files: [{ attachment: STREAK_IMAGE, name: 'streak.png' }],
       });
     }
 
     // ── /streak setchannel (admin) ────────────────────────────────────
     if (sub === 'setchannel') {
-      const isAdmin = !!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator);
-      if (!isAdmin) {
+      if (!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator)) {
         return interaction.reply({ content: '❌ Only administrators can set the streak channel.', ephemeral: true });
       }
       await setStreakSetting(SETTING_KEY(guildId), interaction.channel.id);

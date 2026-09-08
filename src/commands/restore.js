@@ -19,7 +19,7 @@ module.exports = {
     const user = await getStreakUser(userId);
     if (!user) {
       return interaction.reply({
-        content: '❌ You are not registered in the streak system. Use `/register streak` first.',
+        content: '❌ You are not registered in the streak system. Use `/streak register` first.',
         ephemeral: true,
       });
     }
