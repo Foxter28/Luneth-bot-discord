@@ -135,6 +135,20 @@ async function ensureSchema() {
       key TEXT PRIMARY KEY,
       value TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS streak_registered (
+      userId TEXT PRIMARY KEY,
+      streak INTEGER NOT NULL DEFAULT 1,
+      lastHeartbeat INTEGER NOT NULL DEFAULT 0,
+      fireChannelId TEXT,
+      guildId TEXT,
+      frozen INTEGER NOT NULL DEFAULT 0
+    );
+
+    CREATE TABLE IF NOT EXISTS streak_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    );
   `);
 
   // Guarded column migrations (only act when a column is missing). Harmless on
@@ -585,6 +599,60 @@ async function addXp(userId, amount) {
   };
 }
 
+// -------------------------------------------------------------------
+// Streak system helpers
+// -------------------------------------------------------------------
+async function registerStreak(userId, guildId, channelId) {
+  const now = Date.now();
+  await dbRun(
+    'INSERT OR REPLACE INTO streak_registered (userId, streak, lastHeartbeat, fireChannelId, guildId, frozen) VALUES (?, 1, ?, ?, ?, 0)',
+    userId, now, channelId, guildId
+  );
+  return { userId, streak: 1, lastHeartbeat: now, fireChannelId: channelId, guildId, frozen: 0 };
+}
+
+async function getStreakUser(userId) {
+  return dbGet('SELECT * FROM streak_registered WHERE userId = ?', userId);
+}
+
+async function heartbeatStreak(userId) {
+  const now = Date.now();
+  await dbRun('UPDATE streak_registered SET lastHeartbeat = ? WHERE userId = ?', now, userId);
+}
+
+async function unfreezeStreak(userId) {
+  await dbRun('UPDATE streak_registered SET frozen = 0 WHERE userId = ?', userId);
+}
+
+async function freezeStreak(userId) {
+  await dbRun('UPDATE streak_registered SET frozen = 1 WHERE userId = ?', userId);
+}
+
+async function setStreak(userId, days) {
+  await dbRun('UPDATE streak_registered SET streak = ? WHERE userId = ?', days, userId);
+}
+
+async function getAllStreakUsers() {
+  return dbAll('SELECT * FROM streak_registered WHERE frozen = 0');
+}
+
+async function getAllStreakUsersFrozen() {
+  return dbAll('SELECT * FROM streak_registered');
+}
+
+async function getStreakSetting(key, fallback = null) {
+  const row = await dbGet('SELECT value FROM streak_settings WHERE key = ?', key);
+  return row ? row.value : fallback;
+}
+
+async function setStreakSetting(key, value) {
+  await dbRun('INSERT OR REPLACE INTO streak_settings (key, value) VALUES (?, ?)', key, String(value));
+}
+
+async function deleteStreakUser(userId) {
+  await dbRun('DELETE FROM streak_registered WHERE userId = ?', userId);
+}
+
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
@@ -634,4 +702,16 @@ module.exports = {
   getXpForLevel,
   getLevelLeaderboard: (limit = 10) => dbQueue(() => getLevelLeaderboard(limit)),
   addXp: (userId, amount) => dbQueue(() => addXp(userId, amount)),
+  // streak
+  registerStreak: (userId, guildId, channelId) => dbQueue(() => registerStreak(userId, guildId, channelId)),
+  getStreakUser: (userId) => dbQueue(() => getStreakUser(userId)),
+  heartbeatStreak: (userId) => dbQueue(() => heartbeatStreak(userId)),
+  unfreezeStreak: (userId) => dbQueue(() => unfreezeStreak(userId)),
+  freezeStreak: (userId) => dbQueue(() => freezeStreak(userId)),
+  setStreak: (userId, days) => dbQueue(() => setStreak(userId, days)),
+  getAllStreakUsers: () => dbQueue(() => getAllStreakUsers()),
+  getAllStreakUsersFrozen: () => dbQueue(() => getAllStreakUsersFrozen()),
+  getStreakSetting: (key, fallback) => dbQueue(() => getStreakSetting(key, fallback)),
+  setStreakSetting: (key, value) => dbQueue(() => setStreakSetting(key, value)),
+  deleteStreakUser: (userId) => dbQueue(() => deleteStreakUser(userId)),
 };

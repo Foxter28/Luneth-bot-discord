@@ -62,4 +62,18 @@ module.exports = {
     topDividerRoleId: "1539641300125491322", // 🧁
     bottomDividerRoleId: "1540916755520553060", // ༎ຶ‿༎ຶ
   },
+
+  // Streak system
+  streak: {
+    restoreCost: 5000,
+    checkIntervalMs: 15 * 60 * 1000, // background check every 15 minutes
+    reminderRoleIds: ['1521728913376804955'],
+    milestoneRoles: [
+      { days: 3,  roleId: '1521728913376804955' },
+      { days: 7,  roleId: '1521728955047084162' },
+      { days: 14, roleId: '1521728999548780714' },
+      { days: 21, roleId: '1521729045614694420' },
+      { days: 30, roleId: '1521725050447724604' },
+    ],
+  },
 };
