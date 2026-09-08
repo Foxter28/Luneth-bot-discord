@@ -177,6 +177,18 @@ async function ensureSchema() {
   await addIfMissing('lastQuestReset', 'lastQuestReset INTEGER NOT NULL DEFAULT 0');
   await addIfMissing('level', 'level INTEGER NOT NULL DEFAULT 1');
   await addIfMissing('xp', 'xp INTEGER NOT NULL DEFAULT 0');
+
+  // Streak table migration: ensure all columns exist on pre-existing tables.
+  const streakCols = (await dbAll("SELECT name FROM pragma_table_info('streak_registered')")).map((r) => r.name);
+  const addIfMissingStreak = (col, ddl) => {
+    if (!streakCols.includes(col)) {
+      return dbExec(`ALTER TABLE streak_registered ADD COLUMN ${ddl};`);
+    }
+    return Promise.resolve();
+  };
+  await addIfMissingStreak('streakUpdatedAt', 'streakUpdatedAt INTEGER NOT NULL DEFAULT 0');
+  await addIfMissingStreak('frozen', 'frozen INTEGER NOT NULL DEFAULT 0');
+  await addIfMissingStreak('guildId', 'guildId TEXT');
 }
 
 // Kick off schema creation. Every dbQueue operation awaits this, so no query
