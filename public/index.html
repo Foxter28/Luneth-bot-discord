@@ -693,54 +693,131 @@
       filter: drop-shadow(0 0 22px rgba(168, 85, 247, .6))
     }
 
-    /* lounge — bento 3+1, not uniform */
-    .lounge {
-      display: grid;
-      grid-template-columns: 1.4fr .9fr;
-      grid-template-rows: auto auto;
-      gap: 14px
-    }
-
-    .lounge .lg {
-      grid-row: span 2;
-      background: linear-gradient(180deg, rgba(168, 85, 247, .14), rgba(20, 13, 38, .9));
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px;
+    /* gallery activity — floating memories */
+    .gallery-list {
       display: flex;
       flex-direction: column;
-      justify-content: center
+      gap: 40px
     }
 
-    .room {
-      background: rgba(20, 13, 38, .85);
-      border: 1px solid var(--border);
+    .gallery-item {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 1fr;
+      align-items: center;
+      gap: 20px;
+      min-height: 220px;
+      position: relative
+    }
+
+    .gallery-item .g-photo {
+      width: 100%;
+      max-width: 200px;
       border-radius: 14px;
-      padding: 16px;
-      transition: border-color .15s, transform .15s
+      border: 2px solid rgba(168, 85, 247, .35);
+      box-shadow: 0 8px 30px rgba(168, 85, 247, .25), 0 2px 8px rgba(0, 0, 0, .4);
+      object-fit: cover;
+      aspect-ratio: 3/4;
+      transition: transform .4s ease, box-shadow .4s ease;
+      position: relative;
+      z-index: 2
     }
 
-    .room:hover {
-      border-color: var(--glow);
-      transform: translateY(-2px)
+    .gallery-item:nth-child(odd) .g-photo:first-child {
+      transform: rotate(-4deg) translateY(-8px)
     }
 
-    .room-hash {
+    .gallery-item:nth-child(odd) .g-photo:last-child {
+      transform: rotate(3deg) translateY(10px)
+    }
+
+    .gallery-item:nth-child(even) .g-photo:first-child {
+      transform: rotate(5deg) translateY(10px)
+    }
+
+    .gallery-item:nth-child(even) .g-photo:last-child {
+      transform: rotate(-3deg) translateY(-12px)
+    }
+
+    .gallery-item:hover .g-photo {
+      transform: rotate(0deg) translateY(-4px) scale(1.04);
+      box-shadow: 0 12px 40px rgba(168, 85, 247, .4), 0 4px 12px rgba(0, 0, 0, .5)
+    }
+
+    .gallery-item .g-icon {
+      width: 100%;
+      max-width: 130px;
+      border-radius: 16px;
+      border: 2px solid rgba(56, 189, 248, .4);
+      box-shadow: 0 8px 30px rgba(56, 189, 248, .3), 0 2px 8px rgba(0, 0, 0, .4);
+      object-fit: cover;
+      aspect-ratio: 1;
+      animation: iconFloat 3s ease-in-out infinite;
+      position: relative;
+      z-index: 2
+    }
+
+    @keyframes iconFloat {
+      0%, 100% { transform: translateY(0) rotate(2deg) }
+      50% { transform: translateY(-10px) rotate(-2deg) }
+    }
+
+    .gallery-item .g-text {
+      text-align: center;
+      padding: 24px 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      position: relative;
+      z-index: 3;
+      box-shadow: var(--sh)
+    }
+
+    .gallery-item .g-text .g-label {
       font-family: var(--fp);
+      font-size: .72rem;
       color: var(--cyan);
-      font-size: .95rem;
-      margin-bottom: 4px
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: 6px
     }
 
-    .room h3 {
-      font-size: .95rem;
+    .gallery-item .g-text h3 {
+      font-family: var(--fd);
+      font-size: 1.15rem;
       color: #fff;
-      margin-bottom: 4px
+      margin-bottom: 8px
     }
 
-    .room p {
-      font-size: .82rem;
-      color: #a78bfa
+    .gallery-item .g-text p {
+      font-size: .88rem;
+      color: #c4b5fd;
+      line-height: 1.6
+    }
+
+    @keyframes gFloat1 {
+      0%, 100% { transform: rotate(-4deg) translateY(-8px) }
+      50% { transform: rotate(-4deg) translateY(4px) }
+    }
+
+    @keyframes gFloat2 {
+      0%, 100% { transform: rotate(3deg) translateY(10px) }
+      50% { transform: rotate(3deg) translateY(-2px) }
+    }
+
+    .gallery-item:nth-child(odd) .g-photo:first-child {
+      animation: gFloat1 5s ease-in-out infinite
+    }
+
+    .gallery-item:nth-child(odd) .g-photo:last-child {
+      animation: gFloat2 5.5s ease-in-out infinite
+    }
+
+    .gallery-item:nth-child(even) .g-photo:first-child {
+      animation: gFloat2 4.8s ease-in-out infinite
+    }
+
+    .gallery-item:nth-child(even) .g-photo:last-child {
+      animation: gFloat1 5.2s ease-in-out infinite
     }
 
     /* booster — constellation / ticker distinct */
@@ -1023,12 +1100,20 @@
         border-top: 1px solid var(--border)
       }
 
-      .lounge {
-        grid-template-columns: 1fr
+      .gallery-item .g-photo {
+        max-width: 140px
       }
 
-      .lounge .lg {
-        grid-row: auto
+      .gallery-item .g-icon {
+        max-width: 100px
+      }
+
+      .gallery-item .g-text h3 {
+        font-size: 1rem
+      }
+
+      .gallery-item .g-text p {
+        font-size: .82rem
       }
     }
 
@@ -1111,7 +1196,7 @@
       <a href="#" class="brand"><img src="/asset/logo/lunera-logo.webp" alt="Lunera" /><b>LUNERA</b></a>
       <ul class="nav-links">
         <li><a href="#peraturan">Peraturan</a></li>
-        <li><a href="#komunitas">Komunitas</a></li>
+        <li><a href="#komunitas">Galery Activity</a></li>
         <li><a href="/guide" style="color:var(--gold)">Panduan Bot ↗</a></li>
       </ul>
       <div class="nav-cta">
@@ -1123,8 +1208,8 @@
       <div class="drawer" id="drawer">
         <a href="#peraturan" onclick="toggleDrawer()"><i data-lucide="scroll-text" style="width:16px;height:16px"></i>
           Peraturan Server</a>
-        <a href="#komunitas" onclick="toggleDrawer()"><i data-lucide="users" style="width:16px;height:16px"></i> Ruang
-          Komunitas</a>
+        <a href="#komunitas" onclick="toggleDrawer()"><i data-lucide="users" style="width:16px;height:16px"></i> Galery
+          Activity</a>
         <a href="#boosters" onclick="toggleDrawer()"><i data-lucide="heart" style="width:16px;height:16px"></i> Hall of
           Boosters</a>
         <a href="/guide" style="color:var(--gold)"><i data-lucide="book-open" style="width:16px;height:16px"></i>
@@ -1293,38 +1378,42 @@
       </div>
     </section>
 
-    <!-- KOMUNITAS — bento -->
+    <!-- GALLERY ACTIVITY — floating memories -->
     <section id="komunitas" class="sec">
       <div class="sec-head">
         <div>
-          <div class="chip">RUANG KOMUNITAS</div>
-          <h2>Tempat Nongkrong Favorit</h2>
+          <div class="chip">GALERY ACTIVITY</div>
+          <h2>Aktivitas di Lunera</h2>
         </div>
-        <p>Kanal yang paling ramai setiap malam — pilih suasana yang paling nyaman untukmu.</p>
+        <p>Momen-momen yang paling berkesan dari komunitas night owls kita.</p>
       </div>
-      <div class="lounge">
-        <div class="lg">
-          <div class="room-hash" style="font-size:1.1rem"># obrolan-santai</div>
-          <h3 style="color:#fff">Ruang bercengkerama utama</h3>
-          <p style="color:#c4b5fd;font-size:.9rem;margin-top:6px">Berbagi cerita harian, meme, dan obrolan ringan hingga
-            larut malam. Selalu ada teman mengobrol.</p>
+      <div class="gallery-list">
+        <div class="gallery-item">
+          <img class="g-photo" src="/asset/activity/obrolan.jpg" alt="Obrolan Santai" loading="lazy" />
+          <div class="g-text">
+            <div class="g-label"># obrolan-santai</div>
+            <h3>Ruang Bercengkrama</h3>
+            <p>Berbagi cerita harian, meme, dan obrolan ringan hingga larut malam. Selalu ada teman mengobrol.</p>
+          </div>
+          <img class="g-photo" src="/asset/activity/gaming.jpg" alt="Gaming" loading="lazy" />
         </div>
-        <div class="room">
-          <div class="room-hash"># bot-economy</div>
-          <h3>Arena RPG</h3>
-          <p>Pamer kartu level, adu dungeon, dan berburu peti misteri bersama Luneth.</p>
+        <div class="gallery-item">
+          <img class="g-photo" src="/asset/activity/nobar.jpg" alt="Nonton Bareng" loading="lazy" />
+          <div class="g-text">
+            <div class="g-label">🔊 voice & nobar</div>
+            <h3>Nobar & Mabar</h3>
+            <p>Voice 24/7 untuk menonton film atau bermain gim bersama teman-teman sepanjang malam.</p>
+          </div>
+          <img class="g-icon" src="/asset/activity/icon.jpg" alt="Activity Icon" loading="lazy" />
         </div>
-        <div class="room">
-          <div class="room-hash">🔊 Voice & Nobar</div>
-          <h3>Nobar & Mabar</h3>
-          <p>Voice 24/7 untuk menonton film atau bermain gim bersama.</p>
-        </div>
-        <div class="room" style="grid-column:1/-1;display:flex;align-items:center;gap:14px">
-          <div style="flex:1">
-            <div class="room-hash"># jual-beli</div>
-            <h3>Forum Jual Beli</h3>
-            <p>Transaksi aman dengan pendampingan Staf / Luminary — gratis.</p>
-          </div><button class="btn btn-ghost" onclick="openModal('fjb')" style="flex-shrink:0">Lihat Aturan</button>
+        <div class="gallery-item">
+          <img class="g-photo" src="/asset/activity/gaming.jpg" alt="Arena RPG" loading="lazy" />
+          <div class="g-text">
+            <div class="g-label"># bot-economy</div>
+            <h3>Arena RPG</h3>
+            <p>Pamer kartu level, adu dungeon, dan berburu peti misteri bersama Luneth bot.</p>
+          </div>
+          <img class="g-photo" src="/asset/activity/obrolan.jpg" alt="Komunitas" loading="lazy" />
         </div>
       </div>
     </section>
