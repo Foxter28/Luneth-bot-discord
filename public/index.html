@@ -699,81 +699,71 @@
     .gallery-list {
       display: flex;
       flex-direction: column;
-      gap: 46px
+      gap: 36px
     }
 
     .gallery-item {
       display: grid;
-      grid-template-columns: 1.2fr 1.4fr 1.2fr;
+      grid-template-columns: 1fr 1fr;
       align-items: center;
-      gap: 16px;
-      min-height: 240px;
-      position: relative
+      gap: 28px;
+      min-height: 200px
+    }
+
+    .gallery-item.reverse {
+      direction: rtl
+    }
+
+    .gallery-item.reverse > * {
+      direction: ltr
     }
 
     .gallery-item video.g-video {
       width: 100%;
-      max-width: 260px;
+      max-width: 420px;
       border-radius: 14px;
       border: 2px solid rgba(168, 85, 247, .35);
       box-shadow: 0 8px 30px rgba(168, 85, 247, .25), 0 2px 8px rgba(0, 0, 0, .4);
       object-fit: cover;
       aspect-ratio: 16/9;
-      opacity: .55;
+      opacity: .6;
       background: #0d0820;
       transition: transform .4s ease, box-shadow .4s ease, opacity .4s ease;
-      position: relative;
       z-index: 2
-    }
-
-    .gallery-item .g-icon {
-      width: 100%;
-      max-width: 120px;
-      border-radius: 14px;
-      object-fit: cover;
-      aspect-ratio: 1;
-      animation: iconFloat 3s ease-in-out infinite;
-      position: relative;
-      z-index: 2
-    }
-
-    @keyframes iconFloat {
-      0%, 100% { transform: translateY(0) rotate(2deg) }
-      50% { transform: translateY(-10px) rotate(-2deg) }
-    }
-
-    .gallery-item:nth-child(odd) video.g-video:first-child {
-      transform: rotate(-4deg) translateY(-8px)
-    }
-
-    .gallery-item:nth-child(odd) video.g-video:last-child {
-      transform: rotate(3deg) translateY(10px)
-    }
-
-    .gallery-item:nth-child(even) video.g-video:first-child {
-      transform: rotate(5deg) translateY(10px)
-    }
-
-    .gallery-item:nth-child(even) video.g-video:last-child {
-      transform: rotate(-3deg) translateY(-12px)
     }
 
     .gallery-item:hover video.g-video {
-      transform: rotate(0deg) translateY(-4px) scale(1.04);
+      transform: scale(1.03);
       box-shadow: 0 12px 40px rgba(168, 85, 247, .4), 0 4px 12px rgba(0, 0, 0, .5);
       opacity: .8
     }
 
+    .gallery-item .g-media {
+      display: flex;
+      align-items: center;
+      gap: 14px
+    }
+
+    .gallery-item .g-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 16px;
+      object-fit: cover;
+      animation: iconFloat 3s ease-in-out infinite
+    }
+
+    @keyframes iconFloat {
+      0%, 100% { transform: translateY(0) rotate(2deg) }
+      50% { transform: translateY(-8px) rotate(-2deg) }
+    }
+
     .gallery-item .g-text {
-      text-align: center;
-      padding: 12px;
-      position: relative;
-      z-index: 3
+      padding: 8px 0
     }
 
     .gallery-item .g-text .g-label {
       font-family: var(--fp);
-      font-size: .72rem;
+      font-size: .75rem;
       color: var(--cyan);
       letter-spacing: .1em;
       text-transform: uppercase;
@@ -782,43 +772,16 @@
 
     .gallery-item .g-text h3 {
       font-family: var(--fd);
-      font-size: 1.25rem;
+      font-size: 1.4rem;
       color: #fff;
-      text-shadow: 0 0 16px rgba(168, 85, 247, .6), 0 2px 8px rgba(0, 0, 0, .8);
+      text-shadow: 0 0 16px rgba(168, 85, 247, .5);
       margin-bottom: 8px
     }
 
     .gallery-item .g-text p {
-      font-size: .9rem;
-      color: #e9d5ff;
-      line-height: 1.6;
-      text-shadow: 0 0 12px rgba(0, 0, 0, .8), 0 2px 6px rgba(0, 0, 0, .9)
-    }
-
-    @keyframes gFloat1 {
-      0%, 100% { transform: rotate(-4deg) translateY(-8px) }
-      50% { transform: rotate(-4deg) translateY(4px) }
-    }
-
-    @keyframes gFloat2 {
-      0%, 100% { transform: rotate(3deg) translateY(10px) }
-      50% { transform: rotate(3deg) translateY(-2px) }
-    }
-
-    .gallery-item:nth-child(odd) video.g-video:first-child {
-      animation: gFloat1 6s ease-in-out infinite
-    }
-
-    .gallery-item:nth-child(odd) video.g-video:last-child {
-      animation: gFloat2 6.4s ease-in-out infinite
-    }
-
-    .gallery-item:nth-child(even) video.g-video:first-child {
-      animation: gFloat2 5.6s ease-in-out infinite
-    }
-
-    .gallery-item:nth-child(even) video.g-video:last-child {
-      animation: gFloat1 6.2s ease-in-out infinite
+      font-size: .92rem;
+      color: #c4b5fd;
+      line-height: 1.6
     }
 
     /* booster — constellation / ticker distinct */
@@ -1106,18 +1069,18 @@
         gap: 14px
       }
 
+      .gallery-item.reverse {
+        direction: ltr
+      }
+
       .gallery-item video.g-video {
-        max-width: 220px;
-        justify-self: center;
-        aspect-ratio: 9/16
+        max-width: 100%;
+        aspect-ratio: 9/16;
+        max-height: 320px
       }
 
       .gallery-item .g-text {
-        order: 0
-      }
-
-      .gallery-item video.g-video {
-        order: -1
+        text-align: center
       }
     }
 
@@ -1393,31 +1356,31 @@
       </div>
       <div class="gallery-list">
         <div class="gallery-item">
-          <video class="g-video" src="/asset/activity/2.webm" alt="General Chat" autoplay muted loop playsinline preload="auto"></video>
           <div class="g-text">
             <div class="g-label"># obrolan-santai</div>
             <h3>Ruang Bercengkrama</h3>
             <p>Berbagi cerita harian, meme, dan obrolan ringan hingga larut malam. Selalu ada teman mengobrol.</p>
           </div>
-          <video class="g-video" src="/asset/activity/1.webm" alt="Luneth Bot" autoplay muted loop playsinline preload="auto"></video>
-        </div>
-        <div class="gallery-item">
           <video class="g-video" src="/asset/activity/2.webm" alt="General Chat" autoplay muted loop playsinline preload="auto"></video>
+        </div>
+        <div class="gallery-item reverse">
           <div class="g-text">
             <div class="g-label">🔊 voice & nobar</div>
             <h3>Nobar & Mabar</h3>
             <p>Voice 24/7 untuk menonton film atau bermain gim bersama teman-teman sepanjang malam.</p>
           </div>
-          <img class="g-icon" src="/asset/activity/moon.gif" alt="Moon" />
+          <div class="g-media">
+            <video class="g-video" src="/asset/activity/3.webm" alt="Voice Chat" autoplay muted loop playsinline preload="auto"></video>
+            <img class="g-icon" src="/asset/activity/moon.gif" alt="Moon" />
+          </div>
         </div>
         <div class="gallery-item">
-          <video class="g-video" src="/asset/activity/3.webm" alt="Voice Chat" autoplay muted loop playsinline preload="auto"></video>
           <div class="g-text">
             <div class="g-label"># bot-economy</div>
             <h3>Arena RPG</h3>
             <p>Pamer kartu level, adu dungeon, dan berburu peti misteri bersama Luneth bot.</p>
           </div>
-          <video class="g-video" src="/asset/activity/2.webm" alt="General Chat" autoplay muted loop playsinline preload="metadata"></video>
+          <video class="g-video" src="/asset/activity/1.webm" alt="Luneth Bot" autoplay muted loop playsinline preload="auto"></video>
         </div>
       </div>
     </section>
