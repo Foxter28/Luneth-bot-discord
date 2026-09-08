@@ -5,7 +5,7 @@ const path = require('path');
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 
 process.env.PORT = '4567';
-process.env.DISCORD_INVITE_URL = 'https://discord.com/invite/zSc9VWE4';
+process.env.DISCORD_INVITE_URL = 'https://discord.gg/Eg2SBcsG4N';
 
 let failures = 0;
 const assert = (cond, msg) => {
