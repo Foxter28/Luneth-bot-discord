@@ -719,7 +719,7 @@
       box-shadow: 0 8px 30px rgba(168, 85, 247, .25), 0 2px 8px rgba(0, 0, 0, .4);
       object-fit: cover;
       aspect-ratio: 16/9;
-      opacity: .45;
+      opacity: .55;
       background: #0d0820;
       transition: transform .4s ease, box-shadow .4s ease, opacity .4s ease;
       position: relative;
@@ -1393,16 +1393,16 @@
       </div>
       <div class="gallery-list">
         <div class="gallery-item">
-          <video class="g-video" src="/asset/activity/2.webm" alt="General Chat" autoplay muted loop playsinline preload="metadata"></video>
+          <video class="g-video" src="/asset/activity/2.webm" alt="General Chat" autoplay muted loop playsinline preload="auto"></video>
           <div class="g-text">
             <div class="g-label"># obrolan-santai</div>
             <h3>Ruang Bercengkrama</h3>
             <p>Berbagi cerita harian, meme, dan obrolan ringan hingga larut malam. Selalu ada teman mengobrol.</p>
           </div>
-          <video class="g-video" src="/asset/activity/1.webm" alt="Luneth Bot" autoplay muted loop playsinline preload="metadata"></video>
+          <video class="g-video" src="/asset/activity/1.webm" alt="Luneth Bot" autoplay muted loop playsinline preload="auto"></video>
         </div>
         <div class="gallery-item">
-          <video class="g-video" src="/asset/activity/2.webm" alt="General Chat" autoplay muted loop playsinline preload="metadata"></video>
+          <video class="g-video" src="/asset/activity/2.webm" alt="General Chat" autoplay muted loop playsinline preload="auto"></video>
           <div class="g-text">
             <div class="g-label">🔊 voice & nobar</div>
             <h3>Nobar & Mabar</h3>
@@ -1411,7 +1411,7 @@
           <img class="g-icon" src="/asset/activity/moon.gif" alt="Moon" />
         </div>
         <div class="gallery-item">
-          <video class="g-video" src="/asset/activity/3.webm" alt="Voice Chat" autoplay muted loop playsinline preload="metadata"></video>
+          <video class="g-video" src="/asset/activity/3.webm" alt="Voice Chat" autoplay muted loop playsinline preload="auto"></video>
           <div class="g-text">
             <div class="g-label"># bot-economy</div>
             <h3>Arena RPG</h3>
@@ -1532,6 +1532,11 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof lucide !== 'undefined') lucide.createIcons();
+      document.querySelectorAll('video.g-video').forEach(v => {
+        v.muted = true;
+        const p = v.play();
+        if (p) p.catch(() => { });
+      });
       fetch('/api/widget').then(r => r.json()).then(d => {
         const n = d.membersCount || d.memberCount || d.presenceCount;
         if (n) { const t = n.toLocaleString('id-ID') + '+'; document.querySelectorAll('.badge-live').forEach(b => b.innerHTML = '<span class="dot"></span><span class="txt">' + t + ' ONLINE</span>'); document.querySelectorAll('.meta strong').forEach((el, i) => { if (i === 0) el.textContent = t }) }
