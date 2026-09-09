@@ -752,6 +752,25 @@
       animation: iconFloat 3s ease-in-out infinite
     }
 
+    .gallery-item .g-icon-sticker {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      width: 70px;
+      height: 70px;
+      border-radius: 12px;
+      object-fit: cover;
+      z-index: 5;
+      pointer-events: none;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, .6)) drop-shadow(0 0 12px rgba(168, 85, 247, .4));
+      animation: stickerBob 2.5s ease-in-out infinite
+    }
+
+    @keyframes stickerBob {
+      0%, 100% { transform: translateY(0) rotate(-2deg) }
+      50% { transform: translateY(-5px) rotate(2deg) }
+    }
+
     @keyframes iconFloat {
 
       0%,
@@ -1036,6 +1055,10 @@
       }
 
       .badge-live {
+        display: none
+      }
+
+      .nav-cta .btn-primary {
         display: none
       }
 
@@ -1341,7 +1364,7 @@
     <!-- HERO -->
     <section class="hero">
       <div class="hero-copy">
-        <div class="eyebrow"><i data-lucide="moon-star" style="width:14px;height:14px"></i> KOMUNITAS NIGHT OWLS</div>
+        <div class="eyebrow"><i data-lucide="moon-star" style="width:14px;height:14px"></i> KOMUNITAS LUNARIANS</div>
         <h1>Tempat nongkrong <em>paling nyaman</em> di malam hari.</h1>
         <p>Lunera adalah server Discord untuk bercengkerama dengan santai — mengobrol, menonton bersama, bermain gim,
           dan berbagi cerita hingga larut. Kehadiran <b>Luneth Bot v1.5</b> menambah keseruan dengan sistem RPG yang
@@ -1519,10 +1542,10 @@
             <h3>Nobar & Mabar</h3>
             <p>Voice 24/7 untuk menonton film atau bermain gim bersama teman-teman sepanjang malam.</p>
           </div>
-          <div class="g-media">
+          <div class="g-media" style="position:relative">
             <video class="g-video" src="/asset/activity/3.webm" alt="Voice Chat" autoplay muted loop playsinline
               preload="auto"></video>
-            <img class="g-icon" src="/asset/activity/moon.gif" alt="Moon" />
+            <img class="g-icon-sticker" src="/asset/activity/moon.gif" alt="Moon" />
           </div>
         </div>
         <div class="gallery-item">
