@@ -368,6 +368,7 @@ function buildSelectRow(selectedCategory, isAdmin = true) {
         .addOptions(
             visibleCategories(isAdmin).map(([value, meta]) => ({
                 label: meta.letter ? `${meta.letter}. ${meta.label}` : meta.label,
+                emoji: meta.emoji,
                 value,
                 default: value === selectedCategory,
             }))
