@@ -179,35 +179,35 @@ const COMMAND_INFO = [
     },
     {
         name: 'craft',
-        category: 'shop',
+        category: 'adventure',
         emoji: '⚒️',
         usage: 'craft item:<id>',
         desc: 'Craft an item from materials (see /recipes).',
     },
     {
         name: 'scramble',
-        category: 'economy',
+        category: 'games',
         emoji: '🔤',
         usage: 'scramble',
         desc: '🔤 **Scramble Game** — Unscramble the word to win Coin rewards.',
     },
     {
         name: 'recipes',
-        category: 'shop',
+        category: 'adventure',
         emoji: '📜',
         usage: 'recipes',
         desc: 'List all crafting recipes and their materials.',
     },
     {
         name: 'equip',
-        category: 'shop',
+        category: 'adventure',
         emoji: '🎽',
         usage: 'equip',
         desc: 'View your equipped gear and pick weapons/armor from your inventory.',
     },
     {
         name: 'battle',
-        category: 'shop',
+        category: 'adventure',
         emoji: '⚔️',
         usage: 'battle',
         desc: '⚔️ **PvE Combat** — actively fight monsters for big coin rewards + rare gear drops. Harder foes as you win more.',
@@ -215,7 +215,7 @@ const COMMAND_INFO = [
     },
     {
         name: 'mine',
-        category: 'shop',
+        category: 'adventure',
         emoji: '⛏️',
         usage: 'mine [ore] | mine status',
         desc: '⛏️ **Farming** — mine ores & materials using your own stamina. Materials feed /craft.',
@@ -279,10 +279,12 @@ const COMMAND_INFO = [
 
 const CATEGORIES = {
     all: { label: 'All Commands', emoji: '✦', letter: '' },
-    economy: { label: 'Economy', emoji: '**E.**', letter: 'E' },
-    shop: { label: 'Shop', emoji: '**S.**', letter: 'S' },
-    gambling: { label: 'Gambling', emoji: '**G.**', letter: 'G' },
-    admin: { label: 'Admin', emoji: '**A.**', letter: 'A' },
+    economy: { label: 'Economy', emoji: '<:economy:1547167467896307733>', letter: 'E' },
+    shop: { label: 'Shop', emoji: '<:shop:1547167662658953306>', letter: 'S' },
+    adventure: { label: 'Adventure', emoji: '<:adventure:1547167417887752192>', letter: 'Ad' },
+    gambling: { label: 'Gambling', emoji: '<:gambling:1547167541791563797>', letter: 'G' },
+    games: { label: 'Games', emoji: '<:games:1547167596741398528>', letter: 'M' },
+    admin: { label: 'Admin', emoji: '<:admin:1547167312757399552>', letter: 'A' },
 };
 
 // Adapter so we can filter while keeping the original list unchanged.
@@ -362,7 +364,7 @@ function buildEmbed(category, activePrefix, isAdmin = false) {
 function buildSelectRow(selectedCategory, isAdmin = true) {
     const menu = new StringSelectMenuBuilder()
         .setCustomId('help_category_select')
-        .setPlaceholder('Filter by category (E = Economy · S = Shop · G = Gambling)...')
+        .setPlaceholder('Filter by category (E = Economy · S = Shop · Ad = Adventure · G = Gambling · M = Games)...')
         .addOptions(
             visibleCategories(isAdmin).map(([value, meta]) => ({
                 label: meta.letter ? `${meta.letter}. ${meta.label}` : meta.label,
