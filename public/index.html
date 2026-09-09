@@ -1035,8 +1035,20 @@
         display: none
       }
 
+      .badge-live {
+        display: none
+      }
+
+      .nav-cta {
+        gap: 8px
+      }
+
       .hamburger {
-        display: block
+        display: block;
+        padding: 8px 11px;
+        line-height: 1;
+        border-radius: 10px;
+        border: 1px solid var(--border)
       }
 
       .hero {
@@ -1183,7 +1195,7 @@
     .slot-strip {
       display: flex;
       flex-direction: column;
-      transition: transform .7s cubic-bezier(.22, 1, .36, 1)
+      transition: transform 1s cubic-bezier(.22, 1, .36, 1)
     }
     .slot-word {
       font-family: var(--fd);
@@ -1666,23 +1678,29 @@
       try { if (sessionStorage.getItem('lunera_intro')) { ov.remove(); return } } catch (_) { ov.remove(); return }
       var words = strip.querySelectorAll('.slot-word'),
         rm = matchMedia('(prefers-reduced-motion:reduce)').matches,
-        step = words[0] ? words[0].offsetHeight : 70,
-        idx = 0, pauses = [1100, 1100, 0];
-      strip.style.transform = 'translateY(0)';
-      function next() {
-        idx++;
-        if (idx < words.length) {
-          strip.style.transform = 'translateY(' + (-idx * step) + 'px)';
-          setTimeout(next, rm ? 400 : pauses[idx] || 1000);
-        } else {
-          try { sessionStorage.setItem('lunera_intro', '1') } catch (_) {}
-          setTimeout(function () {
-            ov.classList.add('hide');
-            setTimeout(function () { ov.remove() }, 400);
-          }, rm ? 0 : 500);
+        idx = 0,
+        pauses = [1600, 1600, 0],
+        start = rm ? function (fn) { fn() } : function (fn) {
+          (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(fn);
+        };
+      start(function () {
+        var step = words[0] ? words[0].offsetHeight || 70 : 70;
+        strip.style.transform = 'translateY(0)';
+        function next() {
+          idx++;
+          if (idx < words.length) {
+            strip.style.transform = 'translateY(' + (-idx * step) + 'px)';
+            setTimeout(next, rm ? 400 : pauses[idx] || 1300);
+          } else {
+            try { sessionStorage.setItem('lunera_intro', '1') } catch (_) {}
+            setTimeout(function () {
+              ov.classList.add('hide');
+              setTimeout(function () { ov.remove() }, 400);
+            }, rm ? 0 : 650);
+          }
         }
-      }
-      setTimeout(next, rm ? 400 : 1000);
+        setTimeout(next, rm ? 500 : 1400);
+      });
     })();
 
     // ── Overlay 2: Crescent Moon Liquid (every page load) ──
