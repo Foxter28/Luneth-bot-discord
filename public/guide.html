@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Luneth Bot Guide ✦ Panduan Lengkap Economy RPG — Lunera</title>
+  <title>Lunera | Luneth Bot Guide</title>
   <meta name="description"
     content="Panduan lengkap bermain Luneth Bot Economy RPG di server Lunera: Leveling, Senjata, Crate, Mining, Battle, Transfer, Daily Quest, Gambling, dan semua command yang tersedia." />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -154,8 +154,13 @@
     }
 
     @keyframes tickerRoll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
     }
 
     .parallax-particles {
@@ -205,6 +210,7 @@
         opacity: 0;
         transform: translateY(50px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -341,8 +347,15 @@
     }
 
     @keyframes dotPulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: .4; }
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: .4;
+      }
     }
 
     .btn {
@@ -418,8 +431,15 @@
     }
 
     @keyframes drawerIn {
-      from { opacity: 0; transform: translateY(-6px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .drawer a {
@@ -475,13 +495,11 @@
       top: 0;
       bottom: 0;
       width: var(--path-width);
-      background: linear-gradient(
-        to bottom,
-        transparent,
-        var(--accent-lavender) 5%,
-        var(--accent-lavender) 95%,
-        transparent
-      );
+      background: linear-gradient(to bottom,
+          transparent,
+          var(--accent-lavender) 5%,
+          var(--accent-lavender) 95%,
+          transparent);
       opacity: 0.35;
       border-radius: 2px;
     }
@@ -541,10 +559,13 @@
     }
 
     @keyframes waypointPulse {
-      0%, 100% {
+
+      0%,
+      100% {
         opacity: 0.5;
         transform: scale(1);
       }
+
       50% {
         opacity: 1;
         transform: scale(1.15);
@@ -972,7 +993,7 @@
 
     #voice-fab.active {
       transform: scale(.92) rotate(45deg);
-      background: linear-gradient(135deg, rgba(239, 68, 68, .85), rgba(248, 113, 113, .7))
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.85rgba(0, 0, 0, 0.7).7))
     }
 
     #voice-fab .fab-icon {
@@ -1218,7 +1239,9 @@
 
   <!-- Ticker -->
   <div class="ticker" aria-hidden="true">
-    <span>✦ LUNETH BOT GUIDE ✦ RPG ECONOMY v1.5 ✦ MAX LV. 999 ✦ 16+ WEAPONS ✦ CRATE REWARDS ✦ MINING &amp; CRAFTING ✦ DAILY QUEST &amp; GAMBLING ✦ LUNETH BOT GUIDE ✦ RPG ECONOMY v1.5 ✦ MAX LV. 999 ✦ 16+ WEAPONS ✦ CRATE REWARDS ✦ MINING &amp; CRAFTING ✦ DAILY QUEST &amp; GAMBLING ✦</span>
+    <span>✦ LUNETH BOT GUIDE ✦ RPG ECONOMY v1.5 ✦ MAX LV. 999 ✦ 16+ WEAPONS ✦ CRATE REWARDS ✦ MINING &amp; CRAFTING ✦
+      DAILY QUEST &amp; GAMBLING ✦ LUNETH BOT GUIDE ✦ RPG ECONOMY v1.5 ✦ MAX LV. 999 ✦ 16+ WEAPONS ✦ CRATE REWARDS ✦
+      MINING &amp; CRAFTING ✦ DAILY QUEST &amp; GAMBLING ✦</span>
   </div>
 
   <!-- Navigation -->
@@ -1235,17 +1258,24 @@
       </ul>
       <div class="nav-cta">
         <div class="badge-live" style="display:none"></div>
-        <a href="https://discord.gg/Eg2SBcsG4N" target="_blank" rel="noopener" class="btn btn-primary"><i data-lucide="log-in" style="width:15px;height:15px"></i> Bergabung</a>
+        <a href="https://discord.gg/Eg2SBcsG4N" target="_blank" rel="noopener" class="btn btn-primary"><i
+            data-lucide="log-in" style="width:15px;height:15px"></i> Bergabung</a>
         <button class="hamburger" onclick="toggleDrawer()" aria-label="Menu">☰</button>
       </div>
     </nav>
     <div class="drawer" id="drawer" aria-hidden="true">
-      <a href="/" onclick="toggleDrawer()"><i data-lucide="home" style="width:16px;height:16px"></i> Home (Lunera Server)</a>
-      <a href="/#peraturan" onclick="toggleDrawer()"><i data-lucide="scroll-text" style="width:16px;height:16px"></i> Peraturan Server</a>
-      <a href="/#komunitas" onclick="toggleDrawer()"><i data-lucide="users" style="width:16px;height:16px"></i> Galery Activity</a>
-      <a href="/#boosters" onclick="toggleDrawer()"><i data-lucide="heart" style="width:16px;height:16px"></i> Hall of Boosters</a>
-      <a href="/guide" style="color:var(--gold)"><i data-lucide="book-open" style="width:16px;height:16px"></i> Panduan Lengkap Bot</a>
-      <a href="https://discord.gg/Eg2SBcsG4N" target="_blank"><i data-lucide="external-link" style="width:16px;height:16px"></i> Buka Discord</a>
+      <a href="/" onclick="toggleDrawer()"><i data-lucide="home" style="width:16px;height:16px"></i> Home (Lunera
+        Server)</a>
+      <a href="/#peraturan" onclick="toggleDrawer()"><i data-lucide="scroll-text" style="width:16px;height:16px"></i>
+        Peraturan Server</a>
+      <a href="/#komunitas" onclick="toggleDrawer()"><i data-lucide="users" style="width:16px;height:16px"></i> Galery
+        Activity</a>
+      <a href="/#boosters" onclick="toggleDrawer()"><i data-lucide="heart" style="width:16px;height:16px"></i> Hall of
+        Boosters</a>
+      <a href="/guide" style="color:var(--gold)"><i data-lucide="book-open" style="width:16px;height:16px"></i> Panduan
+        Lengkap Bot</a>
+      <a href="https://discord.gg/Eg2SBcsG4N" target="_blank"><i data-lucide="external-link"
+          style="width:16px;height:16px"></i> Buka Discord</a>
     </div>
   </div>
   <div class="drawer-backdrop" id="backdrop" onclick="toggleDrawer()"></div>
@@ -1275,7 +1305,8 @@
     <div class="hero-moon">☾</div>
     <div class="hero-subtitle">Luneth Bot Economy RPG</div>
     <h1 class="hero-title">Bot Guide Versi 1.5</h1>
-    <p class="hero-desc">Panduan interaktif lengkap untuk bermain sistem Economy RPG bot Luneth di server Lunera. Dari awal sampai Level 999!</p>
+    <p class="hero-desc">Panduan interaktif lengkap untuk bermain sistem Economy RPG bot Luneth di server Lunera. Dari
+      awal sampai Level 999!</p>
   </section>
 
   <!-- Main Content — Vertical Timeline -->
@@ -1291,24 +1322,28 @@
         <div class="section-card">
           <div class="section-label">Getting Started</div>
           <h2 class="section-title">Cara Memulai</h2>
-          <p>Begitu kamu bergabung ke server Lunera, Luneth Bot otomatis akan menyapamu. Cukup ketikkan command pertama di channel <code>#bot-economy</code> dan akun RPG-mu langsung dibuat!</p>
+          <p>Begitu kamu bergabung ke server Lunera, Luneth Bot otomatis akan menyapamu. Cukup ketikkan command pertama
+            di channel <code>#bot-economy</code> dan akun RPG-mu langsung dibuat!</p>
 
           <h3>Command Pertama</h3>
           <div class="callout">
-            <strong>Tip:</strong> Semua command bisa dipakai sebagai <strong>Slash Command</strong> (<code>/daily</code>) atau <strong>Text Prefix</strong> (<code>ludaily</code>). Keduanya berfungsi sama!
+            <strong>Tip:</strong> Semua command bisa dipakai sebagai <strong>Slash Command</strong>
+            (<code>/daily</code>) atau <strong>Text Prefix</strong> (<code>ludaily</code>). Keduanya berfungsi sama!
           </div>
 
           <div class="cmd-grid">
             <div class="cmd-card">
               <div class="cmd-name">/daily</div>
               <div class="cmd-aliases">Alias: ludaily, lud</div>
-              <div class="cmd-desc">Ambil hadiah harian koin + XP. Tersedia setiap 24 jam sekali. Streak beruntun meningkatkan bonus!</div>
+              <div class="cmd-desc">Ambil hadiah harian koin + XP. Tersedia setiap 24 jam sekali. Streak beruntun
+                meningkatkan bonus!</div>
               <div class="cmd-reward">💰 Reward: +Koin & +50~100 XP</div>
             </div>
             <div class="cmd-card">
               <div class="cmd-name">/work</div>
               <div class="cmd-aliases">Alias: luwork, luw</div>
-              <div class="cmd-desc">Kirim karaktermu ekspedisi ke dungeon untuk mendapatkan koin & XP. Tersedia setiap 30 menit.</div>
+              <div class="cmd-desc">Kirim karaktermu ekspedisi ke dungeon untuk mendapatkan koin & XP. Tersedia setiap
+                30 menit.</div>
               <div class="cmd-reward">💰 Reward: +Koin & +15~35 XP</div>
             </div>
             <div class="cmd-card">
@@ -1319,7 +1354,8 @@
             <div class="cmd-card">
               <div class="cmd-name">/help</div>
               <div class="cmd-aliases">Alias: luhelp</div>
-              <div class="cmd-desc">Tampilkan daftar lengkap semua command Luneth yang tersedia secara langsung di Discord.</div>
+              <div class="cmd-desc">Tampilkan daftar lengkap semua command Luneth yang tersedia secara langsung di
+                Discord.</div>
             </div>
           </div>
         </div>
@@ -1334,14 +1370,16 @@
         <div class="section-card">
           <div class="section-label">Leveling System</div>
           <h2 class="section-title">Sistem Leveling & XP</h2>
-          <p>Setiap aktivitas di server memberikanmu XP (Experience Points). Kumpulkan XP hingga levelmu naik — maksimal sampai <strong>Level 999!</strong></p>
+          <p>Setiap aktivitas di server memberikanmu XP (Experience Points). Kumpulkan XP hingga levelmu naik — maksimal
+            sampai <strong>Level 999!</strong></p>
 
           <h3>Cara Cek Level</h3>
           <div class="cmd-grid">
             <div class="cmd-card">
               <div class="cmd-name">/level</div>
               <div class="cmd-aliases">Alias: lulevel, lulvl, rank, lvl, xp</div>
-              <div class="cmd-desc">Tampilkan kartu level visualmu: foto profil, progress bar XP, rasio XP, dan info milestone reward berikutnya.</div>
+              <div class="cmd-desc">Tampilkan kartu level visualmu: foto profil, progress bar XP, rasio XP, dan info
+                milestone reward berikutnya.</div>
             </div>
           </div>
 
@@ -1389,7 +1427,8 @@
           </table>
 
           <div class="callout">
-            <strong>Kurva XP Berbobot:</strong> Level awal naik cepat, semakin tinggi level akan semakin banyak XP yang dibutuhkan. Ini dimaksud agar ada tantangan jangka panjang!
+            <strong>Kurva XP Berbobot:</strong> Level awal naik cepat, semakin tinggi level akan semakin banyak XP yang
+            dibutuhkan. Ini dimaksud agar ada tantangan jangka panjang!
           </div>
         </div>
       </section>
@@ -1403,7 +1442,8 @@
         <div class="section-card">
           <div class="section-label">Crate Rewards</div>
           <h2 class="section-title">Sistem Crate Mystery Box</h2>
-          <p>Setiap kali kamu naik level, kamu otomatis mendapatkan <strong>Crate Mystery Box</strong> ke inventorymu. Buka cratenya untuk mendapatkan senjata, material, dan koin bonus!</p>
+          <p>Setiap kali kamu naik level, kamu otomatis mendapatkan <strong>Crate Mystery Box</strong> ke inventorymu.
+            Buka cratenya untuk mendapatkan senjata, material, dan koin bonus!</p>
 
           <h3>Level Up Rewards</h3>
           <table class="data-table">
@@ -1438,7 +1478,8 @@
             <div class="cmd-card">
               <div class="cmd-name">/open</div>
               <div class="cmd-aliases">Alias: luopen</div>
-              <div class="cmd-desc">Buka crate yang ada di inventory. Pilih jenis crate: <code>common</code>, <code>rare</code>, atau <code>legendary</code>.</div>
+              <div class="cmd-desc">Buka crate yang ada di inventory. Pilih jenis crate: <code>common</code>,
+                <code>rare</code>, atau <code>legendary</code>.</div>
               <div class="cmd-reward">Contoh: <code>/open crate_legendary</code></div>
             </div>
             <div class="cmd-card">
@@ -1459,7 +1500,8 @@
         <div class="section-card">
           <div class="section-label">Economy</div>
           <h2 class="section-title">Sistem Ekonomi Dasar</h2>
-          <p>Koin adalah mata uang utama Luneth. Kamu bisa mendapatkan, menghabiskan, hingga mentransfer koin ke sesama member.</p>
+          <p>Koin adalah mata uang utama Luneth. Kamu bisa mendapatkan, menghabiskan, hingga mentransfer koin ke sesama
+            member.</p>
 
           <div class="cmd-grid">
             <div class="cmd-card">
@@ -1475,7 +1517,8 @@
             <div class="cmd-card">
               <div class="cmd-name">/transfer</div>
               <div class="cmd-aliases">Alias: lutransfer, pay, lupay, tf, send</div>
-              <div class="cmd-desc">Kirim koin ke member lain dari saldo sendiri. Dilengkapi validasi saldo & anti-fraud.</div>
+              <div class="cmd-desc">Kirim koin ke member lain dari saldo sendiri. Dilengkapi validasi saldo &
+                anti-fraud.</div>
               <div class="cmd-reward">Contoh: <code>/transfer @alice 5000</code></div>
             </div>
             <div class="cmd-card">
@@ -1491,7 +1534,8 @@
             <div class="cmd-card">
               <div class="cmd-name">/sell</div>
               <div class="cmd-aliases">Alias: lusell</div>
-              <div class="cmd-desc">Jual item dari inventory untuk mendapatkan koin. Item senjata memiliki nilai jual tinggi.</div>
+              <div class="cmd-desc">Jual item dari inventory untuk mendapatkan koin. Item senjata memiliki nilai jual
+                tinggi.</div>
             </div>
           </div>
         </div>
@@ -1506,7 +1550,8 @@
         <div class="section-card">
           <div class="section-label">Arsenal</div>
           <h2 class="section-title">Senjata & Armor</h2>
-          <p>Luneth punya 16+ senjata custom dengan emoji unik masing-masing. Equip senjatamu untuk meningkatkan stat di pertarungan!</p>
+          <p>Luneth punya 16+ senjata custom dengan emoji unik masing-masing. Equip senjatamu untuk meningkatkan stat di
+            pertarungan!</p>
 
           <h3>Senjata Legendaris</h3>
           <div class="weapon-list">
@@ -1586,19 +1631,22 @@
         <div class="section-card">
           <div class="section-label">Battle System</div>
           <h2 class="section-title">Sistem Battle</h2>
-          <p>Tantang dungeon monster untuk mendapatkan koin, XP, dan item drop langka. Gunakan senjata equip-mu untuk meningkatkan damage!</p>
+          <p>Tantang dungeon monster untuk mendapatkan koin, XP, dan item drop langka. Gunakan senjata equip-mu untuk
+            meningkatkan damage!</p>
 
           <div class="cmd-grid">
             <div class="cmd-card">
               <div class="cmd-name">/battle</div>
               <div class="cmd-aliases">Alias: lubattle, fight, lufight</div>
-              <div class="cmd-desc">Serang monster dungeon. Stat senjata yang di-equip berpengaruh langsung pada damage output.</div>
+              <div class="cmd-desc">Serang monster dungeon. Stat senjata yang di-equip berpengaruh langsung pada damage
+                output.</div>
               <div class="cmd-reward">💰 Menang: +Koin +30~60 XP | Kalah: +15 XP</div>
             </div>
           </div>
 
           <div class="callout">
-            <strong>Tips Battle:</strong> Equip senjata dengan CRIT tinggi untuk meningkatkan peluang Critical Hit yang menghasilkan damage 2× lipat. Senjata Legendary memiliki ATK & CRIT tertinggi!
+            <strong>Tips Battle:</strong> Equip senjata dengan CRIT tinggi untuk meningkatkan peluang Critical Hit yang
+            menghasilkan damage 2× lipat. Senjata Legendary memiliki ATK & CRIT tertinggi!
           </div>
         </div>
       </section>
@@ -1612,13 +1660,15 @@
         <div class="section-card">
           <div class="section-label">Mining</div>
           <h2 class="section-title">Sistem Mining</h2>
-          <p>Eksplorasi tambang untuk mendapatkan batu permata, mineral mistis, dan material langka. Setiap aktivitas mining menghabiskan <strong>Stamina</strong>.</p>
+          <p>Eksplorasi tambang untuk mendapatkan batu permata, mineral mistis, dan material langka. Setiap aktivitas
+            mining menghabiskan <strong>Stamina</strong>.</p>
 
           <div class="cmd-grid">
             <div class="cmd-card">
               <div class="cmd-name">/mine</div>
               <div class="cmd-aliases">Alias: lumine</div>
-              <div class="cmd-desc">Gali tambang dan dapatkan mineral, batu permata, dan material crafting. +20~40 XP per aksi.</div>
+              <div class="cmd-desc">Gali tambang dan dapatkan mineral, batu permata, dan material crafting. +20~40 XP
+                per aksi.</div>
               <div class="cmd-reward">⛏️ Membutuhkan Stamina</div>
             </div>
             <div class="cmd-card">
@@ -1639,19 +1689,22 @@
         <div class="section-card">
           <div class="section-label">Daily Quest</div>
           <h2 class="section-title">Daily Quest</h2>
-          <p>Setiap hari kamu mendapatkan satu Daily Quest yang berganti secara otomatis. Selesaikan quest untuk mendapatkan reward XP dan koin ekstra!</p>
+          <p>Setiap hari kamu mendapatkan satu Daily Quest yang berganti secara otomatis. Selesaikan quest untuk
+            mendapatkan reward XP dan koin ekstra!</p>
 
           <div class="cmd-grid">
             <div class="cmd-card">
               <div class="cmd-name">/quest</div>
               <div class="cmd-aliases">Alias: luquest, qu</div>
-              <div class="cmd-desc">Lihat quest harian aktifmu, progres saat ini, dan claim reward bila sudah selesai.</div>
+              <div class="cmd-desc">Lihat quest harian aktifmu, progres saat ini, dan claim reward bila sudah selesai.
+              </div>
               <div class="cmd-reward">✅ Reward: +Koin & +100~200 XP</div>
             </div>
           </div>
 
           <div class="callout">
-            <strong>Quest berganti setiap tengah malam!</strong> Pastikan kamu claim reward sebelum quest berakhir karena progress tidak dibawa ke quest hari berikutnya.
+            <strong>Quest berganti setiap tengah malam!</strong> Pastikan kamu claim reward sebelum quest berakhir
+            karena progress tidak dibawa ke quest hari berikutnya.
           </div>
         </div>
       </section>
@@ -1665,18 +1718,21 @@
         <div class="section-card">
           <div class="section-label">Gambling Arcade</div>
           <h2 class="section-title">Gambling & Minigames</h2>
-          <p>Uji keberuntunganmu di kasino virtual Luneth! Semua game menggunakan <strong>koin virtual bot</strong> — bukan uang asli.</p>
+          <p>Uji keberuntunganmu di kasino virtual Luneth! Semua game menggunakan <strong>koin virtual bot</strong> —
+            bukan uang asli.</p>
 
           <div class="cmd-grid">
             <div class="cmd-card">
               <div class="cmd-name">/bomber</div>
               <div class="cmd-aliases">Alias: lubomber</div>
-              <div class="cmd-desc">Game Mines 3×3 bergaya Minesweeper. Pilih kotak yang aman, hindari bom untuk melipatgandakan taruhanmu!</div>
+              <div class="cmd-desc">Game Mines 3×3 bergaya Minesweeper. Pilih kotak yang aman, hindari bom untuk
+                melipatgandakan taruhanmu!</div>
             </div>
             <div class="cmd-card">
               <div class="cmd-name">/slots</div>
               <div class="cmd-aliases">Alias: luslots, slot</div>
-              <div class="cmd-desc">Slot machine dengan 5 paylines aktif. Spin untuk mencocokkan simbol dan memenangkan hingga 50× taruhan!</div>
+              <div class="cmd-desc">Slot machine dengan 5 paylines aktif. Spin untuk mencocokkan simbol dan memenangkan
+                hingga 50× taruhan!</div>
             </div>
             <div class="cmd-card">
               <div class="cmd-name">/coinflip</div>
@@ -1686,12 +1742,14 @@
             <div class="cmd-card">
               <div class="cmd-name">/scramble</div>
               <div class="cmd-aliases">Alias: luscramble</div>
-              <div class="cmd-desc">Tebak kata yang hurufnya diacak dalam waktu 30 detik untuk mendapatkan hadiah koin.</div>
+              <div class="cmd-desc">Tebak kata yang hurufnya diacak dalam waktu 30 detik untuk mendapatkan hadiah koin.
+              </div>
             </div>
           </div>
 
           <div class="callout">
-            <strong>Ingat!</strong> Semua gambling di sini menggunakan koin virtual Luneth — bukan uang nyata. Ini fitur resmi server Lunera dan diperbolehkan selama tidak melibatkan fiat money.
+            <strong>Ingat!</strong> Semua gambling di sini menggunakan koin virtual Luneth — bukan uang nyata. Ini fitur
+            resmi server Lunera dan diperbolehkan selama tidak melibatkan fiat money.
           </div>
         </div>
       </section>
@@ -1711,12 +1769,14 @@
             <div class="cmd-card">
               <div class="cmd-name">/leaderboard</div>
               <div class="cmd-aliases">Alias: luleaderboard, lb, lulb</div>
-              <div class="cmd-desc">Tampilkan 10 pemain terkaya + posisi rank dirimu sendiri, meskipun kamu tidak masuk top 10.</div>
+              <div class="cmd-desc">Tampilkan 10 pemain terkaya + posisi rank dirimu sendiri, meskipun kamu tidak masuk
+                top 10.</div>
             </div>
           </div>
 
           <div class="callout">
-            <strong>⚜️ Role Luneth Patron:</strong> Pemain dengan saldo tertinggi di leaderboard otomatis mendapatkan role prestise eksklusif <strong>Luneth Patron</strong> yang disematkan secara langsung dan real-time!
+            <strong>⚜️ Role Luneth Patron:</strong> Pemain dengan saldo tertinggi di leaderboard otomatis mendapatkan
+            role prestise eksklusif <strong>Luneth Patron</strong> yang disematkan secara langsung dan real-time!
           </div>
         </div>
       </section>
@@ -1730,7 +1790,8 @@
         <div class="section-card">
           <div class="section-label">Command Reference</div>
           <h2 class="section-title">Referensi Semua Command</h2>
-          <p>Daftar lengkap seluruh command bot Luneth. Semua bisa dipakai dengan Slash Command atau Text Prefix (<code>lu</code> + nama command).</p>
+          <p>Daftar lengkap seluruh command bot Luneth. Semua bisa dipakai dengan Slash Command atau Text Prefix
+            (<code>lu</code> + nama command).</p>
 
           <div class="ref-section">
             <h3>Ekonomi & Progression</h3>
