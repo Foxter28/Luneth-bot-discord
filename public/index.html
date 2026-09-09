@@ -2084,7 +2084,7 @@
         fetch('/api/widget').then(function (r) { return r.json() }).then(render).catch(function () { });
       }
       poll();
-      setInterval(poll, 15000);
+      setInterval(poll, 10000);
     })();
   </script>
 </body>
