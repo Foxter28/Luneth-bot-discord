@@ -377,23 +377,25 @@ client.on(Events.MessageCreate, async (message) => {
 
   // Streak: heartbeat + notify the streak channel (max 1x per user per WIB day).
   const { heartbeatIfActive, sendStreakMessage, dayDiffWIB } = require('./streakService');
-  const streakRow = await heartbeatIfActive(message.author.id).catch(() => null);
+  const streakRow = await heartbeatIfActive(message.author.id).catch((e) => { console.error('[STREAK-DBG] heartbeatIfActive threw:', e?.message || e); return null; });
+  console.log(`[STREAK-DBG] user=${message.author.id} streakRow=${streakRow ? `streak=${streakRow.streak} frozen=${streakRow.frozen}` : 'NULL'}`);
   if (streakRow) {
     try {
       const { getStreakUser, markStreakNotified } = require('./database');
       const fresh = await getStreakUser(message.author.id);
-      // Send on the first chat of a WIB day: either never notified before
-      // (freshly registered) or notified on an earlier calendar day.
       const needsNotify =
         fresh && !fresh.frozen &&
         (fresh.lastStreakNotifiedAt === 0 ||
           dayDiffWIB(fresh.lastStreakNotifiedAt, Date.now()) >= 1);
+      console.log(`[STREAK-DBG] fresh=${!!fresh} frozen=${fresh?.frozen} lastNotifiedAt=${fresh?.lastStreakNotifiedAt} needsNotify=${needsNotify}`);
       if (needsNotify) {
+        console.log(`[STREAK-DBG] Sending streak message for user=${fresh.userId} streak=${fresh.streak}`);
         await sendStreakMessage(client, fresh.guildId, fresh.userId, fresh.streak);
         await markStreakNotified(fresh.userId, Date.now());
+        console.log('[STREAK-DBG] Message sent & notified OK');
       }
     } catch (err) {
-      console.error('⚠️ Failed to send streak message:', err.message);
+      console.error('[STREAK-DBG] FAILED:', err.message);
     }
   }
 
