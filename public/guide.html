@@ -521,6 +521,14 @@
       border-radius: 50%;
       position: relative;
       z-index: 1;
+      overflow: hidden
+    }
+
+    .waypoint-icon img {
+      width: 60%;
+      height: 60%;
+      object-fit: contain;
+      border-radius: 4px
     }
 
     .waypoint-glow {
@@ -929,6 +937,275 @@
         font-size: 1rem;
       }
     }
+
+    /* ── Voice Activity: FAB + Panel (bottom right) ── */
+    .v-hidden {
+      display: none !important
+    }
+
+    .badge-live {
+      display: none !important
+    }
+
+    #voice-fab {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 9500;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.85), rgba(143, 143, 143, 0.75));
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, .45), 0 0 20px rgba(168, 85, 247, .3);
+      transition: transform .35s cubic-bezier(.34, 1.56, .64, 1), box-shadow .3s ease, opacity .3s ease
+    }
+
+    #voice-fab:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 24px rgba(168, 85, 247, .5), 0 0 30px rgba(56, 189, 248, .3)
+    }
+
+    #voice-fab.active {
+      transform: scale(.92) rotate(45deg);
+      background: linear-gradient(135deg, rgba(239, 68, 68, .85), rgba(248, 113, 113, .7))
+    }
+
+    #voice-fab .fab-icon {
+      width: 22px;
+      height: 22px;
+      color: #fff;
+      transition: transform .3s ease
+    }
+
+    #voice-fab .fab-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 5px;
+      border-radius: 10px;
+      background: #ef4444;
+      color: #fff;
+      font-family: var(--font-pixel);
+      font-size: .62rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--bg-dark);
+      animation: fabPulse 2s ease-in-out infinite
+    }
+
+    @keyframes fabPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, .4)
+      }
+
+      50% {
+        box-shadow: 0 0 0 6px rgba(239, 68, 68, 0)
+      }
+    }
+
+    #voice-panel {
+      position: fixed;
+      right: 18px;
+      bottom: 78px;
+      z-index: 9499;
+      width: 300px;
+      max-height: min(58vh, 400px);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .55), 0 0 20px rgba(168, 85, 247, .15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: var(--font-body);
+      opacity: 0;
+      transform: translateY(12px) scale(.96);
+      transform-origin: bottom right;
+      pointer-events: none;
+      visibility: hidden;
+      transition: opacity .25s ease, transform .3s cubic-bezier(.34, 1.56, .64, 1)
+    }
+
+    #voice-panel.open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+      visibility: visible
+    }
+
+    .voice-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: linear-gradient(135deg, rgba(168, 85, 247, .16), rgba(56, 189, 248, .1));
+      border-bottom: 1px solid var(--border)
+    }
+
+    .voice-head .v-title {
+      font-weight: 700;
+      font-size: .82rem;
+      color: var(--silver);
+      letter-spacing: .04em;
+      flex: 1
+    }
+
+    .voice-head .v-count {
+      font-family: var(--font-pixel);
+      font-size: .72rem;
+      color: var(--accent-frost);
+      background: rgba(111, 168, 220, .14);
+      padding: 2px 8px;
+      border-radius: 20px;
+      white-space: nowrap
+    }
+
+    .voice-body {
+      overflow-y: auto;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px
+    }
+
+    .voice-body::-webkit-scrollbar {
+      width: 5px
+    }
+
+    .voice-body::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px
+    }
+
+    .v-channel {
+      display: flex;
+      flex-direction: column;
+      gap: 5px
+    }
+
+    .v-channel-name {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--glow);
+      letter-spacing: .05em;
+      text-transform: uppercase
+    }
+
+    .v-channel-name::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-frost);
+      box-shadow: 0 0 8px var(--accent-frost)
+    }
+
+    .v-user {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 6px 9px;
+      background: var(--bg-card-hover);
+      border: 1px solid rgba(168, 85, 247, .16);
+      border-radius: 10px
+    }
+
+    .v-user img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border);
+      flex-shrink: 0
+    }
+
+    .v-user .v-uinfo {
+      flex: 1;
+      min-width: 0
+    }
+
+    .v-user .v-uname {
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--silver);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .v-user .v-live {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: .62rem;
+      color: var(--accent-frost);
+      font-weight: 700
+    }
+
+    .v-user .v-live::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 6px #4ade80;
+      animation: vPulse 1.6s ease-in-out infinite
+    }
+
+    @keyframes vPulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .35
+      }
+    }
+
+    .v-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 18px 10px;
+      color: rgba(243, 240, 255, .45);
+      font-size: .76rem;
+      text-align: center
+    }
+
+    .v-empty svg {
+      opacity: .45
+    }
+
+    @media(max-width:640px) {
+      #voice-panel {
+        right: 10px;
+        bottom: 74px;
+        width: 250px
+      }
+
+      #voice-fab {
+        right: 10px;
+        bottom: 10px
+      }
+    }
   </style>
 </head>
 
@@ -957,7 +1234,7 @@
         <li><a href="/guide" style="color:var(--gold)">Panduan Bot ↗</a></li>
       </ul>
       <div class="nav-cta">
-        <div class="badge-live"><span class="dot"></span><span class="txt">800+ ONLINE</span></div>
+        <div class="badge-live" style="display:none"></div>
         <a href="https://discord.gg/Eg2SBcsG4N" target="_blank" rel="noopener" class="btn btn-primary"><i data-lucide="log-in" style="width:15px;height:15px"></i> Bergabung</a>
         <button class="hamburger" onclick="toggleDrawer()" aria-label="Menu">☰</button>
       </div>
@@ -972,6 +1249,26 @@
     </div>
   </div>
   <div class="drawer-backdrop" id="backdrop" onclick="toggleDrawer()"></div>
+
+  <!-- VOICE ACTIVITY FAB + PANEL -->
+  <button id="voice-fab"
+    onclick="document.getElementById('voice-panel').classList.toggle('open');this.classList.toggle('active')"
+    aria-label="Aktivitas Voice">
+    <svg class="fab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round">
+      <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
+      <path
+        d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
+    </svg>
+    <span class="fab-badge" id="voice-badge" style="display:none">0</span>
+  </button>
+  <div id="voice-panel">
+    <div class="voice-head">
+      <span class="v-title">Aktivitas Voice</span>
+      <span class="v-count" id="voice-count-badge">0</span>
+    </div>
+    <div class="voice-body" id="voice-body"></div>
+  </div>
 
   <!-- Hero -->
   <section class="hero-section moonrise-anim">
@@ -989,7 +1286,7 @@
       <section class="timeline-section" id="memulai">
         <div class="waypoint">
           <div class="waypoint-glow"></div>
-          <div class="waypoint-icon">🌙</div>
+          <div class="waypoint-icon"><img src="/asset/get-start.png" alt="Cara Memulai" /></div>
         </div>
         <div class="section-card">
           <div class="section-label">Getting Started</div>
@@ -1032,7 +1329,7 @@
       <section class="timeline-section" id="leveling">
         <div class="waypoint">
           <div class="waypoint-glow"></div>
-          <div class="waypoint-icon">⭐</div>
+          <div class="waypoint-icon"><img src="/asset/levelup.png" alt="Leveling" /></div>
         </div>
         <div class="section-card">
           <div class="section-label">Leveling System</div>
@@ -1101,7 +1398,7 @@
       <section class="timeline-section" id="crate">
         <div class="waypoint">
           <div class="waypoint-glow"></div>
-          <div class="waypoint-icon">🎁</div>
+          <div class="waypoint-icon"><img src="/asset/chest/legendary-chest.png" alt="Crate" /></div>
         </div>
         <div class="section-card">
           <div class="section-label">Crate Rewards</div>
@@ -1157,7 +1454,7 @@
       <section class="timeline-section" id="ekonomi">
         <div class="waypoint">
           <div class="waypoint-glow"></div>
-          <div class="waypoint-icon">💰</div>
+          <div class="waypoint-icon"><img src="/asset/economy.png" alt="Ekonomi" /></div>
         </div>
         <div class="section-card">
           <div class="section-label">Economy</div>
@@ -1204,7 +1501,7 @@
       <section class="timeline-section" id="weapons">
         <div class="waypoint">
           <div class="waypoint-glow"></div>
-          <div class="waypoint-icon">⚔️</div>
+          <div class="waypoint-icon"><img src="/asset/weapon-icon.png" alt="Senjata" /></div>
         </div>
         <div class="section-card">
           <div class="section-label">Arsenal</div>
@@ -1284,7 +1581,7 @@
       <section class="timeline-section" id="battle">
         <div class="waypoint">
           <div class="waypoint-glow"></div>
-          <div class="waypoint-icon">💥</div>
+          <div class="waypoint-icon"><img src="/asset/battle.png" alt="Battle" /></div>
         </div>
         <div class="section-card">
           <div class="section-label">Battle System</div>
@@ -1310,7 +1607,7 @@
       <section class="timeline-section" id="mining">
         <div class="waypoint">
           <div class="waypoint-glow"></div>
-          <div class="waypoint-icon">⛏️</div>
+          <div class="waypoint-icon"><img src="/asset/miner.png" alt="Mining" /></div>
         </div>
         <div class="section-card">
           <div class="section-label">Mining</div>
@@ -1337,7 +1634,7 @@
       <section class="timeline-section" id="quest">
         <div class="waypoint">
           <div class="waypoint-glow"></div>
-          <div class="waypoint-icon">📋</div>
+          <div class="waypoint-icon"><img src="/asset/quest-icon.png" alt="Daily Quest" /></div>
         </div>
         <div class="section-card">
           <div class="section-label">Daily Quest</div>
@@ -1363,7 +1660,7 @@
       <section class="timeline-section" id="gambling">
         <div class="waypoint">
           <div class="waypoint-glow"></div>
-          <div class="waypoint-icon">🎰</div>
+          <div class="waypoint-icon"><img src="/asset/gambling.png" alt="Gambling" /></div>
         </div>
         <div class="section-card">
           <div class="section-label">Gambling Arcade</div>
@@ -1403,7 +1700,7 @@
       <section class="timeline-section" id="leaderboard">
         <div class="waypoint">
           <div class="waypoint-glow"></div>
-          <div class="waypoint-icon">👑</div>
+          <div class="waypoint-icon"><img src="/asset/crown.png" alt="Leaderboard" /></div>
         </div>
         <div class="section-card">
           <div class="section-label">Leaderboard</div>
@@ -1428,7 +1725,7 @@
       <section class="timeline-section" id="all-commands">
         <div class="waypoint">
           <div class="waypoint-glow"></div>
-          <div class="waypoint-icon">📜</div>
+          <div class="waypoint-icon"><img src="/asset/cmd-icon.png" alt="Semua Command" /></div>
         </div>
         <div class="section-card">
           <div class="section-label">Command Reference</div>
@@ -1566,11 +1863,8 @@
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof lucide !== 'undefined') lucide.createIcons();
       fetch('/api/widget').then(r => r.json()).then(d => {
-        const n = d.membersCount || d.memberCount || d.presenceCount;
-        if (n) {
-          const t = n.toLocaleString('id-ID') + '+';
-          document.querySelectorAll('.badge-live').forEach(b => b.innerHTML = '<span class="dot"></span><span class="txt">' + t + ' ONLINE</span>');
-        }
+        const n = d.presenceCount || d.memberCount;
+        // badge-live is hidden in guide, don't update it
       }).catch(() => { });
     });
 
@@ -1596,6 +1890,64 @@
       }
 
       window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+
+    // ── Voice Activity: FAB + Panel (bottom right, polling every 10s) ──
+    (function () {
+      var fab = document.getElementById('voice-fab'),
+        panel = document.getElementById('voice-panel'),
+        body = document.getElementById('voice-body'),
+        badge = document.getElementById('voice-badge'),
+        countBadge = document.getElementById('voice-count-badge');
+      if (!fab || !panel || !body || !countBadge) return;
+      var esc = function (s) { return String(s == null ? '' : s).replace(/</g, '&lt;').replace(/>/g, '&gt;') };
+
+      function render(data) {
+        var members = Array.isArray(data.users) ? data.users : [];
+        var chans = Array.isArray(data.channels) ? data.channels : [];
+
+        var inVoice = members.filter(function (m) { return m.channelId });
+        var total = inVoice.length;
+
+        // Update FAB badge
+        if (badge) {
+          if (total > 0) { badge.style.display = 'flex'; badge.textContent = total; }
+          else { badge.style.display = 'none'; }
+        }
+        countBadge.textContent = total > 0 ? total + ' di voice' : '0';
+
+        if (total === 0) {
+          body.innerHTML = '<div class="v-empty"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg><span>Belum ada anggota di voice channel</span></div>';
+          fab.classList.add('v-hidden');
+          return;
+        }
+
+        fab.classList.remove('v-hidden');
+
+        // Group by channel, preserving channel order from API.
+        var groups = [];
+        chans.forEach(function (c) {
+          var list = inVoice.filter(function (m) { return m.channelId === c.id });
+          if (list.length) groups.push({ id: c.id, name: c.name || 'Voice', users: list });
+        });
+        var rest = inVoice.filter(function (m) { return !chans.some(function (c) { return c.id === m.channelId }) });
+        if (rest.length) groups.push({ id: 'other', name: 'Voice', users: rest });
+
+        var html = groups.map(function (g) {
+          return '<div class="v-channel"><div class="v-channel-name">' + esc(g.name) + '</div>' +
+            g.users.map(function (m) {
+              var av = m.avatar_url || m.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
+              return '<div class="v-user"><img src="' + av + '" alt="" loading="lazy" onerror="this.src=\'https://cdn.discordapp.com/embed/avatars/0.png\'"/><div class="v-uinfo"><div class="v-uname">' + esc(m.username) + '</div></div><span class="v-live">LIVE</span></div>';
+            }).join('') + '</div>';
+        }).join('');
+        body.innerHTML = html;
+      }
+
+      function poll() {
+        fetch('/api/widget').then(function (r) { return r.json() }).then(render).catch(function () { });
+      }
+      poll();
+      setInterval(poll, 10000);
     })();
   </script>
 </body>
