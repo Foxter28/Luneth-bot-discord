@@ -681,6 +681,16 @@ async function deleteStreakUser(userId) {
   await dbRun('DELETE FROM streak_registered WHERE userId = ?', userId);
 }
 
+// Admin helper: set a user's streak to an arbitrary value and reset the clock
+// so the streak is immediately active (no wait, no freeze).
+async function setStreakForUser(userId, streak, guildId) {
+  const now = Date.now();
+  await dbRun(
+    'INSERT OR REPLACE INTO streak_registered (userId, streak, lastHeartbeat, streakUpdatedAt, guildId, frozen) VALUES (?, ?, ?, ?, ?, 0)',
+    userId, streak, now, now, guildId
+  );
+}
+
 // Stamp when we last notified this user about their streak (1x/day throttle)
 async function markStreakNotified(userId, at = Date.now()) {
   await dbRun('UPDATE streak_registered SET lastStreakNotifiedAt = ? WHERE userId = ?', at, userId);
@@ -747,5 +757,6 @@ module.exports = {
   getStreakSetting: (key, fallback) => dbQueue(() => getStreakSetting(key, fallback)),
   setStreakSetting: (key, value) => dbQueue(() => setStreakSetting(key, value)),
   deleteStreakUser: (userId) => dbQueue(() => deleteStreakUser(userId)),
+  setStreakForUser: (userId, streak, guildId) => dbQueue(() => setStreakForUser(userId, streak, guildId)),
   markStreakNotified: (userId, at) => dbQueue(() => markStreakNotified(userId, at)),
 };
