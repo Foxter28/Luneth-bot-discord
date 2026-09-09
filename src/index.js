@@ -165,6 +165,17 @@ client.once(Events.ClientReady, async (c) => {
 
   syncBoosters();
   setInterval(syncBoosters, 5 * 60 * 1000);
+
+  // Publish guild member count for the website
+  const { setMemberCount } = require('./guildInfo');
+  const LUNERA_ID = '1416799484511391754';
+  function syncMemberCount() {
+    const g = c.guilds.cache.get(LUNERA_ID);
+    if (g) setMemberCount(g.memberCount);
+  }
+  syncMemberCount();
+  setInterval(syncMemberCount, 5 * 60 * 1000);
+
   cleanupDepartedMembers();
 
   // Streak system: daily rollover + 24h expiry + reminders

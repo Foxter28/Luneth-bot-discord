@@ -1269,6 +1269,210 @@
       letter-spacing: .12em;
       opacity: .7
     }
+
+    .v-hidden { display: none !important }
+    /* ── Voice Activity: FAB + Panel (bottom right) ── */
+    #voice-fab {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 9500;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(168, 85, 247, .85), rgba(56, 189, 248, .75));
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, .45), 0 0 20px rgba(168, 85, 247, .3);
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease, opacity .3s ease
+    }
+    #voice-fab:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 24px rgba(168, 85, 247, .5), 0 0 30px rgba(56, 189, 248, .3)
+    }
+    #voice-fab.active {
+      transform: scale(.92) rotate(45deg);
+      background: linear-gradient(135deg, rgba(239, 68, 68, .85), rgba(248, 113, 113, .7))
+    }
+    #voice-fab .fab-icon {
+      width: 22px;
+      height: 22px;
+      color: #fff;
+      transition: transform .3s ease
+    }
+    #voice-fab .fab-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 5px;
+      border-radius: 10px;
+      background: #ef4444;
+      color: #fff;
+      font-family: var(--fp);
+      font-size: .62rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--bg);
+      animation: fabPulse 2s ease-in-out infinite
+    }
+    @keyframes fabPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, .4) }
+      50% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0) }
+    }
+    #voice-panel {
+      position: fixed;
+      right: 18px;
+      bottom: 78px;
+      z-index: 9499;
+      width: 300px;
+      max-height: min(58vh, 400px);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .55), 0 0 20px rgba(168, 85, 247, .15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: var(--fb);
+      opacity: 0;
+      transform: translateY(12px) scale(.96);
+      transform-origin: bottom right;
+      pointer-events: none;
+      visibility: hidden;
+      transition: opacity .25s ease, transform .3s cubic-bezier(.34,1.56,.64,1)
+    }
+    #voice-panel.open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+      visibility: visible
+    }
+    .voice-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: linear-gradient(135deg, rgba(168, 85, 247, .16), rgba(56, 189, 248, .1));
+      border-bottom: 1px solid var(--border)
+    }
+    .voice-head .v-title {
+      font-weight: 700;
+      font-size: .82rem;
+      color: var(--silver);
+      letter-spacing: .04em;
+      flex: 1
+    }
+    .voice-head .v-count {
+      font-family: var(--fp);
+      font-size: .72rem;
+      color: var(--cyan);
+      background: rgba(56, 189, 248, .14);
+      padding: 2px 8px;
+      border-radius: 20px;
+      white-space: nowrap
+    }
+    .voice-body {
+      overflow-y: auto;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px
+    }
+    .voice-body::-webkit-scrollbar { width: 5px }
+    .voice-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px }
+    .v-channel {
+      display: flex;
+      flex-direction: column;
+      gap: 5px
+    }
+    .v-channel-name {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--glow);
+      letter-spacing: .05em;
+      text-transform: uppercase
+    }
+    .v-channel-name::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan)
+    }
+    .v-user {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 6px 9px;
+      background: var(--card2);
+      border: 1px solid rgba(168, 85, 247, .16);
+      border-radius: 10px
+    }
+    .v-user img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border);
+      flex-shrink: 0
+    }
+    .v-user .v-uinfo { flex: 1; min-width: 0 }
+    .v-user .v-uname {
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--silver);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+    .v-user .v-live {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: .62rem;
+      color: var(--cyan);
+      font-weight: 700
+    }
+    .v-user .v-live::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 6px #4ade80;
+      animation: vPulse 1.6s ease-in-out infinite
+    }
+    @keyframes vPulse {
+      0%, 100% { opacity: 1 }
+      50% { opacity: .35 }
+    }
+    .v-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 18px 10px;
+      color: rgba(243, 240, 255, .45);
+      font-size: .76rem;
+      text-align: center
+    }
+    .v-empty svg { opacity: .45 }
+    @media(max-width:640px) {
+      #voice-panel { right: 10px; bottom: 74px; width: 250px }
+      #voice-fab { right: 10px; bottom: 10px }
+    }
     @media (prefers-reduced-motion: reduce) {
       #intro-overlay, .slot-strip, #moon-overlay {
         transition: none
@@ -1339,7 +1543,7 @@
         <li><a href="/guide" style="color:var(--gold)">Panduan Bot ↗</a></li>
       </ul>
       <div class="nav-cta">
-        <div class="badge-live"><span class="dot"></span><span class="txt">800+ ONLINE</span></div>
+        <div class="badge-live"><span class="dot"></span><span class="txt">800+ AKTIF</span></div>
         <a href="https://discord.gg/Eg2SBcsG4N" target="_blank" rel="noopener" class="btn btn-primary"><i
             data-lucide="log-in" style="width:15px;height:15px"></i> Bergabung</a>
         <button class="hamburger" onclick="toggleDrawer()" aria-label="Menu">☰</button>
@@ -1360,6 +1564,19 @@
   </header>
   <div class="drawer-backdrop" id="backdrop" onclick="toggleDrawer()"></div>
 
+<!-- VOICE ACTIVITY FAB + PANEL -->
+  <button id="voice-fab" onclick="document.getElementById('voice-panel').classList.toggle('open');this.classList.toggle('active')" aria-label="Voice Activity">
+    <svg class="fab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+    <span class="fab-badge" id="voice-badge" style="display:none">0</span>
+  </button>
+  <div id="voice-panel">
+    <div class="voice-head">
+      <span class="v-title">Voice Activity</span>
+      <span class="v-count" id="voice-count-badge">0</span>
+    </div>
+    <div class="voice-body" id="voice-body"></div>
+  </div>
+
   <main class="wrap">
     <!-- HERO -->
     <section class="hero">
@@ -1376,9 +1593,9 @@
             Bot</a>
         </div>
         <div class="hero-meta">
-          <div class="meta"><strong>800+</strong><span>Anggota</span></div>
+          <div class="meta"><strong>800+</strong><span>Anggota Aktif</span></div>
           <div class="meta"><strong>24/7</strong><span>Aktif</span></div>
-          <div class="meta"><strong>Lv. 999</strong><span>Maks. Level</span></div>
+          <div class="meta"><strong id="voice-count">0</strong><span>Di Voice</span></div>
         </div>
       </div>
       <div class="stage" id="stage">
@@ -1676,9 +1893,20 @@
         const p = v.play();
         if (p) p.catch(() => { });
       });
-      fetch('/api/widget').then(r => r.json()).then(d => {
-        const n = d.membersCount || d.memberCount || d.presenceCount;
-        if (n) { const t = n.toLocaleString('id-ID') + '+'; document.querySelectorAll('.badge-live').forEach(b => b.innerHTML = '<span class="dot"></span><span class="txt">' + t + ' ONLINE</span>'); document.querySelectorAll('.meta strong').forEach((el, i) => { if (i === 0) el.textContent = t }) }
+         fetch('/api/widget').then(r => r.json()).then(d => {
+        const online = d.presenceCount || d.presence_count;
+        const vc = d.voiceCount || 0;
+        const vEl = document.getElementById('voice-count');
+        if (vEl && vc > 0) vEl.textContent = vc.toLocaleString('id-ID') + '+';
+        const update = (label) => {
+          document.querySelectorAll('.badge-live').forEach(b => b.innerHTML = '<span class="dot"></span><span class="txt">' + label + ' AKTIF</span>');
+          document.querySelectorAll('.meta strong').forEach((el, i) => { if (i === 0) el.textContent = label });
+        };
+        // Try bot's real guild data first; fall back to widget presence count.
+        fetch('/api/stats').then(r => r.json()).then(s => {
+          if (s.memberCount) update(s.memberCount.toLocaleString('id-ID') + '+');
+          else if (online) update(online.toLocaleString('id-ID') + '+');
+        }).catch(() => { if (online) update(online.toLocaleString('id-ID') + '+'); });
       }).catch(() => { });
       fetch('/api/boosters').then(r => r.json()).then(j => {
         const g = document.getElementById('booster-grid'); if (!g) return;
@@ -1799,6 +2027,64 @@
       setLevel(BOTTOM - 10);
       startShimmer();
       setTimeout(function () { if (!done) finish(); }, TIMEOUT);
+    })();
+
+// ── Voice Activity: FAB + Panel (bottom right, polling every 15s) ──
+    (function () {
+      var fab = document.getElementById('voice-fab'),
+        panel = document.getElementById('voice-panel'),
+        body = document.getElementById('voice-body'),
+        badge = document.getElementById('voice-badge'),
+        countBadge = document.getElementById('voice-count-badge');
+      if (!fab || !panel || !body || !countBadge) return;
+      var esc = function (s) { return String(s == null ? '' : s).replace(/</g, '&lt;').replace(/>/g, '&gt;') };
+
+      function render(data) {
+        var members = Array.isArray(data.users) ? data.users : [];
+        var chans = Array.isArray(data.channels) ? data.channels : [];
+
+        var inVoice = members.filter(function (m) { return m.channelId });
+        var total = inVoice.length;
+
+        // Update FAB badge
+        if (badge) {
+          if (total > 0) { badge.style.display = 'flex'; badge.textContent = total; }
+          else { badge.style.display = 'none'; }
+        }
+        countBadge.textContent = total > 0 ? total + ' di voice' : '0';
+
+        if (total === 0) {
+          body.innerHTML = '<div class="v-empty"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg><span>Tidak ada yang di voice</span></div>';
+          fab.classList.add('v-hidden');
+          return;
+        }
+
+        fab.classList.remove('v-hidden');
+
+        // Group by channel, preserving channel order from API.
+        var groups = [];
+        chans.forEach(function (c) {
+          var list = inVoice.filter(function (m) { return m.channelId === c.id });
+          if (list.length) groups.push({ id: c.id, name: c.name || 'Voice', users: list });
+        });
+        var rest = inVoice.filter(function (m) { return !chans.some(function (c) { return c.id === m.channelId }) });
+        if (rest.length) groups.push({ id: 'other', name: 'Voice', users: rest });
+
+        var html = groups.map(function (g) {
+          return '<div class="v-channel"><div class="v-channel-name">' + esc(g.name) + '</div>' +
+            g.users.map(function (m) {
+              var av = m.avatar_url || m.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
+              return '<div class="v-user"><img src="' + av + '" alt="" loading="lazy" onerror="this.src=\'https://cdn.discordapp.com/embed/avatars/0.png\'"/><div class="v-uinfo"><div class="v-uname">' + esc(m.username) + '</div></div><span class="v-live">LIVE</span></div>';
+            }).join('') + '</div>';
+        }).join('');
+        body.innerHTML = html;
+      }
+
+      function poll() {
+        fetch('/api/widget').then(function (r) { return r.json() }).then(render).catch(function () { });
+      }
+      poll();
+      setInterval(poll, 15000);
     })();
   </script>
 </body>

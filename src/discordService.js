@@ -39,6 +39,7 @@ const FALLBACK = Object.freeze({
   instantInvite: siteConfig.discord.inviteUrlEnvFallback || null,
   presenceCount: null,
   memberCount: null,
+  voiceCount: null,
   channels: [],
   users: [],
   available: false,
@@ -70,7 +71,11 @@ function normalize(raw, source = 'live') {
     status: safe(m?.status, 'online'),
     game: m?.game ? { name: safe(m.game.name, null) } : null,
     avatar: safe(m?.avatar_url, null),
+    channelId: safe(m?.channel_id, null),
   }));
+
+  // Members with a channel_id are currently connected to a voice channel.
+  const voiceCount = members.filter((m) => m?.channel_id).length;
 
   // channels[] on the widget endpoint is an array of {id,name,type,...}
   // (type: 0=text, 2=voice, 4=category). We only keep what exists.
@@ -80,6 +85,14 @@ function normalize(raw, source = 'live') {
     name: safe(c?.name, 'general'),
     type: toNum(c?.type) ?? 0,
   }));
+
+  // Merge known voice channel names (widget may not list occupied voice channels).
+  const known = siteConfig.voiceChannelNames || {};
+  Object.keys(known).forEach((id) => {
+    if (!channels.some((c) => c.id === id)) {
+      channels.push({ id, name: known[id], type: 2 });
+    }
+  });
 
   // member_count / presence_count are the headline numbers when present.
   const presenceCount = toNum(raw.presence_count);
@@ -95,6 +108,7 @@ function normalize(raw, source = 'live') {
     instantInvite: instantInvite || null,
     presenceCount,
     memberCount,
+    voiceCount,
     channels,
     users,
     available: true,

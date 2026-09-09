@@ -116,6 +116,20 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // --- Guild stats (member count from bot) ---
+  if (pathname === '/api/stats') {
+    try {
+      const { getMemberCount } = require('./guildInfo');
+      const mc = getMemberCount();
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-cache' });
+      res.end(JSON.stringify({ memberCount: mc }));
+    } catch {
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-cache' });
+      res.end(JSON.stringify({ memberCount: null }));
+    }
+    return;
+  }
+
   // --- Root route ---
   if (pathname === '/' || pathname === '/index.html') {
     return serveIndex(res);

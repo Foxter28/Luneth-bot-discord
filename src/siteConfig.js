@@ -33,6 +33,18 @@ module.exports = {
     inviteUrlEnvFallback: process.env.DISCORD_INVITE_URL || '',
   },
 
+  /**
+   * Known voice channel names keyed by channel ID.
+   * The Discord widget only exposes SOME channels in channels[] — voice
+   * channels occupied by members are NOT all listed. We merge these names
+   * server-side so the voice overlay can show proper channel names.
+   */
+  voiceChannelNames: {
+    '1416799486335783014': '🎵・Music',
+    '1547199659666055269': 'gatau deh',
+    '1547235062804652125': 'ngajarin orang',
+  },
+
   /** How long to cache the widget JSON on the server (ms). */
-  widgetCacheTtl: 15_000, // 15s — keeps "live" feeling without hammering Discord
+  widgetCacheTtl: 5_000, // 5s — minimal server cache; Discord itself caches 30-60s
 };
