@@ -240,17 +240,16 @@ async function heartbeatIfActive(userId) {
   const elapsed = now - row.lastHeartbeat;
   const dayDiff = dayDiffWIB(row.lastHeartbeat, now);
 
-  // Skip the DB write within the same minute, unless the WIB day changed — a
-  // chat right after midnight must still count for the new day.
-  if (elapsed < 60 * 1000 && dayDiff === 0) return;
-
   if (dayDiff >= 1) {
     // Active yesterday -> streak +1; missed a calendar day -> restart at 1.
     if (dayDiff === 1) await bumpStreak(userId);
     else await registerStreak(userId, row.guildId);
+  } else if (elapsed >= 60 * 1000) {
+    // Same WIB day: refresh heartbeat, throttled to once per minute.
+    await heartbeatStreak(userId);
   }
 
-  await heartbeatStreak(userId);
+  // Always return the row (caller evaluates the notify gate on it).
   return getStreakUser(userId);
 }
 

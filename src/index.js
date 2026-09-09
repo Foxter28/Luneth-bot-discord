@@ -375,15 +375,20 @@ client.on(Events.InteractionCreate, async (interaction) => {
 client.on(Events.MessageCreate, async (message) => {
   if (message.author.bot) return;
 
-  // Streak: any chat feeds the fire (rolling 24h); then notify the streak channel
-  // (once per 24h per user, only when the chat actually advanced the heartbeat).
-  const { heartbeatIfActive, sendStreakMessage } = require('./streakService');
+  // Streak: heartbeat + notify the streak channel (max 1x per user per WIB day).
+  const { heartbeatIfActive, sendStreakMessage, dayDiffWIB } = require('./streakService');
   const streakRow = await heartbeatIfActive(message.author.id).catch(() => null);
   if (streakRow) {
     try {
       const { getStreakUser, markStreakNotified } = require('./database');
       const fresh = await getStreakUser(message.author.id);
-      if (fresh && !fresh.frozen && fresh.lastStreakNotifiedAt < fresh.streakUpdatedAt) {
+      // Send on the first chat of a WIB day: either never notified before
+      // (freshly registered) or notified on an earlier calendar day.
+      const needsNotify =
+        fresh && !fresh.frozen &&
+        (fresh.lastStreakNotifiedAt === 0 ||
+          dayDiffWIB(fresh.lastStreakNotifiedAt, Date.now()) >= 1);
+      if (needsNotify) {
         await sendStreakMessage(client, fresh.guildId, fresh.userId, fresh.streak);
         await markStreakNotified(fresh.userId, Date.now());
       }
