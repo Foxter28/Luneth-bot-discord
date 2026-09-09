@@ -189,6 +189,7 @@ async function ensureSchema() {
   await addIfMissingStreak('streakUpdatedAt', 'streakUpdatedAt INTEGER NOT NULL DEFAULT 0');
   await addIfMissingStreak('frozen', 'frozen INTEGER NOT NULL DEFAULT 0');
   await addIfMissingStreak('guildId', 'guildId TEXT');
+  await addIfMissingStreak('lastStreakNotifiedAt', 'lastStreakNotifiedAt INTEGER NOT NULL DEFAULT 0');
 }
 
 // Kick off schema creation. Every dbQueue operation awaits this, so no query
@@ -680,6 +681,11 @@ async function deleteStreakUser(userId) {
   await dbRun('DELETE FROM streak_registered WHERE userId = ?', userId);
 }
 
+// Stamp when we last notified this user about their streak (1x/day throttle)
+async function markStreakNotified(userId, at = Date.now()) {
+  await dbRun('UPDATE streak_registered SET lastStreakNotifiedAt = ? WHERE userId = ?', at, userId);
+}
+
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
@@ -741,4 +747,5 @@ module.exports = {
   getStreakSetting: (key, fallback) => dbQueue(() => getStreakSetting(key, fallback)),
   setStreakSetting: (key, value) => dbQueue(() => setStreakSetting(key, value)),
   deleteStreakUser: (userId) => dbQueue(() => deleteStreakUser(userId)),
+  markStreakNotified: (userId, at) => dbQueue(() => markStreakNotified(userId, at)),
 };

@@ -375,9 +375,22 @@ client.on(Events.InteractionCreate, async (interaction) => {
 client.on(Events.MessageCreate, async (message) => {
   if (message.author.bot) return;
 
-  // Streak: any chat feeds the fire (rolling 24h)
-  const { heartbeatIfActive } = require('./streakService');
-  heartbeatIfActive(message.author.id).catch(() => {});
+  // Streak: any chat feeds the fire (rolling 24h); then notify the streak channel
+  // (once per 24h per user, only when the chat actually advanced the heartbeat).
+  const { heartbeatIfActive, sendStreakMessage } = require('./streakService');
+  const streakRow = await heartbeatIfActive(message.author.id).catch(() => null);
+  if (streakRow) {
+    try {
+      const { getStreakUser, markStreakNotified } = require('./database');
+      const fresh = await getStreakUser(message.author.id);
+      if (fresh && !fresh.frozen && fresh.lastStreakNotifiedAt < fresh.streakUpdatedAt) {
+        await sendStreakMessage(client, fresh.guildId, fresh.userId, fresh.streak);
+        await markStreakNotified(fresh.userId, Date.now());
+      }
+    } catch (err) {
+      console.error('⚠️ Failed to send streak message:', err.message);
+    }
+  }
 
   const activePrefixes = await getActivePrefixes(message.guild?.id, config.prefix, config.prefixAliases);
   const matchedPrefix = activePrefixes.find((p) => message.content.toLowerCase().startsWith(p.toLowerCase()));
