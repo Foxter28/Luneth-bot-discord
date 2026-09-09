@@ -1155,10 +1155,140 @@
         gap: 10px
       }
     }
+
+    /* ── Overlay 1: Slot Machine Text Intro (session-scoped) ── */
+    #intro-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      will-change: opacity;
+      user-select: none;
+      transition: opacity .35s ease
+    }
+    #intro-overlay.hide {
+      opacity: 0;
+      pointer-events: none
+    }
+    .slot-frame {
+      position: relative;
+      height: 4.4rem;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column
+    }
+    .slot-strip {
+      display: flex;
+      flex-direction: column;
+      transition: transform .7s cubic-bezier(.22, 1, .36, 1)
+    }
+    .slot-word {
+      font-family: var(--fd);
+      font-size: clamp(2rem, 5vw, 3.8rem);
+      font-weight: 800;
+      letter-spacing: .12em;
+      line-height: 4.4rem;
+      height: 4.4rem;
+      white-space: nowrap;
+      background: linear-gradient(135deg, #fff 30%, #d8b4fe 60%, var(--glow) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center
+    }
+
+    /* ── Overlay 2: Crescent Moon Liquid (every load) ── */
+    #moon-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      background: rgba(7, 5, 14, .6);
+      backdrop-filter: blur(14px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      will-change: opacity;
+      transition: opacity .4s ease
+    }
+    #moon-overlay.hide {
+      opacity: 0;
+      pointer-events: none
+    }
+    .moon-loader-svg {
+      width: 160px;
+      height: 160px;
+      filter: drop-shadow(0 0 28px rgba(168, 85, 247, .5)) drop-shadow(0 0 60px rgba(168, 85, 247, .15))
+    }
+    #moon-surface-line {
+      opacity: .35
+    }
+    .moon-load-text {
+      font-family: var(--fp);
+      font-size: .82rem;
+      color: var(--glow);
+      letter-spacing: .12em;
+      opacity: .7
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #intro-overlay, .slot-strip, #moon-overlay {
+        transition: none
+      }
+      .slot-strip { transition: none !important }
+    }
+
+    /* ── Content hidden during loading, revealed after moon overlay ── */
+    body.loading { overflow: hidden }
+    body.loading main.wrap,
+    body.loading .nav-wrap,
+    body.loading footer {
+      opacity: 0 !important;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity .45s ease, transform .45s ease
+    }
+    main.wrap.reveal, .nav-wrap.reveal, footer.reveal {
+      opacity: 1 !important;
+      transform: none;
+      pointer-events: auto;
+      transition: opacity .45s ease, transform .45s ease
+    }
   </style>
 </head>
 
-<body>
+  <body class="loading">
+  <!-- OVERLAY 1: Text Intro (once per session) -->
+  <div id="intro-overlay">
+    <div class="slot-frame">
+      <div class="slot-strip" id="slot-strip">
+        <span class="slot-word">LUNERA</span>
+        <span class="slot-word">SERVER HANG OUT</span>
+        <span class="slot-word">LUNARIANS!</span>
+      </div>
+    </div>
+  </div>
+  <!-- OVERLAY 2: Crescent Moon Loading (every page load) -->
+  <div id="moon-overlay">
+    <svg class="moon-loader-svg" viewBox="0 0 200 200">
+      <defs>
+        <mask id="crescent-mask-loader">
+          <rect width="200" height="200" fill="black"/>
+          <circle cx="90" cy="100" r="78" fill="white"/>
+          <circle cx="128" cy="72" r="60" fill="black"/>
+        </mask>
+      </defs>
+      <g mask="url(#crescent-mask-loader)">
+        <path id="moon-wave2" d="M 0 200 L 0 200 Z" fill="var(--silver)" opacity=".12"/>
+        <path id="moon-wave1" d="M 0 200 L 0 200 Z" fill="var(--silver)" opacity=".92"/>
+        <line id="moon-surface-line" x1="0" y1="200" x2="200" y2="200" stroke="var(--glow)" stroke-width="2.5"/>
+      </g>
+    </svg>
+    <span class="moon-load-text">LOADING...</span>
+  </div>
   <div class="grid-bg"></div>
   <div class="nebula"></div>
   <div class="ticker"><span>✦ LUNERA — HANG OUT SERVER ✦ 800+ NIGHT OWLS ✦ NOBAR & MABAR SETIAP MALAM ✦ LUNETH RPG v1.5
@@ -1527,6 +1657,108 @@
         }).join('');
       }).catch(() => { const e = document.getElementById('booster-loading'); if (e) e.textContent = 'Gagal memuat booster.' });
     });
+
+    // ── Overlay 1: Slot Machine Text Intro (once per session) ──
+    (function () {
+      var ov = document.getElementById('intro-overlay'),
+        strip = document.getElementById('slot-strip');
+      if (!ov || !strip) return;
+      try { if (sessionStorage.getItem('lunera_intro')) { ov.remove(); return } } catch (_) { ov.remove(); return }
+      var words = strip.querySelectorAll('.slot-word'),
+        rm = matchMedia('(prefers-reduced-motion:reduce)').matches,
+        step = words[0] ? words[0].offsetHeight : 70,
+        idx = 0, pauses = [1100, 1100, 0];
+      strip.style.transform = 'translateY(0)';
+      function next() {
+        idx++;
+        if (idx < words.length) {
+          strip.style.transform = 'translateY(' + (-idx * step) + 'px)';
+          setTimeout(next, rm ? 400 : pauses[idx] || 1000);
+        } else {
+          try { sessionStorage.setItem('lunera_intro', '1') } catch (_) {}
+          setTimeout(function () {
+            ov.classList.add('hide');
+            setTimeout(function () { ov.remove() }, 400);
+          }, rm ? 0 : 500);
+        }
+      }
+      setTimeout(next, rm ? 400 : 1000);
+    })();
+
+    // ── Overlay 2: Crescent Moon Liquid (every page load) ──
+    (function () {
+      var ov = document.getElementById('moon-overlay');
+      if (!ov) return;
+      var w1 = document.getElementById('moon-wave1'),
+        w2 = document.getElementById('moon-wave2'),
+        sf = document.getElementById('moon-surface-line'),
+        rm = matchMedia('(prefers-reduced-motion:reduce)').matches,
+        done = false, TIMEOUT = 8000,
+        imagesLoaded = 0, imagesTotal = 0, fontsReady = false, domReady = false,
+        BOTTOM = 180, TOP = 22;
+
+      var phase = 0;
+      function wavePath(y, amp, freq) {
+        var pts = [], steps = 20;
+        for (var i = 0; i <= steps; i++) {
+          var cx = (200 / steps) * i;
+          var cy = y + Math.sin((i / steps) * Math.PI * freq + phase) * amp;
+          if (i === 0) pts.push('M 0 ' + cy);
+          else pts.push('C ' + (cx - 10) + ' ' + (cy + amp * .4) + ' ' + cx + ' ' + (cy - amp * .4) + ' ' + cx + ' ' + cy);
+        }
+        return pts.join(' ') + ' L 200 200 L 0 200 Z';
+      }
+      function setLevel(y) {
+        w1.setAttribute('d', wavePath(y, 5, 2));
+        w2.setAttribute('d', wavePath(y + 3, 3, 3));
+        sf.setAttribute('y1', y); sf.setAttribute('y2', y);
+      }
+
+      var shimmerId;
+      function startShimmer() {
+        shimmerId = setInterval(function () {
+          if (done) return;
+          phase += .06;
+          setLevel(BOTTOM - (BOTTOM - TOP) * progress());
+        }, rm ? 200 : 40);
+      }
+
+      function progress() {
+        var imgP = imagesTotal > 0 ? imagesLoaded / imagesTotal : 1;
+        return Math.min(1, imgP * .5 + (fontsReady ? 1 : .4) * .2 + (domReady ? 1 : .3) * .3);
+      }
+      function tick() { setLevel(BOTTOM - (BOTTOM - TOP) * progress()); }
+      function finish() {
+        if (done) return; done = true;
+        clearInterval(shimmerId);
+        setLevel(TOP);
+        setTimeout(function () {
+          ov.classList.add('hide');
+          document.body.classList.remove('loading');
+          var revealEls = [document.querySelector('main.wrap'), document.querySelector('.nav-wrap'), document.querySelector('footer')];
+          setTimeout(function () { revealEls.forEach(function (el) { if (el) el.classList.add('reveal') }) }, 50);
+          setTimeout(function () { ov.remove() }, 400);
+        }, rm ? 0 : 350);
+      }
+
+      document.querySelectorAll('img').forEach(function (i) {
+        if (i.complete) { imagesLoaded++; return }
+        imagesTotal++; i.onload = i.onerror = function () { imagesLoaded++; tick(); };
+      });
+      document.querySelectorAll('video').forEach(function (v) {
+        if (v.readyState >= 2) { imagesLoaded++; return }
+        imagesTotal++; v.onloadeddata = v.onerror = function () { imagesLoaded++; tick(); };
+      });
+      if (document.fonts && document.fonts.ready)
+        document.fonts.ready.then(function () { fontsReady = true; tick(); });
+      else fontsReady = true;
+      if (document.readyState === 'complete') { domReady = true; tick(); }
+      else window.addEventListener('load', function () { domReady = true; tick(); });
+
+      setLevel(BOTTOM - 10);
+      startShimmer();
+      setTimeout(function () { if (!done) finish(); }, TIMEOUT);
+    })();
   </script>
 </body>
 

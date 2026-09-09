@@ -163,6 +163,8 @@ client.once(Events.ClientReady, async (c) => {
     }
   }
 
+  syncBoosters();
+  setInterval(syncBoosters, 5 * 60 * 1000);
   cleanupDepartedMembers();
 
   // Streak system: daily rollover + 24h expiry + reminders
