@@ -934,6 +934,146 @@
       font-size: .88rem
     }
 
+    /* Guestbook / Testimoni */
+    .guestbook {
+      margin: 40px 0 0
+    }
+
+    .guestbook h3 {
+      font-family: var(--fd);
+      color: var(--color-gold);
+      font-size: 1.2rem;
+      margin-bottom: 4px
+    }
+
+    .guestbook > p {
+      color: var(--color-text-2);
+      font-size: .9rem;
+      margin-bottom: 20px
+    }
+
+    .gb-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      flex-wrap: wrap
+    }
+
+    .gb-form input,
+    .gb-form textarea {
+      font-family: var(--fp);
+      font-size: .88rem;
+      background: rgba(14, 8, 28, .8);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--color-text);
+      outline: none;
+      transition: border-color .25s
+    }
+
+    .gb-form input:focus,
+    .gb-form textarea:focus {
+      border-color: var(--color-accent-2)
+    }
+
+    .gb-form .gb-name {
+      flex: 0 0 180px
+    }
+
+    .gb-form .gb-msg {
+      flex: 1;
+      min-width: 200px;
+      resize: vertical
+    }
+
+    .gb-form .gb-btn {
+      flex: 0 0 auto;
+      padding: 10px 20px;
+      background: var(--color-accent);
+      border: 1px solid rgba(168, 85, 247, .4);
+      border-radius: 8px;
+      color: #fff;
+      font-family: var(--fd);
+      font-size: .85rem;
+      cursor: pointer;
+      transition: background .25s
+    }
+
+    .gb-form .gb-btn:hover {
+      background: var(--color-accent-2)
+    }
+
+    .gb-list {
+      display: grid;
+      gap: 12px
+    }
+
+    .gb-card {
+      background: rgba(14, 8, 28, .88);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 14px 16px
+    }
+
+    .gb-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px
+    }
+
+    .gb-card-header .gb-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #a855f7, #6d28d9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--fd);
+      font-size: .7rem;
+      color: #fff;
+      flex-shrink: 0
+    }
+
+    .gb-card-header .gb-author {
+      font-family: var(--fd);
+      font-size: .85rem;
+      color: var(--color-text)
+    }
+
+    .gb-card-header .gb-anon {
+      color: var(--color-muted);
+      font-style: italic
+    }
+
+    .gb-card-header .gb-time {
+      margin-left: auto;
+      font-size: .7rem;
+      color: var(--color-muted)
+    }
+
+    .gb-card .gb-body {
+      color: var(--color-text-2);
+      font-size: .88rem;
+      line-height: 1.6
+    }
+
+    .gb-empty {
+      color: var(--color-muted);
+      font-size: .88rem;
+      font-style: italic;
+      text-align: center;
+      padding: 20px 0
+    }
+
+    .gb-note {
+      font-size: .72rem;
+      color: var(--color-muted);
+      margin-top: 8px
+    }
+
     /* CTA — centered, not boxed like others */
     .cta {
       margin: 56px 0 40px;
@@ -1169,9 +1309,7 @@
     .lum-strip .lum-item .lum-banner {
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(168, 85, 247, .55), rgba(56, 189, 248, .35));
-      background-size: cover;
-      background-position: center;
+      background: url('/asset/background-profile-card.webp') center / cover no-repeat;
       opacity: 0;
       transition: opacity .4s ease
     }
@@ -1443,9 +1581,9 @@
       font-size: .88rem
     }
 
-    /* how to apply — placeholder, filled in later manually */
+    /* how to apply — zig-zag star journey */
     .roster-apply {
-      margin-top: 40px
+      margin-top: 48px
     }
 
     .roster-apply h3 {
@@ -1455,16 +1593,189 @@
       margin-bottom: 8px
     }
 
-    .roster-apply-placeholder {
-      border: 2px dashed var(--color-border);
-      border-radius: 14px;
-      padding: 34px 20px;
-      text-align: center;
+    .journey {
+      position: relative;
+      margin: 28px 0 0;
+      padding: 10px 0 26px
+    }
+
+    /* the light path — dashed neon line down the middle */
+    .journey::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 2px;
+      transform: translateX(-50%);
+      background: repeating-linear-gradient(180deg, rgba(168, 85, 247, .9) 0 7px, transparent 7px 14px);
+      box-shadow: 0 0 12px rgba(168, 85, 247, .65), 0 0 32px rgba(56, 189, 248, .35);
+      pointer-events: none;
+      z-index: 0
+    }
+
+    .j-step {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 44px 1fr;
+      align-items: center;
+      gap: 0 26px;
+      margin-bottom: 44px;
+      z-index: 1
+    }
+
+    /* even steps swap content columns (left/right) while center stays the path */
+    .j-step:nth-child(even) .j-media {
+      grid-column: 3
+    }
+
+    .j-step:nth-child(even) .j-text {
+      grid-column: 1;
+      grid-row: 1;
+      text-align: right
+    }
+
+    .j-media {
+      position: relative;
+      grid-column: 1;
+      grid-row: 1;
+      aspect-ratio: 4/3;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(168, 85, 247, .35);
+      box-shadow: 0 12px 34px rgba(0, 0, 0, .45);
+      background: #170d2b
+    }
+
+    /* parallax image — inner layer keeps ratio uniform */
+    .j-media img {
+      position: absolute;
+      inset: -18% 0;
+      width: 100%;
+      height: auto;
+      min-height: 100%;
+      object-fit: cover;
+      object-position: center;
+      will-change: transform;
+      transform: translate3d(0, 0, 0)
+    }
+
+    .j-media .j-starlight {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(120% 90% at 50% 0%, transparent 55%, rgba(14, 8, 28, .55) 100%);
+      pointer-events: none;
+      z-index: 1
+    }
+
+    .j-text {
+      grid-column: 3;
+      grid-row: 1;
+      min-width: 0
+    }
+
+    .j-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--fd);
+      font-size: .66rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #c084fc;
+      border: 1px solid rgba(192, 132, 252, .4);
+      background: rgba(168, 85, 247, .1);
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px
+    }
+
+    .j-text h4 {
+      font-family: var(--fd);
+      font-size: 1.15rem;
+      color: var(--color-text);
+      margin-bottom: 6px
+    }
+
+    .j-text p {
       color: var(--color-text-2);
-      font-family: var(--fp);
-      font-size: .85rem;
-      margin-top: 12px;
-      background: rgba(168, 85, 247, .04)
+      font-size: .9rem;
+      line-height: 1.65
+    }
+
+    /* star node at each step (on the light path) */
+    .j-node {
+      grid-column: 2;
+      grid-row: 1;
+      justify-self: center;
+      align-self: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff, #a855f7 70%);
+      box-shadow: 0 0 12px #a855f7, 0 0 28px rgba(168, 85, 247, .6);
+      z-index: 2;
+      pointer-events: none
+    }
+
+    /* warning step */
+    .j-step--warn {
+      margin-bottom: 0
+    }
+
+    .j-step--warn .j-media {
+      border-color: rgba(253, 224, 71, .55);
+      box-shadow: 0 12px 34px rgba(253, 224, 71, .12)
+    }
+
+    .j-step--warn .j-badge {
+      color: #fde047;
+      border-color: rgba(253, 224, 71, .5);
+      background: rgba(253, 224, 71, .08)
+    }
+
+    @media (max-width: 700px) {
+      .j-step,
+      .j-step:nth-child(even) {
+        display: flex;
+        flex-direction: column;
+        gap: 14px
+      }
+
+      .j-step .j-media,
+      .j-step:nth-child(even) .j-media {
+        width: 100%;
+        grid-column: auto;
+        grid-row: auto;
+        order: 1
+      }
+
+      .j-step .j-text,
+      .j-step:nth-child(even) .j-text {
+        grid-column: auto;
+        grid-row: auto;
+        text-align: left;
+        order: 2
+      }
+
+      .j-node {
+        position: absolute;
+        top: 50%;
+        left: 16px;
+        transform: translate(-50%, -50%);
+        grid-column: auto;
+        grid-row: auto;
+        justify-self: auto;
+        align-self: auto
+      }
+
+      .journey::before {
+        left: 8px
+      }
+
+      .j-step {
+        padding-left: 28px
+      }
     }
 
     @media (max-width: 700px) {
@@ -2491,12 +2802,103 @@
       <!-- HOW TO APPLY — placeholder (detail &amp; images added manually later) -->
       <div class="roster-apply">
         <h3>Cara Apply</h3>
-        <p style="color:var(--color-text-2);font-size:.9rem;max-width:560px">Menarik? Berikut cara mendaftar menjadi
-          bagian dari Luminary.</p>
-        <div class="roster-apply-placeholder">
-          <!-- Konten langkah-langkah & gambar akan ditambahkan manual di sini nanti -->
-          [ Tempat konten cara apply: langkah-langkah &amp; gambar — diisi manual ]
+        <p style="color:var(--color-text-2);font-size:.9rem;max-width:560px">Menarik? Berikut perjalanan menjadi
+          bagian dari Luminary — ikuti jalurnya langkah demi langkah.</p>
+
+        <div class="journey">
+
+          <!-- STEP 1 -->
+          <div class="j-step">
+            <div class="j-media">
+              <img src="/asset/tutorial-chat-owner/1.jpg" alt="Channel chat-to-owner" loading="lazy" />
+              <span class="j-starlight"></span>
+            </div>
+            <div class="j-text">
+              <span class="j-badge">Langkah 1</span>
+              <h4>Buka Channel ✘・chat-to-owner</h4>
+              <p>Buka channel <b>✘・chat-to-owner</b> di server Lunera sebagai pintu awal untuk menghubungi owner.</p>
+            </div>
+            <span class="j-node"></span>
+          </div>
+
+          <!-- STEP 2 -->
+          <div class="j-step">
+            <div class="j-media">
+              <img src="/asset/tutorial-chat-owner/2.jpg" alt="Klik Start Chat" loading="lazy" />
+              <span class="j-starlight"></span>
+            </div>
+            <div class="j-text">
+              <span class="j-badge">Langkah 2</span>
+              <h4>Klik &ldquo;Start Chat&rdquo;</h4>
+              <p>Setelah masuk ke channel, klik tombol <b>&ldquo;Start Chat&rdquo;</b> untuk membuat tiket percakapan dengan
+                owner.</p>
+            </div>
+            <span class="j-node"></span>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="j-step">
+            <div class="j-media">
+              <img src="/asset/tutorial-chat-owner/3.jpg" alt="Tiket #ticket dibuat" loading="lazy" />
+              <span class="j-starlight"></span>
+            </div>
+            <div class="j-text">
+              <span class="j-badge">Langkah 3</span>
+              <h4>Tiket Terbuat — Klik #ticket-XXXX</h4>
+              <p>Setelah tiket dibuat, klik channel <b>#ticket-XXXX</b> yang muncul untuk membuka ruang percakapan
+                dengan owner.</p>
+            </div>
+            <span class="j-node"></span>
+          </div>
+
+          <!-- STEP 4 -->
+          <div class="j-step">
+            <div class="j-media">
+              <img src="/asset/tutorial-chat-owner/4.jpg" alt="Ajukan diri jadi Luminary" loading="lazy" />
+              <span class="j-starlight"></span>
+            </div>
+            <div class="j-text">
+              <span class="j-badge">Langkah 4</span>
+              <h4>Ajukan Dirimu Menjadi Luminary</h4>
+              <p>Sampaikan perkenalan dirimu beserta alasan dan keahlian yang kamu miliki untuk menjadi <b>Luminary</b>
+                di Server Lunera.</p>
+            </div>
+            <span class="j-node"></span>
+          </div>
+
+          <!-- STEP 5 — WARNING -->
+          <div class="j-step j-step--warn">
+            <div class="j-media">
+              <img src="/asset/tutorial-chat-owner/5.jpg" alt="Jangan tutup chat mendadak" loading="lazy" />
+              <span class="j-starlight"></span>
+            </div>
+            <div class="j-text">
+              <span class="j-badge">⚠ Peringatan</span>
+              <h4>Jangan Tutup Chat Mendadak</h4>
+              <p>Jika kamu ingin mengundurkan diri dari proses atau peran, <b>pamit dulu dengan sopan</b> — jangan pernah
+                menutup chat secara tiba-tiba tanpa kabar.</p>
+            </div>
+            <span class="j-node" style="background:radial-gradient(circle at 35% 35%,#fff,#fde047 70%);box-shadow:0 0 12px #fde047,0 0 28px rgba(253,224,71,.6)"></span>
+          </div>
+
         </div>
+      </div>
+    </section>
+
+    <!-- GUESTBOOK / TESTIMONI -->
+    <section class="sec">
+      <div class="guestbook">
+        <h3>Komentar & Pengalaman</h3>
+        <p>Berbagi pendapat atau pengalamanmu selama di Lunera. Jika Discord-mu terdeteksi di server, namamu akan otomatis terbaca.</p>
+        <div class="gb-form" id="gb-form">
+          <input type="text" class="gb-name" id="gb-name" placeholder="Nick Discord (opsional)" maxlength="50" />
+          <textarea class="gb-msg" id="gb-msg" placeholder="Tulis pendapat atau pengalamanmu…" rows="2" maxlength="1000"></textarea>
+          <button class="gb-btn" id="gb-submit" type="button">Kirim</button>
+        </div>
+        <div class="gb-list" id="gb-list">
+          <div class="gb-empty" id="gb-loading">Memuat komentar…</div>
+        </div>
+        <p class="gb-note">Komentar bersifat publik. Jika nama Discord-mu tidak terdeteksi di server, akan terbaca sebagai &ldquo;Anonymous Person&rdquo;.</p>
       </div>
     </section>
 
@@ -2673,7 +3075,6 @@
           document.querySelectorAll(`[data-roster-avatar="${role.id}"]`).forEach(el => { if (role.user.avatar) el.src = role.user.avatar });
           document.querySelectorAll(`[data-roster-banner="${role.id}"]`).forEach(el => {
             if (role.user.banner) el.style.backgroundImage = `url('${role.user.banner}')`;
-            else if (role.user.accentColor) el.style.background = `linear-gradient(135deg, ${role.user.accentColor}, rgba(56,189,248,.4))`;
           });
         });
       }).catch(() => { /* keep static fallback */ });
@@ -2696,6 +3097,102 @@
           rosterCards.forEach(c => io.observe(c));
         }
       }
+
+      // Journey (Cara Apply) — parallax on the step images.
+      (function () {
+        const medias = Array.from(document.querySelectorAll('.j-media'));
+        if (!medias.length) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+
+        const vis = new Set();
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(e => e.isIntersecting ? vis.add(e.target) : vis.delete(e.target));
+        }, { rootMargin: '110px 0px' });
+        medias.forEach(m => io.observe(m));
+
+        let ticking = false;
+        const update = () => {
+          ticking = false;
+          const vh = window.innerHeight;
+          vis.forEach((m) => {
+            const img = m.querySelector('img');
+            if (!img) return;
+            const r = m.getBoundingClientRect();
+            // parallax factor: image is oversized by 36% (inset -18%), so we can scroll it ±18%.
+            const p = Math.max(-0.18, Math.min(0.18, (r.top + r.height / 2 - vh / 2) / vh));
+            img.style.transform = `translate3d(0, ${(-p * 38).toFixed(1)}px, 0)`;
+          });
+        };
+        window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+        window.addEventListener('resize', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } });
+        update();
+      })();
+
+      // ── Guestbook — load comments + submit ──
+      (function () {
+        const list = document.getElementById('gb-list');
+        const loading = document.getElementById('gb-loading');
+        const nameEl = document.getElementById('gb-name');
+        const msgEl = document.getElementById('gb-msg');
+        const btn = document.getElementById('gb-submit');
+        if (!list || !btn) return;
+
+        function timeAgo(ts) {
+          const d = Date.now() - ts, s = Math.floor(d / 1000);
+          if (s < 60) return 'baru saja';
+          const m = Math.floor(s / 60); if (m < 60) return m + ' menit lalu';
+          const h = Math.floor(m / 60); if (h < 24) return h + ' jam lalu';
+          const dy = Math.floor(h / 24); return dy + ' hari lalu';
+        }
+
+        function renderCard(c) {
+          const div = document.createElement('div');
+          div.className = 'gb-card';
+          const initial = (c.displayName || '?')[0].toUpperCase();
+          const isAnon = c.displayName === 'Anonymous Person';
+          div.innerHTML =
+            '<div class="gb-card-header">' +
+              '<span class="gb-avatar">' + initial + '</span>' +
+              '<span class="gb-author' + (isAnon ? ' gb-anon' : '') + '">' +
+                c.displayName.replace(/</g, '&lt;') +
+              '</span>' +
+              '<span class="gb-time">' + timeAgo(c.ts) + '</span>' +
+            '</div>' +
+            '<div class="gb-body">' + c.message.replace(/</g, '&lt;').replace(/\n/g, '<br>') + '</div>';
+          return div;
+        }
+
+        // Load existing comments
+        fetch('/api/comments').then(r => r.json()).then(data => {
+          if (!Array.isArray(data) || !data.length) {
+            if (loading) loading.textContent = 'Belum ada komentar. Jadilah yang pertama!';
+            return;
+          }
+          if (loading) loading.remove();
+          data.forEach(c => list.appendChild(renderCard(c)));
+        }).catch(() => { if (loading) loading.textContent = 'Gagal memuat komentar.' });
+
+        btn.addEventListener('click', () => {
+          const msg = (msgEl.value || '').trim();
+          if (!msg) { msgEl.focus(); return; }
+          const name = (nameEl.value || '').trim();
+          btn.disabled = true;
+          btn.textContent = 'Mengirim…';
+          fetch('/api/comments', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, message: msg }),
+          }).then(r => r.json()).then(c => {
+            if (c && c.id) {
+              list.insertBefore(renderCard(c), list.firstChild);
+              msgEl.value = '';
+              // Remove empty state if present
+              const emp = list.querySelector('.gb-empty');
+              if (emp) emp.remove();
+            }
+          }).catch(() => {}).finally(() => { btn.disabled = false; btn.textContent = 'Kirim'; });
+        });
+      })();
       
     });
 

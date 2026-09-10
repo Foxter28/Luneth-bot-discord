@@ -46,5 +46,5 @@ module.exports = {
   },
 
   /** How long to cache the widget JSON on the server (ms). */
-  widgetCacheTtl: 3_000, // 3s — minimal server cache; Discord itself caches 30-60s
+  widgetCacheTtl: 60_000, // 60s — Discord itself caches 30-60s; this prevents hammering
 };

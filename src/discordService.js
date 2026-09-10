@@ -141,6 +141,7 @@ function fetchWidget() {
     // hammering Discord on every request.
     if (cached && now - cachedAt < siteConfig.widgetCacheTtl) {
       resolve(normalize(cached, 'cache'));
+      return; // don't ALSO fire a Discord request — that caused duplicate fetches
     }
 
     const url = new URL(siteConfig.discord.widgetUrl);
@@ -185,7 +186,7 @@ function fetchWidget() {
         }
       });
 
-    req.setTimeout(8_000, () => {
+    req.setTimeout(15_000, () => {
       req.destroy();
       console.warn('[discord] widget fetch timed out');
       resolve({ ...FALLBACK, source: 'fallback' });
@@ -194,8 +195,6 @@ function fetchWidget() {
     req.end();
   });
 }
-
-module.exports = { fetchWidget, normalize, FALLBACK, fetchRoster };
 
 /**
  * Fetch a single Discord user by ID using the bot token.
@@ -292,3 +291,32 @@ async function fetchRoster() {
   rosterCache = { at: now, data: { roles: data } };
   return { roles: data };
 }
+
+/**
+ * Check if a username belongs to an online member of the Discord server.
+ * Uses the public widget JSON (online members only) with fuzzy matching
+ * to handle prefixed names like '! Staly4n'.
+ * @param {string} name
+ * @returns {Promise<boolean>}
+ */
+async function isGuildMember(name) {
+  try {
+    const n = String(name || '').trim().toLowerCase();
+    if (!n) return false;
+
+    const widget = await fetchWidget();
+    if (!widget || !widget.available) return false;
+
+    // Widget names often carry prefixes like '! ' or custom status.
+    // Strip leading non-alphanumeric chars before comparing.
+    const strip = s => String(s || '').toLowerCase().replace(/^[^a-z0-9]+/i, '').trim();
+    return widget.users.some(u => {
+      const wName = strip(u.username);
+      return wName === n || wName.includes(n) || n.includes(wName);
+    });
+  } catch {
+    return false;
+  }
+}
+
+module.exports = { fetchWidget, normalize, FALLBACK, fetchRoster, isGuildMember };

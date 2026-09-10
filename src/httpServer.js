@@ -13,7 +13,8 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { URL } = require('url');
-const { fetchWidget, fetchRoster } = require('./discordService');
+const { fetchWidget, fetchRoster, isGuildMember } = require('./discordService');
+const { addComment, getAll: getComments } = require('./commentStore');
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
@@ -145,6 +146,37 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-cache' });
       res.end(JSON.stringify({ memberCount: null }));
     }
+    return;
+  }
+
+  // --- Guestbook comments ---
+  if (pathname === '/api/comments' && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-cache' });
+    res.end(JSON.stringify(getComments()));
+    return;
+  }
+  if (pathname === '/api/comments' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => { body += c; if (body.length > 8192) req.destroy(); });
+    req.on('end', async () => {
+      try {
+        const { name, message } = JSON.parse(body || '{}');
+        const msg = String(message || '').trim().slice(0, 1000);
+        if (!msg) { res.writeHead(400, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: 'Empty message' })); return; }
+        const nick = String(name || '').trim().slice(0, 50);
+        let displayName = 'Anonymous Person';
+        if (nick) {
+          const inServer = await isGuildMember(nick);
+          if (inServer) displayName = nick;
+        }
+        const saved = addComment({ name: nick || null, displayName, message: msg });
+        res.writeHead(201, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify(saved));
+      } catch {
+        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ error: 'Invalid request' }));
+      }
+    });
     return;
   }
 
