@@ -199,9 +199,9 @@ module.exports = { fetchWidget, normalize, FALLBACK, fetchRoster };
 
 /**
  * Fetch a single Discord user by ID using the bot token.
- * Resolves { id, username, avatar } or null on any failure.
+ * Resolves { id, username, avatar, banner, accentColor } or null on any failure.
  * @param {string} userId
- * @returns {Promise<{id:string, username:string, avatar:string|null}|null>}
+ * @returns {Promise<{id:string, username:string, avatar:string|null, banner:string|null, accentColor:string|null}|null>}
  */
 function fetchDiscordUser(userId) {
   return new Promise((resolve) => {
@@ -232,10 +232,13 @@ function fetchDiscordUser(userId) {
           }
           try {
             const u = JSON.parse(data);
+            const bannerHash = u.banner || null;
             resolve({
               id: String(u.id),
               username: u.global_name || u.username || `Lunarian`, // prefer display name, fall back to username
               avatar: u.avatar ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png?size=128` : null,
+              banner: bannerHash ? `https://cdn.discordapp.com/banners/${u.id}/${bannerHash}.png?size=600` : null,
+              accentColor: u.accent_color ? `#${u.accent_color.toString(16).padStart(6, '0')}` : null,
             });
           } catch (err) {
             console.warn('[roster] user JSON parse failed:', err.message);

@@ -52,10 +52,15 @@
       --sh2: 6px 6px 0 #2e1065;
 
       /* semantic aliases — Luminary Roster / staff section */
+      --color-bg: #07050e;
+      --color-surface: #110a24;
+      --color-surface-2: rgba(20, 13, 38, .88);
+      --color-border: rgba(168, 85, 247, .32);
+      --color-text: #f3f0ff;
       --color-text-2: #a78bfa;
       --color-muted: #6d6496;
-      --color-gold: var(--gold);
-      --color-accent-2: var(--cyan);
+      --color-gold: #fde047;
+      --color-accent-2: #38bdf8;
     }
 
     *,
@@ -1079,9 +1084,199 @@
       animation: pulse 1.8s ease-in-out infinite
     }
 
-    /* ── LUMINARY ROSTER — constellation scroll reveal ── */
+
+    /* ── LUMINARY PROFILES — tall vertical bars, expand on hover ── */
+    .lum-strip {
+      margin: 28px 0 32px;
+      width: max-content;
+      max-width: 100%;
+      display: flex;
+      gap: 6px;
+      background: transparent;
+      border: none;
+      padding: 0
+    }
+
+    .lum-strip .lum-item {
+      width: 56px;
+      height: 320px;
+      overflow: hidden;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: width .5s cubic-bezier(.25,.8,.25,1);
+      background: linear-gradient(180deg, #1a0f2e 0%, #2b1a54 40%, #3b1d6e 100%);
+      border: 1px solid rgba(168, 85, 247, .25);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      position: relative
+    }
+
+    .lum-strip .lum-item:hover {
+      width: 260px;
+      background: rgba(14, 8, 28, .92);
+      border-color: var(--color-accent-2);
+      box-shadow: 0 8px 28px rgba(56, 189, 248, .18)
+    }
+
+    /* collapsed vertical label */
+    .lum-strip .lum-item .lum-vlabel {
+      min-width: 14em;
+      padding: .5em;
+      text-align: center;
+      transform: rotate(-90deg);
+      transform-origin: center center;
+      transition: all .5s cubic-bezier(.25,.8,.25,1);
+      text-transform: uppercase;
+      font-family: var(--fd);
+      font-size: .72rem;
+      letter-spacing: .12em;
+      color: var(--glow);
+      text-shadow: 0 1px 4px rgba(0, 0, 0, .9);
+      white-space: nowrap;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-top: -50px
+    }
+
+    .lum-strip .lum-item:hover .lum-vlabel {
+      opacity: 0;
+      transform: rotate(0);
+      pointer-events: none
+    }
+
+    /* expanded discord-style profile */
+    .lum-strip .lum-item .lum-profile {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 14px 10px;
+      opacity: 0;
+      transition: all .4s .08s ease;
+      pointer-events: none;
+      z-index: 2
+    }
+
+    .lum-strip .lum-item:hover .lum-profile {
+      opacity: 1
+    }
+
+    .lum-strip .lum-item .lum-banner {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(168, 85, 247, .55), rgba(56, 189, 248, .35));
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity .4s ease
+    }
+
+    .lum-strip .lum-item:hover .lum-banner {
+      opacity: 1
+    }
+
+    .lum-strip .lum-item .lum-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(14, 8, 28, 1);
+      background: #2e1065;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 5px;
+      flex: 0 0 auto;
+      opacity: 0;
+      transition: opacity .4s ease
+    }
+
+    .lum-strip .lum-item:hover .lum-avatar {
+      opacity: 1
+    }
+
+    .lum-strip .lum-item .lum-name {
+      font-family: var(--fd);
+      font-size: .85rem;
+      color: var(--color-text);
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, .7);
+      text-align: center
+    }
+
+    .lum-strip .lum-item .lum-role {
+      font-family: var(--fp);
+      font-size: .58rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--glow);
+      margin-top: 2px;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, .7);
+      text-align: center
+    }
+
+    /* open slot — dashed border */
+    .lum-strip .lum-slot {
+      width: 56px;
+      height: 320px;
+      overflow: hidden;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: width .5s cubic-bezier(.25,.8,.25,1);
+      background: linear-gradient(180deg, #1a0f2e 0%, #2b1a54 40%, #3b1d6e 100%);
+      border: 2px dashed rgba(168, 85, 247, .35);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative
+    }
+
+    .lum-strip .lum-slot:hover {
+      width: 260px;
+      background: rgba(14, 8, 28, .92);
+      border-color: var(--color-gold);
+      box-shadow: 0 8px 28px rgba(253, 224, 71, .12)
+    }
+
+    .lum-strip .lum-slot span {
+      min-width: 14em;
+      padding: .5em;
+      text-align: center;
+      transform: rotate(-90deg);
+      transform-origin: center center;
+      transition: all .5s cubic-bezier(.25,.8,.25,1);
+      text-transform: uppercase;
+      font-family: var(--fd);
+      font-size: .72rem;
+      letter-spacing: .12em;
+      color: var(--color-muted);
+      text-shadow: 0 1px 4px rgba(0, 0, 0, .9)
+    }
+
+    .lum-strip .lum-slot:hover span {
+      transform: rotate(0);
+      color: var(--color-gold)
+    }
+
+    @media(max-width:640px) {
+      .lum-strip .lum-item,
+      .lum-strip .lum-slot {
+        height: 240px
+      }
+    }
+
+
+
+     /* ── LUMINARY ROSTER — grid kartu responsif ── */
     .roster {
-      margin: 20px 0 70px
+      margin: 20px 0 60px
     }
 
     .roster-rule {
@@ -1090,247 +1285,178 @@
       gap: 8px;
       font-size: .85rem;
       color: var(--color-text-2);
-      background: rgba(168, 85, 247, .08);
-      border: 1px dashed rgba(168, 85, 247, .28);
+      background: var(--color-surface);
+      border: 1px dashed var(--color-border);
       border-radius: 999px;
-      padding: 7px 14px;
-      margin-bottom: 34px;
+      padding: 9px 16px;
+      margin-bottom: 30px;
       max-width: fit-content
     }
 
-    .roster-path {
-      position: relative
-    }
-
-    /* thin vertical constellation line with small star dots */
-    .roster-line {
-      position: absolute;
-      left: 26px;
-      top: 0;
-      bottom: 0;
-      width: 1px;
-      background: linear-gradient(180deg, rgba(168, 85, 247, .1), rgba(168, 85, 247, .5), rgba(56, 189, 248, .5), rgba(168, 85, 247, .1));
-      z-index: 0
-    }
-
-    .roster-line::before {
-      content: '';
-      position: absolute;
-      left: -2px;
-      top: 0;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--glow);
-      box-shadow: 0 0 10px var(--glow)
-    }
-
-    .roster-line::after {
-      content: '';
-      position: absolute;
-      left: -2px;
-      bottom: 0;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--cyan);
-      box-shadow: 0 0 10px var(--cyan)
-    }
-
-    .roster-pin {
-      position: relative;
-      z-index: 1;
-      min-height: 76vh;
-      display: flex;
-      align-items: center
+    .roster-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px
     }
 
     .roster-card {
-      margin-left: 58px;
-      width: 100%;
-      max-width: 460px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 20px 22px;
-      box-shadow: var(--sh)
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .5s ease, transform .5s ease, border-color .25s ease
     }
 
-    /* connector dot on the constellation line */
-    .roster-card::before {
-      content: '';
-      position: absolute;
-      left: 20px;
-      top: 50%;
-      width: 13px;
-      height: 13px;
-      border-radius: 50%;
-      background: var(--color-text-2);
-      border: 2px solid var(--bg);
-      transform: translateY(-50%);
-      z-index: 2
+    .roster-card.is-in {
+      opacity: 1;
+      transform: translateY(0)
+    }
+
+    .roster-card:hover {
+      border-color: var(--color-accent-2)
+    }
+
+    .roster-card--wild {
+      grid-column: 1 / -1
     }
 
     .roster-card h3 {
       font-family: var(--fd);
-      font-size: 1.35rem;
-      color: #fff;
-      margin-bottom: 6px
+      font-size: 1.25rem;
+      color: var(--color-text);
+      margin: 0
     }
 
     .roster-role-sub {
       font-family: var(--fp);
       font-size: .72rem;
-      letter-spacing: .1em;
+      letter-spacing: .12em;
       text-transform: uppercase;
-      margin-bottom: 10px
-    }
-
-    .roster-holder {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 4px
-    }
-
-    .roster-holder img {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid var(--border);
-      background: #2e1065
-    }
-
-    .roster-holder b {
-      color: #fff;
-      font-size: .92rem
-    }
-
-    /* status pill */
-    .roster-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--fp);
-      font-size: .72rem;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      padding: 3px 10px;
-      border-radius: 999px;
-      margin-bottom: 10px;
-      font-weight: 700
-    }
-
-    .roster-status .rs-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: currentColor
-    }
-
-    /* ● filled — muted/quiet */
-    .roster-card.st-filled {
-      border-color: rgba(109, 100, 150, .35);
-      background: rgba(109, 100, 150, .12)
-    }
-
-    .roster-card.st-filled h3 {
-      color: var(--color-text-2)
-    }
-
-    .roster-card.st-filled .roster-status {
-      background: rgba(109, 100, 150, .2);
-      color: var(--color-muted)
-    }
-
-    /* ● open — gold, glowing connector, subtle pulse */
-    .roster-card.st-open {
-      border-color: rgba(253, 224, 71, .5);
-      background: rgba(253, 224, 71, .07);
-      box-shadow: 0 0 24px rgba(253, 224, 71, .15)
-    }
-
-    .roster-card.st-open h3 {
-      color: var(--color-gold)
-    }
-
-    .roster-card.st-open .roster-status {
-      background: rgba(253, 224, 71, .16);
-      color: var(--color-gold)
-    }
-
-    .roster-card.st-open::before {
-      background: var(--gold);
-      border-color: #3b0764;
-      box-shadow: 0 0 14px var(--gold);
-      animation: pulse 1.8s ease-in-out infinite
-    }
-
-    /* ● wildcard — accent-2 (cyan), distinct third category */
-    .roster-card.st-wild {
-      border-color: rgba(56, 189, 248, .5);
-      background: rgba(56, 189, 248, .08);
-      box-shadow: 0 0 24px rgba(56, 189, 248, .15)
-    }
-
-    .roster-card.st-wild h3 {
-      color: var(--color-accent-2)
-    }
-
-    .roster-card.st-wild .roster-status {
-      background: rgba(56, 189, 248, .16);
-      color: var(--color-accent-2)
-    }
-
-    .roster-card.st-wild::before {
-      background: var(--cyan);
-      border-color: #0c4a6e;
-      box-shadow: 0 0 14px var(--cyan)
+      color: var(--color-muted);
+      margin-bottom: 2px
     }
 
     .roster-card p {
-      color: #c4b5fd;
+      color: var(--color-text-2);
       font-size: .9rem;
       line-height: 1.6;
-      margin-bottom: 8px
+      margin: 0
     }
 
     .roster-card ul {
+      margin: 0;
       padding-left: 18px;
-      margin-bottom: 8px
+      color: var(--color-text-2);
+      font-size: .88rem;
+      line-height: 1.6
     }
 
     .roster-card li {
-      color: #c4b5fd;
-      font-size: .86rem;
-      line-height: 1.55;
       margin-bottom: 4px
     }
 
     .roster-note {
-      font-size: .8rem;
-      color: var(--color-text-2);
       font-style: italic;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px dashed rgba(168, 85, 247, .25)
+      font-size: .82rem;
+      opacity: .85
+    }
+
+    /* status badge — solid pill, readable contrast */
+    .roster-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--fp);
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      padding: 5px 12px;
+      width: fit-content;
+      border: 1px solid transparent
+    }
+
+    .roster-badge .rs-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor
+    }
+
+    .roster-badge--filled {
+      background: var(--color-surface);
+      border-color: var(--color-border);
+      color: var(--color-text-2)
+    }
+
+    .roster-badge--open {
+      background: var(--color-gold);
+      color: var(--color-bg)
+    }
+
+    .roster-badge--wild {
+      background: var(--color-accent-2);
+      color: var(--color-bg)
+    }
+
+    /* subtle idle pulse — ONLY on open badge (opacity, not color/size) */
+    @keyframes rosterPulse {
+      0%,
+      100% {
+        opacity: 1
+      }
+      50% {
+        opacity: .85
+      }
+    }
+
+    .roster-badge--open {
+      animation: rosterPulse 2.4s ease-in-out infinite
+    }
+
+    /* live holder for filled roles */
+    .roster-live {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: auto
+    }
+
+    .roster-live .avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex: 0 0 24px;
+      border: 2px solid var(--color-border);
+      background: #2e1065
+    }
+
+    .roster-live b {
+      color: var(--color-text);
+      font-size: .88rem
     }
 
     /* how to apply — placeholder, filled in later manually */
     .roster-apply {
-      margin-top: 60px
+      margin-top: 40px
     }
 
     .roster-apply h3 {
       font-family: var(--fd);
-      color: var(--gold);
+      color: var(--color-gold);
       font-size: 1.2rem;
       margin-bottom: 8px
     }
 
     .roster-apply-placeholder {
-      border: 2px dashed var(--border);
+      border: 2px dashed var(--color-border);
       border-radius: 14px;
       padding: 34px 20px;
       text-align: center;
@@ -1341,31 +1467,25 @@
       background: rgba(168, 85, 247, .04)
     }
 
-    /* sticky-pin behavior — each role "sticks" while scrolling past it */
-    .roster-pin .roster-card {
-      position: sticky;
-      top: 96px
+    @media (max-width: 700px) {
+      .roster-grid {
+        grid-template-columns: 1fr
+      }
+
+      .roster-card--wild {
+        grid-column: auto
+      }
     }
 
-    /* reduced motion / small screens: static, non-sticky list */
-    @media (max-width: 640px),
-    (prefers-reduced-motion: reduce) {
-      .roster-line {
-        display: none
+    @media (prefers-reduced-motion: reduce) {
+      .roster-card {
+        transition: none;
+        opacity: 1;
+        transform: none
       }
 
-      .roster-pin {
-        min-height: auto
-      }
-
-      .roster-pin .roster-card {
-        position: static;
-        margin-left: 0;
-        margin-bottom: 16px
-      }
-
-      .roster-card::before {
-        display: none
+      .roster-badge--open {
+        animation: none
       }
     }
 
@@ -2239,7 +2359,7 @@
       </div>
     </section>
 
-    <!-- BOOSTERS — distinct constellation -->
+    <!-- BOOSTERS -- distinct constellation -->
     <section id="boosters" class="sec">
       <div class="sec-head">
         <div>
@@ -2257,7 +2377,10 @@
       </div>
     </section>
 
-    <!-- LUMINARY ROSTER — constellation scroll reveal -->
+
+
+
+    <!-- LUMINARY ROSTER — peran staff & slot terbuka -->
     <section id="luminary" class="sec roster">
       <div class="sec-head">
         <div>
@@ -2270,61 +2393,88 @@
       <!-- persistent rule banner -->
       <div class="roster-rule"><span>🔒</span><span>Setiap peran cuma untuk 1 orang — begitu terisi, slotnya tertutup.</span></div>
 
-      <div class="roster-path">
-        <div class="roster-line"></div>
+      <!-- LUMINARY PROFILES — expand-on-hover Discord profile cards -->
+      <div class="lum-strip">
+        <div class="lum-item">
+          <span class="lum-vlabel">Announcer</span>
+          <span class="lum-profile">
+            <span class="lum-banner" data-roster-banner="announcer"></span>
+            <img class="lum-avatar" data-roster-avatar="announcer" alt="" loading="lazy"
+              onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" />
+            <b class="lum-name" data-roster-name="announcer">Lunarian</b>
+            <small class="lum-role">Announcer</small>
+          </span>
+        </div>
+        <div class="lum-item">
+          <span class="lum-vlabel">TalkActive</span>
+          <span class="lum-profile">
+            <span class="lum-banner" data-roster-banner="talkactive"></span>
+            <img class="lum-avatar" data-roster-avatar="talkactive" alt="" loading="lazy"
+              onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" />
+            <b class="lum-name" data-roster-name="talkactive">Lunarian</b>
+            <small class="lum-role">TalkActive</small>
+          </span>
+        </div>
+        <div class="lum-slot"><span>＋ Watcher<br /><small>Slot Terbuka</small></span></div>
+        <div class="lum-slot"><span>＋ Creator<br /><small>Slot Terbuka</small></span></div>
+      </div>
 
-        <!-- Announcer — FILLED (Ellynia) -->
-        <div class="roster-pin">
-          <div class="roster-card st-filled">
-            <span class="roster-status"><span class="rs-dot"></span>Terisi</span>
-            <h3>Announcer</h3>
+      <div class="roster-grid">
+
+        <!-- Announcer — FILLED (live via /api/luminary-roster) -->
+        <article class="roster-card">
+          <span class="roster-badge roster-badge--filled"><span class="rs-dot"></span>Terisi</span>
+          <div>
             <div class="roster-role-sub">Pengumuman &amp; Info</div>
-            <div class="roster-holder">
-              <img data-roster-avatar="announcer" alt="" loading="lazy"
-                onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" />
-              <b data-roster-name="announcer">Lunarian</b>
-            </div>
+            <h3>Announcer</h3>
+            <p>Menyampaikan pengumuman resmi dan informasi penting agar semua Lunarian selalu tahu perkembangan terbaru.</p>
           </div>
-        </div>
+          <div class="roster-live">
+            <img class="avatar" data-roster-avatar="announcer" alt="" loading="lazy"
+              onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" />
+            <b data-roster-name="announcer">Lunarian</b>
+          </div>
+        </article>
 
-        <!-- TalkActive — FILLED (Aruna) -->
-        <div class="roster-pin">
-          <div class="roster-card st-filled">
-            <span class="roster-status"><span class="rs-dot"></span>Terisi</span>
-            <h3>TalkActive</h3>
+        <!-- TalkActive — FILLED (live via /api/luminary-roster) -->
+        <article class="roster-card">
+          <span class="roster-badge roster-badge--filled"><span class="rs-dot"></span>Terisi</span>
+          <div>
             <div class="roster-role-sub">Menghidupkan Obrolan</div>
-            <div class="roster-holder">
-              <img data-roster-avatar="talkactive" alt="" loading="lazy"
-                onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" />
-              <b data-roster-name="talkactive">Lunarian</b>
-            </div>
+            <h3>TalkActive</h3>
+            <p>Menggiatkan percakapan dan menjaga suasana obrolan tetap ramai, hangat, dan menyenangkan.</p>
           </div>
-        </div>
+          <div class="roster-live">
+            <img class="avatar" data-roster-avatar="talkactive" alt="" loading="lazy"
+              onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" />
+            <b data-roster-name="talkactive">Lunarian</b>
+          </div>
+        </article>
 
         <!-- Watcher — OPEN -->
-        <div class="roster-pin">
-          <div class="roster-card st-open">
-            <span class="roster-status"><span class="rs-dot"></span>Dibuka</span>
-            <h3>Watcher</h3>
+        <article class="roster-card">
+          <span class="roster-badge roster-badge--open"><span class="rs-dot"></span>Dibuka</span>
+          <div>
             <div class="roster-role-sub">Menjaga &amp; Mengawasi</div>
+            <h3>Watcher</h3>
             <p>Mengawasi jalannya server dan memastikan suasana tetap nyaman. Slot ini masih kosong dan siap diisi.</p>
           </div>
-        </div>
+        </article>
 
         <!-- Creator — OPEN -->
-        <div class="roster-pin">
-          <div class="roster-card st-open">
-            <span class="roster-status"><span class="rs-dot"></span>Masih Kosong</span>
-            <h3>Creator</h3>
+        <article class="roster-card">
+          <span class="roster-badge roster-badge--open"><span class="rs-dot"></span>Dibuka</span>
+          <div>
             <div class="roster-role-sub">Konten &amp; Kreativitas</div>
+            <h3>Creator</h3>
             <p>Membuat konten, acara, atau pengalaman seru untuk Lunera. Slot ini masih kosong dan siap diisi.</p>
           </div>
-        </div>
+        </article>
 
         <!-- Wildcard slot — OPEN-ENDED / custom role -->
-        <div class="roster-pin">
-          <div class="roster-card st-wild">
-            <span class="roster-status"><span class="rs-dot"></span>Buat Peranmu Sendiri</span>
+        <article class="roster-card roster-card--wild">
+          <span class="roster-badge roster-badge--wild"><span class="rs-dot"></span>Buat Peranmu Sendiri</span>
+          <div>
             <h3>Punya Keahlian Lain? Bikin Peranmu Sendiri</h3>
             <p>Luminary tidak terbatas pada peran-peran di atas — siapa saja yang merasa punya keahlian atau ide
               kontribusi bermanfaat buat Lunera boleh mengajukan peran baru sesuai keahliannya sendiri.</p>
@@ -2335,7 +2485,7 @@
             <p class="roster-note">Ini cuma contoh — kemungkinan lain masih terbuka sesuai kreativitas pelamar. Hubungi
               kami lewat cara yang sama seperti peran lain.</p>
           </div>
-        </div>
+        </article>
       </div>
 
       <!-- HOW TO APPLY — placeholder (detail &amp; images added manually later) -->
@@ -2514,17 +2664,39 @@
 
       // Luminary Roster — live usernames/avatars for filled staff roles.
       // Backend /api/luminary-roster resolves them server-side (Discord API needs a bot token).
-      // On failure, keep the generic 'Lunarian' + default icon fallback already in the markup.
+      // On failure, fallback keeps the generic 'Lunarian' + default icon already in the markup.
       fetch('/api/luminary-roster').then(r => r.json()).then(d => {
         const roles = Array.isArray(d.roles) ? d.roles : [];
         roles.forEach(role => {
           if (role.status !== 'filled' || !role.user) return;
-          const nameEl = document.querySelector(`[data-roster-name="${role.id}"]`);
-          const avEl = document.querySelector(`[data-roster-avatar="${role.id}"]`);
-          if (nameEl) nameEl.textContent = (role.user.username || 'Lunarian').replace(/</g, '&lt;');
-          if (avEl && role.user.avatar) avEl.src = role.user.avatar;
+          document.querySelectorAll(`[data-roster-name="${role.id}"]`).forEach(el => el.textContent = (role.user.username || 'Lunarian').replace(/</g, '&lt;'));
+          document.querySelectorAll(`[data-roster-avatar="${role.id}"]`).forEach(el => { if (role.user.avatar) el.src = role.user.avatar });
+          document.querySelectorAll(`[data-roster-banner="${role.id}"]`).forEach(el => {
+            if (role.user.banner) el.style.backgroundImage = `url('${role.user.banner}')`;
+            else if (role.user.accentColor) el.style.background = `linear-gradient(135deg, ${role.user.accentColor}, rgba(56,189,248,.4))`;
+          });
         });
       }).catch(() => { /* keep static fallback */ });
+
+      // Roster cards — simple fade-in once when first visible (no sticky/continual animation).
+      const rosterCards = document.querySelectorAll('.roster-card');
+      const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (rosterCards.length) {
+        if (rm || !('IntersectionObserver' in window)) {
+          rosterCards.forEach(c => c.classList.add('is-in'));
+        } else {
+          const io = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-in');
+                io.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.15 });
+          rosterCards.forEach(c => io.observe(c));
+        }
+      }
+      
     });
 
     // ── Overlay 1: Slot Machine Text Intro (once per session) ──
