@@ -30,15 +30,14 @@ function persist() {
 
 /**
  * Add a comment.
- * @param {{ name?: string, displayName: string, avatar?: string|null, message: string }} entry
+ * @param {{ name?: string, displayName: string, message: string }} entry
  * @returns the saved comment object
  */
-function addComment({ name, displayName, avatar, message }) {
+function addComment({ name, displayName, message }) {
   const entry = {
     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
     name: name || null,           // original Discord nick submitted by user
     displayName,                  // resolved display name (Anonymous Person if not in server)
-    avatar: avatar || null,       // Discord avatar URL if member was online at submit time
     message,
     ts: Date.now(),
   };
@@ -52,4 +51,9 @@ function getAll() {
   return comments.slice().reverse(); // newest first
 }
 
-module.exports = { addComment, getAll };
+function clearAll() {
+  comments = [];
+  persist();
+}
+
+module.exports = { addComment, getAll, clearAll };

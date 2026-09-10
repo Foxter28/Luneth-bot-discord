@@ -3149,14 +3149,11 @@
         function renderCard(c) {
           const div = document.createElement('div');
           div.className = 'gb-card';
-          const initial = (c.displayName || '?')[0].toUpperCase();
           const isAnon = c.displayName === 'Anonymous Person';
-          const avatarHtml = c.avatar
-            ? '<img class="gb-avatar" src="' + c.avatar + '" alt="" referrerpolicy="no-referrer" loading="lazy" />'
-            : '<span class="gb-avatar">' + initial + '</span>';
+          const iconSrc = pickIcon(c.id);
           div.innerHTML =
             '<div class="gb-card-header">' +
-              avatarHtml +
+              '<img class="gb-avatar" src="' + iconSrc + '" alt="" loading="lazy" />' +
               '<span class="gb-author' + (isAnon ? ' gb-anon' : '') + '">' +
                 c.displayName.replace(/</g, '&lt;') +
               '</span>' +
@@ -3164,6 +3161,18 @@
             '</div>' +
             '<div class="gb-body">' + c.message.replace(/</g, '&lt;').replace(/\n/g, '<br>') + '</div>';
           return div;
+        }
+
+const ICONS = [
+          '/asset/profile-icon/kasane.gif',
+          '/asset/profile-icon/moon.jpg',
+          '/asset/profile-icon/star-pixel.gif',
+          '/asset/profile-icon/star.jpg',
+        ];
+        function pickIcon(id) {
+          // Deterministic pick from comment id so each comment keeps its icon
+          let h = 0; for (let i = 0; i < (id || '').length; i++) h = ((h << 5) - h + (id || '').charCodeAt(i)) | 0;
+          return ICONS[Math.abs(h) % ICONS.length];
         }
 
         // Load existing comments

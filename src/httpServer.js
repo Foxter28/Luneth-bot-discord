@@ -149,6 +149,18 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (pathname === '/api/comments' && req.method === 'DELETE') {
+    try {
+      const commentStore = require('./commentStore');
+      commentStore.clearAll();
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ ok: true }));
+    } catch {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Failed' }));
+    }
+    return;
+  }
   // --- Guestbook comments ---
   if (pathname === '/api/comments' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-cache' });
@@ -165,15 +177,12 @@ const server = http.createServer(async (req, res) => {
         if (!msg) { res.writeHead(400, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: 'Empty message' })); return; }
         const nick = String(name || '').trim().slice(0, 50);
         let displayName = 'Anonymous Person';
-        let avatar = null;
         if (nick) {
+          const { resolveMember } = require('./discordService');
           const member = await resolveMember(nick);
-          if (member) {
-            displayName = member.displayName;
-            avatar = member.avatar;
-          }
+          if (member) displayName = member.displayName;
         }
-        const saved = addComment({ name: nick || null, displayName, avatar, message: msg });
+        const saved = addComment({ name: nick || null, displayName, message: msg });
         res.writeHead(201, { 'Content-Type': 'application/json; charset=utf-8' });
         res.end(JSON.stringify(saved));
       } catch {
