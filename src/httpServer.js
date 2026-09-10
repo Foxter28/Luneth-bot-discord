@@ -13,7 +13,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { URL } = require('url');
-const { fetchWidget, fetchRoster, isGuildMember } = require('./discordService');
+const { fetchWidget, fetchRoster, resolveMember } = require('./discordService');
 const { addComment, getAll: getComments } = require('./commentStore');
 
 const PORT = process.env.PORT || 3000;
@@ -165,11 +165,15 @@ const server = http.createServer(async (req, res) => {
         if (!msg) { res.writeHead(400, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: 'Empty message' })); return; }
         const nick = String(name || '').trim().slice(0, 50);
         let displayName = 'Anonymous Person';
+        let avatar = null;
         if (nick) {
-          const inServer = await isGuildMember(nick);
-          if (inServer) displayName = nick;
+          const member = await resolveMember(nick);
+          if (member) {
+            displayName = member.displayName;
+            avatar = member.avatar;
+          }
         }
-        const saved = addComment({ name: nick || null, displayName, message: msg });
+        const saved = addComment({ name: nick || null, displayName, avatar, message: msg });
         res.writeHead(201, { 'Content-Type': 'application/json; charset=utf-8' });
         res.end(JSON.stringify(saved));
       } catch {

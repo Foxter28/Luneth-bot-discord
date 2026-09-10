@@ -1034,7 +1034,8 @@
       font-family: var(--fd);
       font-size: .7rem;
       color: #fff;
-      flex-shrink: 0
+      flex-shrink: 0;
+      object-fit: cover
     }
 
     .gb-card-header .gb-author {
@@ -3150,9 +3151,12 @@
           div.className = 'gb-card';
           const initial = (c.displayName || '?')[0].toUpperCase();
           const isAnon = c.displayName === 'Anonymous Person';
+          const avatarHtml = c.avatar
+            ? '<img class="gb-avatar" src="' + c.avatar + '" alt="" referrerpolicy="no-referrer" loading="lazy" />'
+            : '<span class="gb-avatar">' + initial + '</span>';
           div.innerHTML =
             '<div class="gb-card-header">' +
-              '<span class="gb-avatar">' + initial + '</span>' +
+              avatarHtml +
               '<span class="gb-author' + (isAnon ? ' gb-anon' : '') + '">' +
                 c.displayName.replace(/</g, '&lt;') +
               '</span>' +

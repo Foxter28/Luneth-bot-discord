@@ -293,30 +293,34 @@ async function fetchRoster() {
 }
 
 /**
- * Check if a username belongs to an online member of the Discord server.
- * Uses the public widget JSON (online members only) with fuzzy matching
- * to handle prefixed names like '! Staly4n'.
+ * Resolve a username against online server members (public widget).
+ * Returns { displayName, avatar } on match, else null.
+ * Fuzzy matching handles prefixed names like '! Staly4n'.
  * @param {string} name
- * @returns {Promise<boolean>}
+ * @returns {Promise<{displayName:string, avatar:string|null}|null>}
  */
-async function isGuildMember(name) {
+async function resolveMember(name) {
   try {
     const n = String(name || '').trim().toLowerCase();
-    if (!n) return false;
+    if (!n) return null;
 
     const widget = await fetchWidget();
-    if (!widget || !widget.available) return false;
+    if (!widget || !widget.available) return null;
 
-    // Widget names often carry prefixes like '! ' or custom status.
-    // Strip leading non-alphanumeric chars before comparing.
+    // Widget names often carry prefixes like '! ' — strip leading
+    // non-alphanumeric chars before comparing.
     const strip = s => String(s || '').toLowerCase().replace(/^[^a-z0-9]+/i, '').trim();
-    return widget.users.some(u => {
+    const user = widget.users.find(u => {
       const wName = strip(u.username);
       return wName === n || wName.includes(n) || n.includes(wName);
     });
+    if (!user) return null;
+
+    const displayName = strip(user.username) || name;
+    return { displayName, avatar: user.avatar || null };
   } catch {
-    return false;
+    return null;
   }
 }
 
-module.exports = { fetchWidget, normalize, FALLBACK, fetchRoster, isGuildMember };
+module.exports = { fetchWidget, normalize, FALLBACK, fetchRoster, resolveMember };
