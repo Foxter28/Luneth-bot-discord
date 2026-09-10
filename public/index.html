@@ -2381,6 +2381,18 @@
       pointer-events: auto;
       transition: opacity .45s ease, transform .45s ease
     }
+
+    /* Anti-download: block drag & context menu on media */
+    .gallery-item img,
+    .gallery-item video,
+    .stat-ticker img,
+    .stat-ticker video,
+    img[loading],
+    video {
+      pointer-events: none;
+      -webkit-user-drag: none;
+      user-select: none
+    }
   </style>
 </head>
 
@@ -3373,7 +3385,18 @@ const ICONS = [
       }
       poll();
       setInterval(poll, 10000);
-    })();
+  })();
+
+    // ── Anti-inspect: block right-click + devtools shortcuts ──
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+      // F12, Ctrl+Shift+I/J/C, Cmd+Option+I/J/C
+      const f = e.key;
+      if (f === 'F12') return e.preventDefault();
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && 'IiJjCc'.includes(f)) return e.preventDefault();
+      // Ctrl+U (view source)
+      if ((e.ctrlKey || e.metaKey) && (f === 'u' || f === 'U')) return e.preventDefault();
+    });
   </script>
 </body>
 
