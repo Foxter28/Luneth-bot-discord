@@ -50,6 +50,12 @@
       --fb: 'Plus Jakarta Sans', sans-serif;
       --sh: 4px 4px 0 #3b0764;
       --sh2: 6px 6px 0 #2e1065;
+
+      /* semantic aliases — Luminary Roster / staff section */
+      --color-text-2: #a78bfa;
+      --color-muted: #6d6496;
+      --color-gold: var(--gold);
+      --color-accent-2: var(--cyan);
     }
 
     *,
@@ -233,6 +239,35 @@
       50% {
         opacity: .4
       }
+    }
+
+    /* staff recruitment — navbar marker (sibling of badge-live) */
+    .nav-staff {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--fp);
+      font-size: .78rem;
+      color: var(--gold);
+      background: rgba(253, 224, 71, .12);
+      border: 1px solid rgba(253, 224, 71, .4);
+      padding: 6px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background .15s
+    }
+
+    .nav-staff:hover {
+      background: rgba(253, 224, 71, .22);
+      color: #fff
+    }
+
+    .staff-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: pulse 1.8s ease-in-out infinite
     }
 
     .btn {
@@ -1015,6 +1050,325 @@
       color: var(--cyan)
     }
 
+    /* staff recruitment — prominent trigger, same shape as other modal buttons */
+    .btn-staff {
+      background: linear-gradient(135deg, rgba(253, 224, 71, .22), rgba(253, 224, 71, .08));
+      color: var(--gold);
+      border-color: rgba(253, 224, 71, .55);
+      box-shadow: 0 4px 14px rgba(253, 224, 71, .22)
+    }
+
+    .btn-staff:hover {
+      background: linear-gradient(135deg, rgba(253, 224, 71, .32), rgba(253, 224, 71, .14));
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(253, 224, 71, .35)
+    }
+
+    .staff-badge {
+      font-family: var(--fp);
+      font-size: .62rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      background: var(--gold);
+      color: #3b0764;
+      padding: 2px 7px;
+      border-radius: 999px;
+      line-height: 1.4;
+      box-shadow: 0 0 8px rgba(253, 224, 71, .5);
+      animation: pulse 1.8s ease-in-out infinite
+    }
+
+    /* ── LUMINARY ROSTER — constellation scroll reveal ── */
+    .roster {
+      margin: 20px 0 70px
+    }
+
+    .roster-rule {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .85rem;
+      color: var(--color-text-2);
+      background: rgba(168, 85, 247, .08);
+      border: 1px dashed rgba(168, 85, 247, .28);
+      border-radius: 999px;
+      padding: 7px 14px;
+      margin-bottom: 34px;
+      max-width: fit-content
+    }
+
+    .roster-path {
+      position: relative
+    }
+
+    /* thin vertical constellation line with small star dots */
+    .roster-line {
+      position: absolute;
+      left: 26px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(180deg, rgba(168, 85, 247, .1), rgba(168, 85, 247, .5), rgba(56, 189, 248, .5), rgba(168, 85, 247, .1));
+      z-index: 0
+    }
+
+    .roster-line::before {
+      content: '';
+      position: absolute;
+      left: -2px;
+      top: 0;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--glow);
+      box-shadow: 0 0 10px var(--glow)
+    }
+
+    .roster-line::after {
+      content: '';
+      position: absolute;
+      left: -2px;
+      bottom: 0;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan)
+    }
+
+    .roster-pin {
+      position: relative;
+      z-index: 1;
+      min-height: 76vh;
+      display: flex;
+      align-items: center
+    }
+
+    .roster-card {
+      margin-left: 58px;
+      width: 100%;
+      max-width: 460px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px 22px;
+      box-shadow: var(--sh)
+    }
+
+    /* connector dot on the constellation line */
+    .roster-card::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--color-text-2);
+      border: 2px solid var(--bg);
+      transform: translateY(-50%);
+      z-index: 2
+    }
+
+    .roster-card h3 {
+      font-family: var(--fd);
+      font-size: 1.35rem;
+      color: #fff;
+      margin-bottom: 6px
+    }
+
+    .roster-role-sub {
+      font-family: var(--fp);
+      font-size: .72rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: 10px
+    }
+
+    .roster-holder {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px
+    }
+
+    .roster-holder img {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border);
+      background: #2e1065
+    }
+
+    .roster-holder b {
+      color: #fff;
+      font-size: .92rem
+    }
+
+    /* status pill */
+    .roster-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--fp);
+      font-size: .72rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+      font-weight: 700
+    }
+
+    .roster-status .rs-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor
+    }
+
+    /* ● filled — muted/quiet */
+    .roster-card.st-filled {
+      border-color: rgba(109, 100, 150, .35);
+      background: rgba(109, 100, 150, .12)
+    }
+
+    .roster-card.st-filled h3 {
+      color: var(--color-text-2)
+    }
+
+    .roster-card.st-filled .roster-status {
+      background: rgba(109, 100, 150, .2);
+      color: var(--color-muted)
+    }
+
+    /* ● open — gold, glowing connector, subtle pulse */
+    .roster-card.st-open {
+      border-color: rgba(253, 224, 71, .5);
+      background: rgba(253, 224, 71, .07);
+      box-shadow: 0 0 24px rgba(253, 224, 71, .15)
+    }
+
+    .roster-card.st-open h3 {
+      color: var(--color-gold)
+    }
+
+    .roster-card.st-open .roster-status {
+      background: rgba(253, 224, 71, .16);
+      color: var(--color-gold)
+    }
+
+    .roster-card.st-open::before {
+      background: var(--gold);
+      border-color: #3b0764;
+      box-shadow: 0 0 14px var(--gold);
+      animation: pulse 1.8s ease-in-out infinite
+    }
+
+    /* ● wildcard — accent-2 (cyan), distinct third category */
+    .roster-card.st-wild {
+      border-color: rgba(56, 189, 248, .5);
+      background: rgba(56, 189, 248, .08);
+      box-shadow: 0 0 24px rgba(56, 189, 248, .15)
+    }
+
+    .roster-card.st-wild h3 {
+      color: var(--color-accent-2)
+    }
+
+    .roster-card.st-wild .roster-status {
+      background: rgba(56, 189, 248, .16);
+      color: var(--color-accent-2)
+    }
+
+    .roster-card.st-wild::before {
+      background: var(--cyan);
+      border-color: #0c4a6e;
+      box-shadow: 0 0 14px var(--cyan)
+    }
+
+    .roster-card p {
+      color: #c4b5fd;
+      font-size: .9rem;
+      line-height: 1.6;
+      margin-bottom: 8px
+    }
+
+    .roster-card ul {
+      padding-left: 18px;
+      margin-bottom: 8px
+    }
+
+    .roster-card li {
+      color: #c4b5fd;
+      font-size: .86rem;
+      line-height: 1.55;
+      margin-bottom: 4px
+    }
+
+    .roster-note {
+      font-size: .8rem;
+      color: var(--color-text-2);
+      font-style: italic;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(168, 85, 247, .25)
+    }
+
+    /* how to apply — placeholder, filled in later manually */
+    .roster-apply {
+      margin-top: 60px
+    }
+
+    .roster-apply h3 {
+      font-family: var(--fd);
+      color: var(--gold);
+      font-size: 1.2rem;
+      margin-bottom: 8px
+    }
+
+    .roster-apply-placeholder {
+      border: 2px dashed var(--border);
+      border-radius: 14px;
+      padding: 34px 20px;
+      text-align: center;
+      color: var(--color-text-2);
+      font-family: var(--fp);
+      font-size: .85rem;
+      margin-top: 12px;
+      background: rgba(168, 85, 247, .04)
+    }
+
+    /* sticky-pin behavior — each role "sticks" while scrolling past it */
+    .roster-pin .roster-card {
+      position: sticky;
+      top: 96px
+    }
+
+    /* reduced motion / small screens: static, non-sticky list */
+    @media (max-width: 640px),
+    (prefers-reduced-motion: reduce) {
+      .roster-line {
+        display: none
+      }
+
+      .roster-pin {
+        min-height: auto
+      }
+
+      .roster-pin .roster-card {
+        position: static;
+        margin-left: 0;
+        margin-bottom: 16px
+      }
+
+      .roster-card::before {
+        display: none
+      }
+    }
+
     footer {
       border-top: 1px solid var(--border);
       background: #06030b;
@@ -1061,7 +1415,8 @@
         display: none
       }
 
-      .badge-live {
+      .badge-live,
+      .nav-staff {
         display: none
       }
 
@@ -1565,6 +1920,11 @@
       .slot-strip {
         transition: none !important
       }
+
+      .staff-badge,
+      .staff-dot {
+        animation: none
+      }
     }
 
     /* ── Content hidden during loading, revealed after moon overlay ── */
@@ -1637,6 +1997,8 @@
       </ul>
       <div class="nav-cta">
         <div class="badge-live"><span class="dot"></span><span class="txt">800+ AKTIF</span></div>
+        <button class="nav-staff" onclick="openModal('staff')"><span class="staff-dot"></span><span>Lowongan
+            Staff</span></button>
         <a href="https://discord.gg/Eg2SBcsG4N" target="_blank" rel="noopener" class="btn btn-primary"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-2px;margin-right:4px"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>Discord</a>
         <button class="hamburger" onclick="toggleDrawer()" aria-label="Menu">☰</button>
       </div>
@@ -1806,11 +2168,13 @@
       </div>
       <div class="scroll-hint"><i data-lucide="move-horizontal" style="width:14px;height:14px"></i> Geser untuk melihat
         peraturan lainnya</div>
-      <div style="margin-top:12px;display:flex;gap:8px">
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-ghost" onclick="openModal('nobar')"><i data-lucide="film"
             style="width:14px;height:14px"></i> Ketentuan Nobar</button>
         <button class="btn btn-ghost" onclick="openModal('fjb')"><i data-lucide="shopping-bag"
             style="width:14px;height:14px"></i> Ketentuan Jual Beli</button>
+        <button class="btn btn-staff" onclick="openModal('staff')"><i data-lucide="shield"
+            style="width:14px;height:14px"></i> Lowongan Staff Dibuka<span class="staff-badge">Baru</span></button>
       </div>
     </section>
 
@@ -1893,6 +2257,99 @@
       </div>
     </section>
 
+    <!-- LUMINARY ROSTER — constellation scroll reveal -->
+    <section id="luminary" class="sec roster">
+      <div class="sec-head">
+        <div>
+          <div class="chip"><i data-lucide="sparkles" style="width:13px;height:13px"></i> LUMINARY ROSTER</div>
+          <h2>Luminary Roster</h2>
+        </div>
+        <p>Peran-peran aktif para Luminary di Lunera — siapa yang mengisi, dan slot mana yang masih terbuka.</p>
+      </div>
+
+      <!-- persistent rule banner -->
+      <div class="roster-rule"><span>🔒</span><span>Setiap peran cuma untuk 1 orang — begitu terisi, slotnya tertutup.</span></div>
+
+      <div class="roster-path">
+        <div class="roster-line"></div>
+
+        <!-- Announcer — FILLED (Ellynia) -->
+        <div class="roster-pin">
+          <div class="roster-card st-filled">
+            <span class="roster-status"><span class="rs-dot"></span>Terisi</span>
+            <h3>Announcer</h3>
+            <div class="roster-role-sub">Pengumuman &amp; Info</div>
+            <div class="roster-holder">
+              <img data-roster-avatar="announcer" alt="" loading="lazy"
+                onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" />
+              <b data-roster-name="announcer">Lunarian</b>
+            </div>
+          </div>
+        </div>
+
+        <!-- TalkActive — FILLED (Aruna) -->
+        <div class="roster-pin">
+          <div class="roster-card st-filled">
+            <span class="roster-status"><span class="rs-dot"></span>Terisi</span>
+            <h3>TalkActive</h3>
+            <div class="roster-role-sub">Menghidupkan Obrolan</div>
+            <div class="roster-holder">
+              <img data-roster-avatar="talkactive" alt="" loading="lazy"
+                onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" />
+              <b data-roster-name="talkactive">Lunarian</b>
+            </div>
+          </div>
+        </div>
+
+        <!-- Watcher — OPEN -->
+        <div class="roster-pin">
+          <div class="roster-card st-open">
+            <span class="roster-status"><span class="rs-dot"></span>Dibuka</span>
+            <h3>Watcher</h3>
+            <div class="roster-role-sub">Menjaga &amp; Mengawasi</div>
+            <p>Mengawasi jalannya server dan memastikan suasana tetap nyaman. Slot ini masih kosong dan siap diisi.</p>
+          </div>
+        </div>
+
+        <!-- Creator — OPEN -->
+        <div class="roster-pin">
+          <div class="roster-card st-open">
+            <span class="roster-status"><span class="rs-dot"></span>Masih Kosong</span>
+            <h3>Creator</h3>
+            <div class="roster-role-sub">Konten &amp; Kreativitas</div>
+            <p>Membuat konten, acara, atau pengalaman seru untuk Lunera. Slot ini masih kosong dan siap diisi.</p>
+          </div>
+        </div>
+
+        <!-- Wildcard slot — OPEN-ENDED / custom role -->
+        <div class="roster-pin">
+          <div class="roster-card st-wild">
+            <span class="roster-status"><span class="rs-dot"></span>Buat Peranmu Sendiri</span>
+            <h3>Punya Keahlian Lain? Bikin Peranmu Sendiri</h3>
+            <p>Luminary tidak terbatas pada peran-peran di atas — siapa saja yang merasa punya keahlian atau ide
+              kontribusi bermanfaat buat Lunera boleh mengajukan peran baru sesuai keahliannya sendiri.</p>
+            <ul>
+              <li>Memimpin forum/komunitas game tertentu seperti Mobile Legends atau Free Fire.</li>
+              <li>Mengelola forum diskusi topik lain yang diminati banyak Lunarian.</li>
+            </ul>
+            <p class="roster-note">Ini cuma contoh — kemungkinan lain masih terbuka sesuai kreativitas pelamar. Hubungi
+              kami lewat cara yang sama seperti peran lain.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- HOW TO APPLY — placeholder (detail &amp; images added manually later) -->
+      <div class="roster-apply">
+        <h3>Cara Apply</h3>
+        <p style="color:var(--color-text-2);font-size:.9rem;max-width:560px">Menarik? Berikut cara mendaftar menjadi
+          bagian dari Luminary.</p>
+        <div class="roster-apply-placeholder">
+          <!-- Konten langkah-langkah & gambar akan ditambahkan manual di sini nanti -->
+          [ Tempat konten cara apply: langkah-langkah &amp; gambar — diisi manual ]
+        </div>
+      </div>
+    </section>
+
     <section class="cta">
       <h2>Siap bergabung dengan Lunera?</h2>
       <p>Server terbuka setiap hari — bergabung sekarang dan sapa para night owls lainnya.</p>
@@ -1951,6 +2408,43 @@
       </div>
     </div>
   </div>
+  <div class="overlay" id="modal-staff" onclick="if(event.target===this)closeModal('staff')">
+    <div class="modal">
+      <div class="modal-head"><span>🛡️ LOWONGAN STAFF DIBUKA</span><button class="x"
+          onclick="closeModal('staff')">✕</button></div>
+      <div class="modal-body">
+        <h3>Rekrutmen Staff — Lunera</h3>
+        <p>Sebelum apply, ada baiknya kamu paham dulu apa yang sebenarnya kami cari dari seorang staff.
+          Kami bagi jadi dua bagian: hal yang paling krusial, dan standar umum yang perlu dipenuhi.</p>
+        <h4>Hal yang Paling Kami Perhatikan:</h4>
+        <ul>
+          <li><b>Integritas</b> — Rekam jejak yang bersih di server ini jadi pertimbangan utama. Staff memegang
+            kepercayaan dan akses yang lebih besar dibanding member biasa, jadi track record yang bermasalah dari awal
+            akan jadi risiko besar ke depannya.</li>
+          <li><b>Komitmen yang Nyata</b> — Niat saja tidak cukup tanpa waktu yang benar-benar bisa dialokasikan. Staff
+            yang aktif sebentar lalu menghilang berbulan-bulan justru lebih merepotkan dibanding slot yang memang kosong,
+            karena posisinya jadi terisi tapi tidak produktif.</li>
+          <li><b>Kedewasaan dalam Menghadapi Konflik</b> — Kemampuan memediasi masalah tanpa memihak, serta tetap tenang
+            saat dikritik atau dihadapkan pada situasi yang memanas, adalah hal yang sering luput saat seseorang direkrut
+            hanya karena terlihat aktif mengobrol.</li>
+          <li><b>Menjaga Kerahasiaan</b> — Staff akan terpapar informasi internal seperti laporan pelanggaran maupun
+            diskusi pengambilan keputusan. Kebocoran informasi ini, baik disengaja maupun tidak, dapat merusak kepercayaan
+            seluruh tim dan komunitas.</li>
+        </ul>
+        <h4>Standar Umum:</h4>
+        <ul>
+          <li>Minimal berusia 15 tahun</li>
+          <li>Sudah menjadi member aktif minimal 2 minggu</li>
+          <li>Memahami dan mematuhi Rules Lunera serta Community Guidelines Discord</li>
+          <li>Tidak pernah menerima sanksi berat (warn, mute, atau ban) sebelumnya</li>
+          <li>Dikenal baik oleh komunitas, bukan sekadar member yang tiba-tiba muncul untuk mendaftar</li>
+          <li>Mampu berkomunikasi dengan jelas dan sopan, baik kepada member maupun sesama staff</li>
+        </ul>
+        <p>Kami memahami tidak ada kandidat yang sempurna, tapi keempat hal di bagian pertama adalah fondasi
+          yang akan terus kami perhatikan sepanjang proses seleksi maupun setelah bergabung.</p>
+      </div>
+    </div>
+  </div>
 
   <footer>
     <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:8px"><a
@@ -1961,7 +2455,7 @@
   <script>
     function openModal(id) { document.getElementById('modal-' + id)?.classList.add('open'); document.body.style.overflow = 'hidden' }
     function closeModal(id) { document.getElementById('modal-' + id)?.classList.remove('open'); document.body.style.overflow = '' }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal('nobar'); closeModal('fjb') } })
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal('nobar'); closeModal('fjb'); closeModal('staff') } })
     function toggleDrawer() { document.getElementById('drawer')?.classList.toggle('open'); document.getElementById('backdrop')?.classList.toggle('open') }
 
     // parallax stars — pointer + scroll
@@ -2017,6 +2511,20 @@
           return `<div class="booster"><img src="${av}" alt="${name}" loading="lazy" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'"/><b>${name}</b><small>${since ? 'Sejak ' + since : '💜 Booster'}</small></div>`;
         }).join('');
       }).catch(() => { const e = document.getElementById('booster-loading'); if (e) e.textContent = 'Gagal memuat booster.' });
+
+      // Luminary Roster — live usernames/avatars for filled staff roles.
+      // Backend /api/luminary-roster resolves them server-side (Discord API needs a bot token).
+      // On failure, keep the generic 'Lunarian' + default icon fallback already in the markup.
+      fetch('/api/luminary-roster').then(r => r.json()).then(d => {
+        const roles = Array.isArray(d.roles) ? d.roles : [];
+        roles.forEach(role => {
+          if (role.status !== 'filled' || !role.user) return;
+          const nameEl = document.querySelector(`[data-roster-name="${role.id}"]`);
+          const avEl = document.querySelector(`[data-roster-avatar="${role.id}"]`);
+          if (nameEl) nameEl.textContent = (role.user.username || 'Lunarian').replace(/</g, '&lt;');
+          if (avEl && role.user.avatar) avEl.src = role.user.avatar;
+        });
+      }).catch(() => { /* keep static fallback */ });
     });
 
     // ── Overlay 1: Slot Machine Text Intro (once per session) ──

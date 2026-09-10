@@ -13,7 +13,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { URL } = require('url');
-const { fetchWidget } = require('./discordService');
+const { fetchWidget, fetchRoster } = require('./discordService');
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
@@ -78,6 +78,19 @@ async function serveWidget(res) {
   }
 }
 
+async function serveRoster(res) {
+  try {
+    const data = await fetchRoster();
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-cache' });
+    res.end(JSON.stringify(data));
+  } catch (err) {
+    // Guard anyway — never let a Discord hiccup break the page.
+    console.warn('[http] roster handler error:', err.message);
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-cache' });
+    res.end(JSON.stringify({ roles: [] }));
+  }
+}
+
 const server = http.createServer(async (req, res) => {
   // Parse URL path, stripping query string.
   let url;
@@ -93,6 +106,11 @@ const server = http.createServer(async (req, res) => {
   // --- Discord widget proxy (server-side, no secret exposed) ---
   if (pathname === '/api/widget') {
     return serveWidget(res);
+  }
+
+  // --- Luminary Roster (server-side Discord user lookup for staff) ---
+  if (pathname === '/api/luminary-roster') {
+    return serveRoster(res);
   }
 
   // --- Health check ---

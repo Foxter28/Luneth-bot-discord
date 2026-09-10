@@ -15,6 +15,18 @@ const { URL } = require('url');
 const siteConfig = require('./siteConfig');
 
 /**
+ * Luminary Roster — resolve Discord usernames/avatars for staff user IDs.
+ *
+ * Discord has no public endpoint to resolve a User ID to a username/avatar
+ * without a bot token, so this runs SERVER-SIDE using the bot's DISCORD_TOKEN
+ * (configured in .env) and caches the result for a few minutes so we don't
+ * hammer the Discord API on every page visit.
+ */
+const ROSTER_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+/** @type {{ at: number, data: Object } | null} */
+let rosterCache = null;
+
+/**
  * @typedef {Object} NormalizedDiscordData
  * @property {string} id              Guild ID
  * @property {string} name            Guild/server name
@@ -183,4 +195,97 @@ function fetchWidget() {
   });
 }
 
-module.exports = { fetchWidget, normalize, FALLBACK };
+module.exports = { fetchWidget, normalize, FALLBACK, fetchRoster };
+
+/**
+ * Fetch a single Discord user by ID using the bot token.
+ * Resolves { id, username, avatar } or null on any failure.
+ * @param {string} userId
+ * @returns {Promise<{id:string, username:string, avatar:string|null}|null>}
+ */
+function fetchDiscordUser(userId) {
+  return new Promise((resolve) => {
+    const token = process.env.DISCORD_TOKEN;
+    if (!token) {
+      console.warn('[roster] DISCORD_TOKEN missing — cannot resolve usernames');
+      resolve(null);
+      return;
+    }
+    const req = https.request(
+      {
+        method: 'GET',
+        hostname: 'discord.com',
+        path: `/api/v10/users/${encodeURIComponent(userId)}`,
+        headers: { Authorization: `Bot ${token}`, 'User-Agent': 'Lunera-Site/1.0' },
+      },
+      (res) => {
+        let data = '';
+        res.on('data', (chunk) => {
+          data += chunk;
+          if (data.length > 1_000_000) res.destroy();
+        });
+        res.on('end', () => {
+          if (res.statusCode !== 200) {
+            console.warn(`[roster] user ${userId} returned HTTP ${res.statusCode}`);
+            resolve(null);
+            return;
+          }
+          try {
+            const u = JSON.parse(data);
+            resolve({
+              id: String(u.id),
+              username: u.global_name || u.username || `Lunarian`, // prefer display name, fall back to username
+              avatar: u.avatar ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png?size=128` : null,
+            });
+          } catch (err) {
+            console.warn('[roster] user JSON parse failed:', err.message);
+            resolve(null);
+          }
+        });
+      }
+    );
+    req.on('error', (err) => {
+      console.warn('[roster] user fetch failed:', err.message);
+      resolve(null);
+    });
+    req.setTimeout(8_000, () => {
+      req.destroy();
+      resolve(null);
+    });
+    req.end();
+  });
+}
+
+/**
+ * Resolve the roster's filled roles. Cached for 5 minutes.
+ * Returns { roles: [...] } where filled roles carry {id, username, avatar}
+ * (or null user on failure), and open roles carry no user info at all.
+ * Always resolves (never throws).
+ */
+async function fetchRoster() {
+  const now = Date.now();
+  if (rosterCache && now - rosterCache.at < ROSTER_CACHE_TTL) {
+    return rosterCache.data;
+  }
+
+  const roles = [
+    { id: 'announcer', name: 'Announcer', status: 'filled', userId: '1000279810569928724' },
+    { id: 'talkactive', name: 'TalkActive', status: 'filled', userId: '1483991203312697456' },
+    { id: 'watcher', name: 'Watcher', status: 'open' },
+    { id: 'creator', name: 'Creator', status: 'open' },
+    { id: 'wildcard', name: 'Wildcard', status: 'wildcard' },
+  ];
+
+  const data = await Promise.all(
+    roles.map(async (role) => {
+      if (role.status === 'filled' && role.userId) {
+        const user = await fetchDiscordUser(role.userId);
+        return { ...role, user: user || { id: role.userId, username: 'Lunarian', avatar: null } };
+      }
+      return role;
+    })
+  );
+
+  rosterCache = { at: now, data: { roles: data } };
+  return { roles: data };
+}
