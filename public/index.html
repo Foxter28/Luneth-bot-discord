@@ -1404,6 +1404,34 @@
       color: var(--color-gold)
     }
 
+    /* FILLED slot — purple glow */
+    .lum-strip .lum-slot.is-filled {
+      border: 2px solid rgba(168, 85, 247, 0.7);
+      box-shadow: 0 0 14px rgba(168, 85, 247, 0.35), inset 0 0 20px rgba(168, 85, 247, 0.1)
+    }
+
+    .lum-strip .lum-slot.is-filled span {
+      color: var(--glow)
+    }
+
+    .lum-strip .lum-slot.is-filled:hover {
+      box-shadow: 0 0 24px rgba(168, 85, 247, 0.55), inset 0 0 28px rgba(168, 85, 247, 0.15)
+    }
+
+    /* OPEN/EMPTY slot — attention-grabbing pulse */
+    .lum-strip .lum-slot:not(.is-filled) {
+      animation: slotPulse 2.6s ease-in-out infinite
+    }
+
+    .lum-strip .lum-slot:not(.is-filled) span {
+      color: var(--color-gold)
+    }
+
+    @keyframes slotPulse {
+      0%, 100% { border-color: rgba(168, 85, 247, 0.25); box-shadow: 0 0 0 0 rgba(168, 85, 247, 0) }
+      50% { border-color: rgba(168, 85, 247, 0.6); box-shadow: 0 0 18px rgba(168, 85, 247, 0.25) }
+    }
+
     @media(max-width:640px) {
 
       .lum-strip .lum-item,
@@ -1915,12 +1943,28 @@
 
       .gallery-item video.g-video {
         max-width: 100%;
-        aspect-ratio: 9/16;
-        max-height: 320px
+        aspect-ratio: 16/9;
+        max-height: 280px
       }
 
       .gallery-item .g-text {
         text-align: center
+      }
+
+      /* Mobile: stacked card same size as other videos, reduced back-card peek */
+      .stacked-card-wrap {
+        max-width: 100%;
+        max-height: 280px;
+        margin: 0 auto
+      }
+
+      .stacked-card-wrap .sc-card.sc-back {
+        transform: translate(-10px, 10px) scale(0.9)
+      }
+
+      /* Front card: slight lift to top-right, same idea as desktop */
+      .stacked-card-wrap .sc-card.sc-front {
+        transform: translate(8px, -7px) scale(1.01)
       }
     }
 
@@ -2082,6 +2126,64 @@
 
     .badge-live {
       display: none !important
+    }
+
+    /* ── Stacked Card Swipe ── */
+    .stacked-card-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+      aspect-ratio: 16/9;
+      overflow: visible;
+      align-self: start;
+      /* tiny buffer toward the text column; glow stays natural on open sides */
+      padding-right: 4px;
+    }
+
+    .stacked-card-wrap .sc-card {
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      overflow: hidden;
+      will-change: transform, opacity;
+      /* smooth "slide up" easing — matches the reference's lifting feel */
+      transition: transform 0.55s cubic-bezier(.22, 1, .36, 1),
+        box-shadow 0.55s cubic-bezier(.22, 1, .36, 1),
+        opacity 0.55s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .stacked-card-wrap .sc-card video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 16px;
+    }
+
+    /* BACK card: sits bottom-left, smaller, dimmed — clearly peeking out */
+    .stacked-card-wrap .sc-card.sc-back {
+      z-index: 1;
+      transform: translate(-18px, 18px) scale(0.86);
+      box-shadow: 0 6px 22px rgba(0, 0, 0, 0.6);
+      opacity: 0.6;
+      border: 2px solid rgba(168, 85, 247, 0.18);
+      /* make it read as "behind" — slightly desaturated + darker */
+      filter: saturate(0.85) brightness(0.88);
+    }
+
+    /* FRONT card: lifted top-right, ever-so-slightly bigger (feels nearer) */
+    .stacked-card-wrap .sc-card.sc-front {
+      z-index: 2;
+      transform: translate(14px, -12px) scale(1.02);
+      box-shadow: 0 14px 36px rgba(168, 85, 247, 0.3), 0 4px 12px rgba(0, 0, 0, 0.45);
+      opacity: 1;
+      border: 2px solid rgba(168, 85, 247, 0.55);
+    }
+
+    /* during swap — brief z-index elevation for the rising card */
+    .stacked-card-wrap .sc-card.sc-rising {
+      z-index: 3;
     }
 
     /* ── Voice Activity: FAB + Panel (bottom right) ── */
@@ -2677,10 +2779,18 @@
             <h3>Nobar & Mabar</h3>
             <p>Voice 24/7 untuk menonton film atau bermain gim bersama teman-teman sepanjang malam.</p>
           </div>
-          <div class="g-media" style="position:relative">
-            <video class="g-video" src="/asset/activity/3.webm" alt="Voice Chat" autoplay muted loop playsinline
-              preload="auto"></video>
-            <img class="g-icon-sticker" src="/asset/activity/moon.gif" alt="Moon" />
+          <!-- STACKED CARD SWIPE -->
+          <div class="stacked-card-wrap" id="stacked-card-nobar" aria-label="Stacked card swipe — voice & nobar">
+            <!-- Card A: 2.webm — starts as FRONT -->
+            <div class="sc-card sc-front" id="sc-card-a">
+              <video src="/asset/activity/3.webm" autoplay loop muted playsinline preload="auto"></video>
+            </div>
+            <!-- Card B: 2.1.webm — starts as BACK -->
+            <div class="sc-card sc-back" id="sc-card-b">
+              <video src="/asset/activity/3.1.webm" autoplay loop muted playsinline preload="auto"></video>
+            </div>
+            <!-- floating moon sticker stays on top -->
+            <img class="g-icon-sticker" src="/asset/activity/moon.gif" alt="Moon" style="z-index:10" />
           </div>
         </div>
         <div class="gallery-item">
@@ -2732,26 +2842,8 @@
 
       <!-- LUMINARY PROFILES — expand-on-hover Discord profile cards -->
       <div class="lum-strip">
-        <div class="lum-item">
-          <span class="lum-vlabel">Announcer</span>
-          <span class="lum-profile">
-            <span class="lum-banner" data-roster-banner="announcer"></span>
-            <img class="lum-avatar" data-roster-avatar="announcer" alt="" loading="lazy"
-              onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" />
-            <b class="lum-name" data-roster-name="announcer">Lunarian</b>
-            <small class="lum-role">Announcer</small>
-          </span>
-        </div>
-        <div class="lum-item">
-          <span class="lum-vlabel">TalkActive</span>
-          <span class="lum-profile">
-            <span class="lum-banner" data-roster-banner="talkactive"></span>
-            <img class="lum-avatar" data-roster-avatar="talkactive" alt="" loading="lazy"
-              onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" />
-            <b class="lum-name" data-roster-name="talkactive">Lunarian</b>
-            <small class="lum-role">TalkActive</small>
-          </span>
-        </div>
+        <div class="lum-slot is-filled"><span>Announcer<br /><small>Slot Terisi</small></span></div>
+        <div class="lum-slot is-filled"><span>TalkActive<br /><small>Slot Terisi</small></span></div>
         <div class="lum-slot"><span>＋ Watcher<br /><small>Slot Terbuka</small></span></div>
         <div class="lum-slot"><span>＋ Creator<br /><small>Slot Terbuka</small></span></div>
       </div>
@@ -3408,6 +3500,42 @@
       }
       poll();
       setInterval(poll, 10000);
+    })();
+
+    // ── Stacked Card Swipe: 2.webm & 2.1.webm alternate every 3s ──
+    (function () {
+      var cardA = document.getElementById('sc-card-a');
+      var cardB = document.getElementById('sc-card-b');
+      if (!cardA || !cardB) return;
+
+      // true = A is front, false = B is front
+      var aIsFront = true;
+
+      setInterval(function () {
+        var front = aIsFront ? cardA : cardB;
+        var back = aIsFront ? cardB : cardA;
+
+        // Step 1: elevate back card's z-index above front so it can visually cross over
+        back.classList.add('sc-rising');
+
+        // Step 2: after a frame, swap the visual classes so CSS transition fires
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            back.classList.remove('sc-back');
+            back.classList.add('sc-front');
+            front.classList.remove('sc-front');
+            front.classList.add('sc-back');
+
+            // Step 3: once transition ends, remove the temporary elevation helper
+            back.addEventListener('transitionend', function handler() {
+              back.removeEventListener('transitionend', handler);
+              back.classList.remove('sc-rising');
+            });
+
+            aIsFront = !aIsFront;
+          });
+        });
+      }, 3000);
     })();
 
     // ── Anti-inspect: block right-click + devtools shortcuts ──
