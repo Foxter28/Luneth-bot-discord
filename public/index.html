@@ -1408,8 +1408,7 @@
     /* FILLED slot — purple glow, profile overlay */
     .lum-strip .lum-slot.is-filled {
       border: 2px solid rgba(168, 85, 247, 0.7);
-      box-shadow: 0 0 14px rgba(168, 85, 247, 0.35), inset 0 0 20px rgba(168, 85, 247, 0.1);
-      justify-content: flex-end
+      box-shadow: 0 0 14px rgba(168, 85, 247, 0.35), inset 0 0 20px rgba(168, 85, 247, 0.1)
     }
 
     .lum-strip .lum-slot.is-filled span {
@@ -1421,7 +1420,7 @@
       background: rgba(14, 8, 28, .92)
     }
 
-    /* vertical label inside filled slots — always visible */
+    /* vertical label inside filled slots — always visible (flex child like open slots) */
     .lum-strip .lum-slot.is-filled .lum-vlabel {
       min-width: 14em;
       padding: .5em;
@@ -1436,10 +1435,7 @@
       color: var(--glow);
       text-shadow: 0 1px 4px rgba(0, 0, 0, .9);
       white-space: nowrap;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      margin-top: -50px;
+      position: relative;
       z-index: 2
     }
 
