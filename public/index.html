@@ -1384,7 +1384,8 @@
       box-shadow: 0 8px 28px rgba(253, 224, 71, .12)
     }
 
-    .lum-strip .lum-slot span {
+    /* generic span rule for OPEN slots only — not filled */
+    .lum-strip .lum-slot:not(.is-filled) span {
       min-width: 14em;
       padding: .5em;
       text-align: center;
@@ -1399,7 +1400,7 @@
       text-shadow: 0 1px 4px rgba(0, 0, 0, .9)
     }
 
-    .lum-strip .lum-slot:hover span {
+    .lum-strip .lum-slot:not(.is-filled):hover span {
       transform: rotate(0);
       color: var(--color-gold)
     }
@@ -2972,7 +2973,7 @@
       <!-- LUMINARY PROFILES — expand-on-hover Discord profile cards -->
       <div class="lum-strip">
         <div class="lum-slot is-filled" data-roster-lum="announcer">
-          <span class="lum-vlabel">Announcer<br /><small>Slot Terisi</small></span>
+          <span class="lum-vlabel">Luminary<br /><small>Announcer</small></span>
           <span class="lum-profile">
             <span class="lum-banner" data-roster-banner="announcer"></span>
             <img class="lum-avatar" data-roster-avatar="announcer" alt="" loading="lazy"
@@ -2982,7 +2983,7 @@
           </span>
         </div>
         <div class="lum-slot is-filled" data-roster-lum="talkactive">
-          <span class="lum-vlabel">TalkActive<br /><small>Slot Terisi</small></span>
+          <span class="lum-vlabel">Luminary<br /><small>TalkActive</small></span>
           <span class="lum-profile">
             <span class="lum-banner" data-roster-banner="talkactive"></span>
             <img class="lum-avatar" data-roster-avatar="talkactive" alt="" loading="lazy"
