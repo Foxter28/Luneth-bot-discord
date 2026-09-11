@@ -1594,23 +1594,45 @@
     .roster-live {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-top: auto
+      gap: 12px;
+      margin-top: auto;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(168, 85, 247, .12), rgba(56, 189, 248, .06));
+      border: 1px solid rgba(168, 85, 247, .2);
+      position: relative;
+      overflow: hidden
     }
 
     .roster-live .avatar {
-      width: 24px;
-      height: 24px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       object-fit: cover;
-      flex: 0 0 24px;
-      border: 2px solid var(--color-border);
+      flex: 0 0 48px;
+      border: 2px solid rgba(168, 85, 247, .45);
       background: #2e1065
     }
 
     .roster-live b {
       color: var(--color-text);
-      font-size: .88rem
+      font-size: .92rem;
+      position: relative;
+      z-index: 1
+    }
+
+    /* banner backdrop for filled roles */
+    .roster-banner {
+      position: absolute;
+      inset: 0;
+      background: url('/asset/background-profile-card.webp') center / cover no-repeat;
+      opacity: .35;
+      transition: opacity .4s ease;
+      z-index: 0
+    }
+
+    .roster-live:hover .roster-banner {
+      opacity: .5
     }
 
     /* how to apply — zig-zag star journey */
@@ -2851,7 +2873,7 @@
       <div class="roster-grid">
 
         <!-- Announcer — FILLED (live via /api/luminary-roster) -->
-        <article class="roster-card">
+        <article class="roster-card" data-roster-card="announcer">
           <span class="roster-badge roster-badge--filled"><span class="rs-dot"></span>Terisi</span>
           <div>
             <div class="roster-role-sub">Pengumuman &amp; Info</div>
@@ -2859,7 +2881,8 @@
             <p>Menyampaikan pengumuman resmi dan informasi penting agar semua Lunarian selalu tahu perkembangan terbaru.
             </p>
           </div>
-          <div class="roster-live">
+          <div class="roster-live" data-roster-live="announcer">
+            <span class="roster-banner" data-roster-banner="announcer"></span>
             <img class="avatar" data-roster-avatar="announcer" alt="" loading="lazy"
               onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" />
             <b data-roster-name="announcer">Lunarian</b>
@@ -2867,14 +2890,15 @@
         </article>
 
         <!-- TalkActive — FILLED (live via /api/luminary-roster) -->
-        <article class="roster-card">
+        <article class="roster-card" data-roster-card="talkactive">
           <span class="roster-badge roster-badge--filled"><span class="rs-dot"></span>Terisi</span>
           <div>
             <div class="roster-role-sub">Menghidupkan Obrolan</div>
             <h3>TalkActive</h3>
             <p>Menggiatkan percakapan dan menjaga suasana obrolan tetap ramai, hangat, dan menyenangkan.</p>
           </div>
-          <div class="roster-live">
+          <div class="roster-live" data-roster-live="talkactive">
+            <span class="roster-banner" data-roster-banner="talkactive"></span>
             <img class="avatar" data-roster-avatar="talkactive" alt="" loading="lazy"
               onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" />
             <b data-roster-name="talkactive">Lunarian</b>
@@ -3204,6 +3228,17 @@
           document.querySelectorAll(`[data-roster-banner="${role.id}"]`).forEach(el => {
             if (role.user.banner) el.style.backgroundImage = `url('${role.user.banner}')`;
           });
+          // Apply accent color to roster-live container for personalization
+          if (role.user.accentColor) {
+            document.querySelectorAll(`[data-roster-card="${role.id}"]`).forEach(el => {
+              el.style.borderColor = `${role.user.accentColor}44`;
+              el.style.boxShadow = `0 0 20px ${role.user.accentColor}18, inset 0 0 24px ${role.user.accentColor}08`;
+            });
+            document.querySelectorAll(`[data-roster-live="${role.id}"]`).forEach(el => {
+              el.style.borderColor = `${role.user.accentColor}55`;
+              el.style.background = `linear-gradient(135deg, ${role.user.accentColor}1a, ${role.user.accentColor}08)`;
+            });
+          }
         });
       }).catch(() => { /* keep static fallback */ });
 
