@@ -1404,10 +1404,11 @@
       color: var(--color-gold)
     }
 
-    /* FILLED slot — purple glow */
+    /* FILLED slot — purple glow, profile overlay */
     .lum-strip .lum-slot.is-filled {
       border: 2px solid rgba(168, 85, 247, 0.7);
-      box-shadow: 0 0 14px rgba(168, 85, 247, 0.35), inset 0 0 20px rgba(168, 85, 247, 0.1)
+      box-shadow: 0 0 14px rgba(168, 85, 247, 0.35), inset 0 0 20px rgba(168, 85, 247, 0.1);
+      justify-content: flex-end
     }
 
     .lum-strip .lum-slot.is-filled span {
@@ -1415,7 +1416,113 @@
     }
 
     .lum-strip .lum-slot.is-filled:hover {
-      box-shadow: 0 0 24px rgba(168, 85, 247, 0.55), inset 0 0 28px rgba(168, 85, 247, 0.15)
+      box-shadow: 0 0 24px rgba(168, 85, 247, 0.55), inset 0 0 28px rgba(168, 85, 247, 0.15);
+      background: rgba(14, 8, 28, .92)
+    }
+
+    /* vertical label inside filled slots — always visible */
+    .lum-strip .lum-slot.is-filled .lum-vlabel {
+      min-width: 14em;
+      padding: .5em;
+      text-align: center;
+      transform: rotate(-90deg);
+      transform-origin: center center;
+      transition: all .5s cubic-bezier(.25, .8, .25, 1);
+      text-transform: uppercase;
+      font-family: var(--fd);
+      font-size: .72rem;
+      letter-spacing: .12em;
+      color: var(--glow);
+      text-shadow: 0 1px 4px rgba(0, 0, 0, .9);
+      white-space: nowrap;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-top: -50px;
+      z-index: 2
+    }
+
+    .lum-strip .lum-slot.is-filled:hover .lum-vlabel {
+      opacity: 0;
+      transform: rotate(0);
+      pointer-events: none
+    }
+
+    /* profile overlay — hidden until hover */
+    .lum-strip .lum-slot.is-filled .lum-profile {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 14px 10px;
+      opacity: 0;
+      transition: all .4s .08s ease;
+      pointer-events: none;
+      z-index: 3
+    }
+
+    .lum-strip .lum-slot.is-filled:hover .lum-profile {
+      opacity: 1
+    }
+
+    .lum-strip .lum-slot.is-filled .lum-banner {
+      position: absolute;
+      inset: 0;
+      background: url('/asset/background-profile-card.webp') center / cover no-repeat;
+      opacity: 0;
+      transition: opacity .4s ease
+    }
+
+    .lum-strip .lum-slot.is-filled:hover .lum-banner {
+      opacity: 1
+    }
+
+    .lum-strip .lum-slot.is-filled .lum-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(14, 8, 28, 1);
+      background: #2e1065;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 5px;
+      flex: 0 0 auto;
+      opacity: 0;
+      transition: opacity .4s ease
+    }
+
+    .lum-strip .lum-slot.is-filled:hover .lum-avatar {
+      opacity: 1
+    }
+
+    .lum-strip .lum-slot.is-filled .lum-name {
+      font-family: var(--fd);
+      font-size: .85rem;
+      color: var(--color-text);
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, .7);
+      text-align: center;
+      position: relative;
+      z-index: 1
+    }
+
+    .lum-strip .lum-slot.is-filled .lum-role {
+      font-family: var(--fp);
+      font-size: .58rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--glow);
+      margin-top: 2px;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, .7);
+      text-align: center;
+      position: relative;
+      z-index: 1
     }
 
     /* OPEN/EMPTY slot — attention-grabbing pulse */
@@ -2864,8 +2971,26 @@
 
       <!-- LUMINARY PROFILES — expand-on-hover Discord profile cards -->
       <div class="lum-strip">
-        <div class="lum-slot is-filled"><span>Announcer<br /><small>Slot Terisi</small></span></div>
-        <div class="lum-slot is-filled"><span>TalkActive<br /><small>Slot Terisi</small></span></div>
+        <div class="lum-slot is-filled" data-roster-lum="announcer">
+          <span class="lum-vlabel">Announcer<br /><small>Slot Terisi</small></span>
+          <span class="lum-profile">
+            <span class="lum-banner" data-roster-banner="announcer"></span>
+            <img class="lum-avatar" data-roster-avatar="announcer" alt="" loading="lazy"
+              onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" />
+            <b class="lum-name" data-roster-name="announcer">Lunarian</b>
+            <small class="lum-role">Announcer</small>
+          </span>
+        </div>
+        <div class="lum-slot is-filled" data-roster-lum="talkactive">
+          <span class="lum-vlabel">TalkActive<br /><small>Slot Terisi</small></span>
+          <span class="lum-profile">
+            <span class="lum-banner" data-roster-banner="talkactive"></span>
+            <img class="lum-avatar" data-roster-avatar="talkactive" alt="" loading="lazy"
+              onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" />
+            <b class="lum-name" data-roster-name="talkactive">Lunarian</b>
+            <small class="lum-role">TalkActive</small>
+          </span>
+        </div>
         <div class="lum-slot"><span>＋ Watcher<br /><small>Slot Terbuka</small></span></div>
         <div class="lum-slot"><span>＋ Creator<br /><small>Slot Terbuka</small></span></div>
       </div>
