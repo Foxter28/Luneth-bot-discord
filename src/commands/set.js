@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { getStreakUser, setStreakForUser } = require('../database');
-const { cacheAddUser, syncMilestoneRoles, sendStreakMessage } = require('../streakService');
+const { syncMilestoneRoles } = require('../streakService');
 const config = require('../config');
 
 module.exports = {
@@ -46,7 +46,6 @@ module.exports = {
 
     // Set the streak + reset clock (immediately active, not frozen)
     await setStreakForUser(target.id, value, guildId);
-    cacheAddUser(target.id);
 
     // Sync milestone roles
     const guild = interaction.guild;
@@ -58,7 +57,7 @@ module.exports = {
     }
 
     const oldLabel = old
-      ? `${old.streak} hari${old.frozen ? ' (frozen)' : ''}`
+      ? `${old.current_streak} hari${old.frozen ? ' (frozen)' : ''}`
       : 'belum terdaftar';
 
     const embed = {

@@ -1,40 +1,51 @@
 /**
- * Streak service — calendar-day streak (WIB, deadline midnight WIB for all).
+ * Streak service — calendar-day streak with WIB (Asia/Jakarta, UTC+7) dates.
  *
- * - Every chat message calls heartbeatIfActive(userId):
- *     * first chat of a new WIB day -> streak +1 (was active yesterday),
- *       or restart at 1 (missed one or more calendar days).
- *     * otherwise just refresh lastHeartbeat.
- * - runStreakMaintenance(client) is invoked on an interval (15 min):
- *    1. EXPIRY  : last chat was 2+ WIB calendar days ago -> freeze, strip
- *                 milestone roles, notify in the guild's reminder channel.
- *    2. REMINDER: at fixed WIB hours (config.streak.reminderHours), ping the
- *                 3-day role in every guild's reminder channel.
- * - Reminder channel is per-guild, set with /streak setchannel.
- * - All day math uses WIB (UTC+7): a day starts at 00:00 WIB for everyone.
+ * - Every chat message in ANY channel calls heartbeatIfActive(userId, guildId):
+ *     * reads the user's row straight from the database (never an in-memory cache)
+ *     * today = WIB calendar date (YYYY-MM-DD)
+ *     * last_chat_date == today        -> already active, no-op (no double count)
+ *     * last_chat_date == yesterday    -> streak +1, longest updated, written now
+ *     * older / never                  -> streak resets to 1, written now
+ *   Every qualifying write is real-time (awaited before returning).
+ * - sendStreakMessage() posts to the guild's configured streak channel:
+ *     "🔥 [Username] streak-nya sekarang: X hari!"
+ * - sendReminder() is invoked by node-cron at 12:00 & 18:00 Asia/Jakarta (see index.js).
+ * - No interval maintenance: a missed day is detected lazily on the next chat
+ *   (the date math is stateless), so there is nothing periodic to lose on restart.
  */
-const DAY_MS = 24 * 60 * 60 * 1000;
-const WIB_OFFSET_MS = 7 * 60 * 60 * 1000; // Indonesia (UTC+7)
 const path = require('path');
 const { EmbedBuilder } = require('discord.js');
 const STREAK_IMAGE = path.join(__dirname, '..', 'public', 'asset', 'streak.png');
 
-// WIB calendar helpers — day boundaries at 00:00 WIB, not per-user elapsed time.
-function wibDayNumber(ts) {
-  return Math.floor((ts + WIB_OFFSET_MS) / DAY_MS);
+// ---------------------------------------------------------------------------
+// WIB helpers — single source of truth for "what day is it" (00:00 WIB)
+// ---------------------------------------------------------------------------
+const WIB_OFFSET_MS = 7 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function wibDateStr(ts = Date.now()) {
+  return new Date(ts + WIB_OFFSET_MS).toISOString().slice(0, 10);
 }
 
 // Calendar-day difference in WIB: 0 = same day, 1 = yesterday, 2+ = missed days.
-function dayDiffWIB(fromTs, toTs) {
-  return wibDayNumber(toTs) - wibDayNumber(fromTs);
+function dayDiffWIB(fromDateStr, toTs = Date.now()) {
+  const from = new Date(fromDateStr + 'T00:00:00+07:00').getTime();
+  const to = new Date(wibDateStr(toTs) + 'T00:00:00+07:00').getTime();
+  return Math.round((to - from) / DAY_MS);
+}
+
+/** Yesterday's WIB date string (YYYY-MM-DD). */
+function yesterdayWIB(ts = Date.now()) {
+  return wibDateStr(ts - DAY_MS);
 }
 
 function isRegistered(row) {
-  return !!row && row.lastHeartbeat > 0;
+  return !!row && !!row.last_chat_date;
 }
 
 // ---------------------------------------------------------------------------
-// Role helpers (all no-throw)
+// Milestone roles (kept for /register, /set, /restore)
 // ---------------------------------------------------------------------------
 
 // Roles a member currently holds from the milestone list
@@ -84,74 +95,118 @@ async function syncMilestoneRoles(member, streak, config) {
 }
 
 // ---------------------------------------------------------------------------
-// Reminder
+// Reminder channel
 // ---------------------------------------------------------------------------
 
-// Returns [channel|null] for a guild's configured reminder channel
+// Returns [channel|null] for a guild's configured streak/reminder channel.
 async function getReminderChannel(client, guildId) {
   const { getStreakSetting } = require('./database');
   const raw = await getStreakSetting(`reminder_channel:${guildId}`);
   if (!raw) return null;
   const guild = client.guilds.cache.get(guildId);
   if (!guild) return null;
-  const channel = guild.channels.cache.get(raw);
-  return channel || null;
+  return guild.channels.cache.get(raw) || null;
 }
 
-// Send the per-user "streak day" message to the guild's streak channel.
-// Called when a registered user chats anywhere; at most once per 24h per user.
-async function sendStreakMessage(client, guildId, userId, streak) {
+// "🔥 [Username] streak-nya sekarang: X hari!" — sent to the streak channel,
+// not the channel where the user chatted. At most once per user per WIB day.
+async function sendStreakMessage(client, guildId, userId, streak, username) {
   const channel = await getReminderChannel(client, guildId);
-  if (!channel) return;
+  if (!channel) return false;
+  const name = username || `<@${userId}>`;
   try {
-    const embed = new EmbedBuilder()
-      .setColor(0xf1c40f)
-      .setTitle('🔥 Streak Active!')
-      .setDescription(`<@${userId}> — kamu sudah streak **hari ke-${streak}**! 🔥\nJangan lupa chat setiap hari untuk menjaga streakmu terus menyala!`)
-      .setThumbnail('attachment://streak.png')
-      .setFooter({ text: 'Streak system' })
-      .setTimestamp();
-    await channel.send({
-      embeds: [embed],
-      files: [{ attachment: STREAK_IMAGE, name: 'streak.png' }],
-      allowedMentions: { parse: ['users'] },
-    });
+    await channel.send(`🔥 **${name}** streak-nya sekarang: **${streak} hari**!`);
+    return true;
   } catch (err) {
     console.error(`⚠️ Streak message failed in guild ${guildId}:`, err.message);
+    return false;
   }
 }
 
+// ---------------------------------------------------------------------------
+// Core: called on every chat message
+// ---------------------------------------------------------------------------
+
+/**
+ * Processes a chat event for a user (in any channel). Reads the user from the
+ * database, applies WIB-date logic, and writes real-time.
+ *
+ * Returns `{ counted, streak, shouldNotify, row }`:
+ *  - counted: true when this message advanced the streak (or started a new one)
+ *  - streak:  the current streak after the update
+ *  - shouldNotify: true when the streak channel should be told (1x/day)
+ *  - row:     the fresh DB row (null if the user isn't registered)
+ */
+async function heartbeatIfActive(userId, guildId) {
+  const { getStreakUser, upsertStreak } = require('./database');
+  const row = await getStreakUser(userId);
+  if (!isRegistered(row) || row.frozen) {
+    return { counted: false, streak: 0, shouldNotify: false, row: null };
+  }
+
+  const today = wibDateStr();
+  const diff = dayDiffWIB(row.last_chat_date, Date.now());
+
+  // Already active today — no change, never double count.
+  if (diff <= 0) {
+    return { counted: false, streak: row.current_streak, shouldNotify: false, row };
+  }
+
+  // Chat yesterday -> streak +1. Missed one+ days -> restart at 1.
+  const nextStreak = diff === 1 ? row.current_streak + 1 : 1;
+  const fresh = await upsertStreak(userId, guildId || row.guildId, nextStreak, today);
+
+  return {
+    counted: true,
+    streak: fresh.current_streak,
+    shouldNotify: true,
+    row: fresh,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Reminder (node-cron at 12:00 & 18:00 Asia/Jakarta)
+// ---------------------------------------------------------------------------
+
+/**
+ * Sends the streak reminder to every configured guild's streak channel:
+ * reminds users who haven't chatted today (last_chat_date != today WIB) and
+ * tags the configured reminder role(s).
+ */
 async function sendReminder(client, config) {
-  const path = require('path');
   const { getAllStreakUsers } = require('./database');
   const users = await getAllStreakUsers();
+  const today = wibDateStr();
 
-  // Group active members (streak >= 3, not frozen) by guild
+  // Group "not chatted today" users by guild (all registered users — the
+  // reminder role is what catches eyeballs; we also mention offenders).
   const byGuild = new Map();
   for (const row of users) {
-    if (row.streak < 3) continue;
     if (!row.guildId) continue;
+    if (row.last_chat_date === today) continue; // already chatted today
     const list = byGuild.get(row.guildId) || [];
     list.push(row);
     byGuild.set(row.guildId, list);
   }
 
+  const roleMention = (config.streak.reminderRoleIds || [])
+    .map((id) => `<@&${id}>`)
+    .join(' ');
+
   for (const [guildId, rows] of byGuild) {
     const channel = await getReminderChannel(client, guildId);
-    if (!channel) continue; // not configured -> skip, don't spam random channels
+    if (!channel) continue; // not configured -> don't spam random channels
 
     const mentions = rows.slice(0, 5).map((r) => `<@${r.userId}>`).join(' ');
-    const roleMention = config.streak.reminderRoleIds.map((id) => `<@&${id}>`).join(' ');
     const text =
-      `🔥 **REMINDER STREAK** 🔥\n` +
-      `${roleMention} — Jangan sampai api streakmu padam! Chat minimal sekali tiap hari kalender sebelum **tengah malam (00:00 WIB)** untuk menjaga streakmu tetap hidup.\n` +
-      (mentions ? `\nBeberapa bear yang masih aktif: ${mentions}` : '') +
-      `\n\nCek status: \`/streak register\` · Pulihkan yang hangus: \`/restore streak\` (5.000 🪙)`;
+      `⏰ **Reminder Streak!** Hai ${roleMention}, jangan lupa chat hari ini biar streak-mu tetap hidup! 🔥` +
+      (mentions ? `\nBelum chat hari ini: ${mentions}` : '') +
+      `\nCek status: \`/streak register\``;
 
     try {
       await channel.send({
         content: text,
-        files: [{ attachment: path.join(__dirname, '..', 'public', 'asset', 'streak.png'), name: 'streak.png' }],
+        files: [{ attachment: STREAK_IMAGE, name: 'streak.png' }],
       });
     } catch (err) {
       console.error(`⚠️ Streak reminder failed in guild ${guildId}:`, err.message);
@@ -159,111 +214,13 @@ async function sendReminder(client, config) {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Maintenance
-// ---------------------------------------------------------------------------
-
-async function notifyExpired(client, guildId, userId, streak) {
-  const channel = await getReminderChannel(client, guildId);
-  if (!channel) return;
-  try {
-    await channel.send(
-      `🔥 <@${userId}> — **streak ${streak} hari kamu BATAL (hangus)!** 🥀\n` +
-      `Kamu tidak chat kemarin sampai tengah malam WIB. Tenang, kamu bisa **pulihkan** dengan \`/restore streak\` seharga **5.000 🪙**!`
-    );
-  } catch (err) {
-    console.error(`⚠️ Streak expiry notification failed for ${userId}:`, err.message);
-  }
-}
-
-async function runStreakMaintenance(client, config) {
-  const {
-    getAllStreakUsers, freezeStreak,
-  } = require('./database');
-
-  const users = await getAllStreakUsers();
-  const now = Date.now();
-
-  for (const row of users) {
-    // 1. Expiry: no chat yesterday AND none today -> streak broken.
-    //    Calendar deadline is midnight WIB shared by everyone.
-    if (dayDiffWIB(row.lastHeartbeat, now) >= 2) {
-      await freezeStreak(row.userId);
-      const guild = client.guilds.cache.get(row.guildId);
-      if (guild) {
-        const member = await guild.members.fetch(row.userId).catch(() => null);
-        if (member && !member.user.bot) {
-          await stripAllMilestoneRoles(member, config);
-          await notifyExpired(client, row.guildId, row.userId, row.streak);
-        }
-      }
-      continue; // frozen; nothing else to do
-    }
-  }
-
-  // 3. Reminder to the 3-day role at fixed local hours (e.g. 12:00 & 18:00).
-  //    Fires on the first maintenance tick after each scheduled hour passes,
-  //    at most once per hour per schedule.
-  const { getStreakSetting, setStreakSetting } = require('./database');
-  const last = Number(await getStreakSetting('streak_last_reminder', 0)) || 0;
-  const hour = new Date().getHours();
-  if (config.streak.reminderHours.includes(hour) && now - last >= 60 * 60 * 1000) {
-    await setStreakSetting('streak_last_reminder', String(now));
-    await sendReminder(client, config);
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Public API
-// ---------------------------------------------------------------------------
-
-let activeUserIds = null; // lazy cache: Set of registered user ids
-
-async function refreshCache() {
-  const { getAllStreakUsers } = require('./database');
-  const users = await getAllStreakUsers();
-  activeUserIds = new Set(users.map((u) => u.userId));
-}
-
-// Called on every message; cheap in-memory check first. Returns the fresh
-// streak row when this message counted for a new day (so the caller can send
-// the streak notification), otherwise null/undefined.
-async function heartbeatIfActive(userId) {
-  if (!activeUserIds) return; // cache not ready yet
-  if (!activeUserIds.has(userId)) return;
-
-  const { getStreakUser, registerStreak } = require('./database');
-  const row = await getStreakUser(userId);
-  if (!isRegistered(row) || row.frozen) return;
-
-  const now = Date.now();
-  const elapsed = now - row.lastHeartbeat;
-  const dayDiff = dayDiffWIB(row.lastHeartbeat, now);
-
-  if (dayDiff >= 1) {
-    // Active yesterday -> streak +1; missed a calendar day -> restart at 1.
-    if (dayDiff === 1) await bumpStreak(userId);
-    else await registerStreak(userId, row.guildId);
-  } else if (elapsed >= 60 * 1000) {
-    // Same WIB day: refresh heartbeat, throttled to once per minute.
-    await heartbeatStreak(userId);
-  }
-
-  // Always return the row (caller evaluates the notify gate on it).
-  return getStreakUser(userId);
-}
-
-// Add a freshly registered user to the heartbeat cache
-function cacheAddUser(userId) {
-  if (activeUserIds) activeUserIds.add(userId);
-}
-
 module.exports = {
   heartbeatIfActive,
-  refreshCache,
-  runStreakMaintenance,
-  syncMilestoneRoles,
-  cacheAddUser,
   sendStreakMessage,
+  sendReminder,
+  syncMilestoneRoles,
+  stripAllMilestoneRoles,
+  wibDateStr,
+  yesterdayWIB,
   dayDiffWIB,
 };

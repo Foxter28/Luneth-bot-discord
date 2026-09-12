@@ -1,5 +1,6 @@
 node_modules/
 .env
+data/
 economy.json
 economy.db
 economy.db-shm

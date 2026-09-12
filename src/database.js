@@ -10,7 +10,7 @@ const config = require('./config');
 // This keeps the bot runnable locally without any cloud setup, while letting it
 // store data durably in the cloud (surviving deploys/restarts) when deployed.
 // ---------------------------------------------------------------------------
-const DB_PATH = path.join(__dirname, '..', 'economy.db');
+const DB_PATH = process.env.STREAK_DB_PATH || path.join(__dirname, '..', 'data', 'economy.db');
 const TURSO_URL = process.env.TURSO_DATABASE_URL;
 const TURSO_TOKEN = process.env.TURSO_AUTH_TOKEN;
 
@@ -27,6 +27,8 @@ if (TURSO_URL) {
   libsql = createClient({ url: TURSO_URL, authToken: TURSO_TOKEN });
   console.log(`✅ Using Turso cloud database (${TURSO_URL}).`);
 } else {
+  const fs = require('fs');
+  fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
   nodeDb = new DatabaseSync(DB_PATH);
   // SQLite concurrency setup (only relevant to the file backend).
   // node:sqlite's DatabaseSync has no built-in busy-wait, so overlapping writes
@@ -138,10 +140,10 @@ async function ensureSchema() {
 
     CREATE TABLE IF NOT EXISTS streak_registered (
       userId TEXT PRIMARY KEY,
-      streak INTEGER NOT NULL DEFAULT 1,
-      lastHeartbeat INTEGER NOT NULL DEFAULT 0,
-      streakUpdatedAt INTEGER NOT NULL DEFAULT 0,
       guildId TEXT,
+      current_streak INTEGER NOT NULL DEFAULT 0,
+      longest_streak INTEGER NOT NULL DEFAULT 0,
+      last_chat_date TEXT,
       frozen INTEGER NOT NULL DEFAULT 0
     );
 
@@ -178,7 +180,8 @@ async function ensureSchema() {
   await addIfMissing('level', 'level INTEGER NOT NULL DEFAULT 1');
   await addIfMissing('xp', 'xp INTEGER NOT NULL DEFAULT 0');
 
-  // Streak table migration: ensure all columns exist on pre-existing tables.
+  // Streak table migration: migrate legacy columns (streak/lastHeartbeat/
+  // streakUpdatedAt/lastStreakNotifiedAt) to the WIB-date schema.
   const streakCols = (await dbAll("SELECT name FROM pragma_table_info('streak_registered')")).map((r) => r.name);
   const addIfMissingStreak = (col, ddl) => {
     if (!streakCols.includes(col)) {
@@ -186,10 +189,34 @@ async function ensureSchema() {
     }
     return Promise.resolve();
   };
-  await addIfMissingStreak('streakUpdatedAt', 'streakUpdatedAt INTEGER NOT NULL DEFAULT 0');
-  await addIfMissingStreak('frozen', 'frozen INTEGER NOT NULL DEFAULT 0');
   await addIfMissingStreak('guildId', 'guildId TEXT');
-  await addIfMissingStreak('lastStreakNotifiedAt', 'lastStreakNotifiedAt INTEGER NOT NULL DEFAULT 0');
+  await addIfMissingStreak('frozen', 'frozen INTEGER NOT NULL DEFAULT 0');
+  await addIfMissingStreak('current_streak', 'current_streak INTEGER NOT NULL DEFAULT 0');
+  await addIfMissingStreak('longest_streak', 'longest_streak INTEGER NOT NULL DEFAULT 0');
+  await addIfMissingStreak('last_chat_date', 'last_chat_date TEXT');
+
+  // Backfill: if this is a pre-existing table with legacy columns, migrate the
+  // data into the new WIB-date columns in place (keeps user IDs/streaks).
+  if (streakCols.includes('streak') && streakCols.includes('lastHeartbeat')) {
+    const legacyRows = await dbAll('SELECT userId, streak, lastHeartbeat, guildId, frozen FROM streak_registered');
+    for (const row of legacyRows) {
+      const wibDate = new Date(row.lastHeartbeat + 7 * 60 * 60 * 1000).toISOString().slice(0, 10);
+      await dbRun(
+        'UPDATE streak_registered SET current_streak = ?, longest_streak = ?, last_chat_date = ?, guildId = ?, frozen = ? WHERE userId = ?',
+        row.streak, row.streak, wibDate, row.guildId, row.frozen, row.userId
+      );
+    }
+    console.log(`✅ Streak migration: backfilled ${legacyRows.length} legacy streak rows to WIB-date format.`);
+  }
+
+  // Startup sanity check: log how many registered streak users were loaded so
+  // a silent wipe (ephemeral storage on deploy) is immediately visible in logs.
+  try {
+    const { c } = await dbGet('SELECT COUNT(*) AS c FROM streak_registered');
+    console.log(`✅ Loaded ${c} registered streak user(s) from database.`);
+  } catch (err) {
+    console.error('⚠️ Could not count streak users at startup:', err.message);
+  }
 }
 
 // Kick off schema creation. Every dbQueue operation awaits this, so no query
@@ -615,40 +642,49 @@ async function addXp(userId, amount) {
 // -------------------------------------------------------------------
 // Streak system helpers
 // -------------------------------------------------------------------
+// YYYY-MM-DD in WIB (UTC+7). Pure calendar date — day boundary at 00:00 WIB.
+function wibDateStr(ts = Date.now()) {
+  return new Date(ts + 7 * 60 * 60 * 1000).toISOString().slice(0, 10);
+}
+
+// WIB calendar-day difference: 0 = same day, 1 = yesterday, 2+ = missed days.
+function dayDiffWIB(fromDateStr, toTs = Date.now()) {
+  const from = new Date(fromDateStr + 'T00:00:00+07:00').getTime();
+  const to = new Date(wibDateStr(toTs) + 'T00:00:00+07:00').getTime();
+  return Math.round((to - from) / (24 * 60 * 60 * 1000));
+}
+
 async function registerStreak(userId, guildId) {
-  const now = Date.now();
+  const today = wibDateStr();
   await dbRun(
-    'INSERT OR REPLACE INTO streak_registered (userId, streak, lastHeartbeat, streakUpdatedAt, guildId, frozen) VALUES (?, 1, ?, ?, ?, 0)',
-    userId, now, now, guildId
+    'INSERT OR REPLACE INTO streak_registered (userId, guildId, current_streak, longest_streak, last_chat_date, frozen) VALUES (?, ?, 1, 1, ?, 0)',
+    userId, guildId, today
   );
-  return { userId, streak: 1, lastHeartbeat: now, streakUpdatedAt: now, guildId, frozen: 0 };
+  return { userId, guildId, current_streak: 1, longest_streak: 1, last_chat_date: today, frozen: 0 };
 }
 
 async function getStreakUser(userId) {
   return dbGet('SELECT * FROM streak_registered WHERE userId = ?', userId);
 }
 
-async function heartbeatStreak(userId) {
-  const now = Date.now();
-  await dbRun('UPDATE streak_registered SET lastHeartbeat = ? WHERE userId = ?', now, userId);
-}
-
-// Streak +1 day, then stamp the +1 so the next rollover waits for the next full day.
-async function bumpStreak(userId) {
-  const now = Date.now();
+// Real-time upsert on every qualifying chat. Computes the new streak values on
+// the JS side (date-based), then writes them immediately — no batching.
+// Returns the fresh row.
+async function upsertStreak(userId, guildId, nextStreak, today) {
+  const row = await getStreakUser(userId);
+  const longest = Math.max(row?.longest_streak || 0, nextStreak);
   await dbRun(
-    'UPDATE streak_registered SET streak = streak + 1, streakUpdatedAt = ? WHERE userId = ?',
-    now, userId
+    'INSERT OR REPLACE INTO streak_registered (userId, guildId, current_streak, longest_streak, last_chat_date, frozen) VALUES (?, ?, ?, ?, ?, 0)',
+    userId, guildId || row?.guildId, nextStreak, longest, today
   );
+  return getStreakUser(userId);
 }
 
-// Restore: clear frozen AND re-light the fire (reset 24h window + day counter)
-// so the user isn't instantly re-frozen/rolled-over next maintenance cycle.
+// Restore: clear frozen and re-light the fire with today's date.
 async function unfreezeStreak(userId) {
-  const now = Date.now();
   await dbRun(
-    'UPDATE streak_registered SET frozen = 0, lastHeartbeat = ?, streakUpdatedAt = ? WHERE userId = ?',
-    now, now, userId
+    'UPDATE streak_registered SET frozen = 0, last_chat_date = ? WHERE userId = ?',
+    wibDateStr(), userId
   );
 }
 
@@ -657,13 +693,13 @@ async function freezeStreak(userId) {
 }
 
 async function getAllStreakUsers() {
-  return dbAll('SELECT * FROM streak_registered WHERE frozen = 0');
+  return dbAll('SELECT * FROM streak_registered');
 }
 
 // Top streak holders (active, not frozen)
 async function getStreakLeaderboard(limit = 10) {
   return dbAll(
-    'SELECT * FROM streak_registered WHERE frozen = 0 ORDER BY streak DESC, lastHeartbeat ASC LIMIT ?',
+    'SELECT * FROM streak_registered WHERE frozen = 0 ORDER BY current_streak DESC, last_chat_date ASC LIMIT ?',
     limit
   );
 }
@@ -684,16 +720,10 @@ async function deleteStreakUser(userId) {
 // Admin helper: set a user's streak to an arbitrary value and reset the clock
 // so the streak is immediately active (no wait, no freeze).
 async function setStreakForUser(userId, streak, guildId) {
-  const now = Date.now();
   await dbRun(
-    'INSERT OR REPLACE INTO streak_registered (userId, streak, lastHeartbeat, streakUpdatedAt, guildId, frozen) VALUES (?, ?, ?, ?, ?, 0)',
-    userId, streak, now, now, guildId
+    'INSERT OR REPLACE INTO streak_registered (userId, guildId, current_streak, longest_streak, last_chat_date, frozen) VALUES (?, ?, ?, ?, ?, 0)',
+    userId, guildId, streak, streak, wibDateStr()
   );
-}
-
-// Stamp when we last notified this user about their streak (1x/day throttle)
-async function markStreakNotified(userId, at = Date.now()) {
-  await dbRun('UPDATE streak_registered SET lastStreakNotifiedAt = ? WHERE userId = ?', at, userId);
 }
 
 // ---------------------------------------------------------------------------
@@ -748,8 +778,7 @@ module.exports = {
   // streak
   registerStreak: (userId, guildId) => dbQueue(() => registerStreak(userId, guildId)),
   getStreakUser: (userId) => dbQueue(() => getStreakUser(userId)),
-  heartbeatStreak: (userId) => dbQueue(() => heartbeatStreak(userId)),
-  bumpStreak: (userId) => dbQueue(() => bumpStreak(userId)),
+  upsertStreak: (userId, guildId, nextStreak, today) => dbQueue(() => upsertStreak(userId, guildId, nextStreak, today)),
   unfreezeStreak: (userId) => dbQueue(() => unfreezeStreak(userId)),
   freezeStreak: (userId) => dbQueue(() => freezeStreak(userId)),
   getAllStreakUsers: () => dbQueue(() => getAllStreakUsers()),
@@ -758,5 +787,6 @@ module.exports = {
   setStreakSetting: (key, value) => dbQueue(() => setStreakSetting(key, value)),
   deleteStreakUser: (userId) => dbQueue(() => deleteStreakUser(userId)),
   setStreakForUser: (userId, streak, guildId) => dbQueue(() => setStreakForUser(userId, streak, guildId)),
-  markStreakNotified: (userId, at) => dbQueue(() => markStreakNotified(userId, at)),
+  wibDateStr,
+  dayDiffWIB,
 };

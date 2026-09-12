@@ -19,7 +19,7 @@ module.exports = {
 
     const lines = top.map((u, i) => {
       const rank = RANK_EMOJI[i] ?? `\`#${i + 1}\``;
-      const days = `**${u.streak}** hari 🔥`;
+      const days = `**${u.current_streak}** hari 🔥`;
       if (i === 0) return `${rank}  __<@${u.userId}>__\n╰ ${days}`;
       if (i < 3) return `${rank}  <@${u.userId}>\n╰ ${days}`;
       return `${rank}  <@${u.userId}> — ${days}`;
@@ -35,7 +35,7 @@ module.exports = {
       const selfIndex = wider.findIndex((u) => u.userId === interaction.user.id);
       selfLine =
         selfIndex !== -1
-          ? `-# Your position: #${selfIndex + 1} • ${wider[selfIndex].streak} hari`
+          ? `-# Your position: #${selfIndex + 1} • ${wider[selfIndex].current_streak} hari`
           : `-# You're not registered yet. Try \`/streak register\`!`;
     }
 

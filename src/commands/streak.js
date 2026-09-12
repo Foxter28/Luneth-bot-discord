@@ -1,7 +1,6 @@
 const path = require('path');
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { getStreakSetting, setStreakSetting, registerStreak, getStreakUser } = require('../database');
-const { cacheAddUser } = require('../streakService');
 
 const SETTING_KEY = (guildId) => `reminder_channel:${guildId}`;
 const STREAK_IMAGE = path.join(__dirname, '..', '..', 'public', 'asset', 'streak.png');
@@ -43,7 +42,6 @@ module.exports = {
       }
 
       await registerStreak(userId, guildId);
-      cacheAddUser(userId);
 
       return interaction.reply({
         content: '🔥 You have registered for the streak system! Keep chatting to maintain your streak.',

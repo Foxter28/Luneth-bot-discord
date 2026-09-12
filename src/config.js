@@ -66,9 +66,13 @@ module.exports = {
   // Streak system
   streak: {
     restoreCost: 5000,
-    checkIntervalMs: 15 * 60 * 1000, // background check every 15 minutes
-    reminderHours: [12, 18], // send the streak reminder at these local hours (12:00 & 18:00)
-    reminderRoleIds: ['1521728913376804955'],
+    // Reminder times (WIB / UTC+7). index.js schedules node-cron at these,
+    // always with timezone 'Asia/Jakarta'.
+    reminderCron: [
+      { hour: 12, minute: 0 },
+      { hour: 18, minute: 0 },
+    ],
+    reminderRoleIds: ['1521728913376804955'], // <- isi role ID yang ingin di-tag saat reminder
     milestoneRoles: [
       { days: 3,  roleId: '1521728913376804955' },
       { days: 7,  roleId: '1521728955047084162' },

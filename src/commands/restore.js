@@ -45,7 +45,7 @@ module.exports = {
     if (guild) {
       const member = await guild.members.fetch(userId).catch(() => null);
       if (member && !member.user.bot) {
-        await syncMilestoneRoles(member, user.streak, config);
+        await syncMilestoneRoles(member, user.current_streak, config);
       }
     }
 

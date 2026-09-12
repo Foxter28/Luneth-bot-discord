@@ -1,6 +1,5 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { registerStreak, getStreakUser } = require('../database');
-const { cacheAddUser } = require('../streakService');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -40,7 +39,6 @@ module.exports = {
     }
 
     await registerStreak(target.id, guildId);
-    cacheAddUser(target.id);
 
     return interaction.reply({
       content: `🔥 <@${target.id}> has been registered for the streak system by admin!`,

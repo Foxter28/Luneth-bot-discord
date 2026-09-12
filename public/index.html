@@ -61,6 +61,10 @@
       --color-muted: #6d6496;
       --color-gold: #fde047;
       --color-accent-2: #38bdf8;
+
+      /* fluid container */
+      --c-max: min(1200px, 94vw);
+      --c-gutter: clamp(12px, 3vw, 24px);
     }
 
     *,
@@ -126,7 +130,8 @@
 
     .ticker span {
       display: inline-block;
-      animation: roll 36s linear infinite
+      animation: roll 36s linear infinite;
+      will-change: transform
     }
 
     @keyframes roll {
@@ -142,11 +147,12 @@
     /* nav — glass pill, distinct from cards */
     .nav-wrap {
       position: sticky;
-      top: 34px;
+      /* sits just below the ticker, whose height varies with clamp() font */
+      top: clamp(24px, 4vw, 36px);
       z-index: 90;
-      max-width: 1200px;
-      margin: 10px auto 0;
-      padding: 0 16px
+      width: var(--c-max);
+      margin: clamp(6px, 1.6vw, 10px) auto 0;
+      padding: clamp(4px, 1.5vw, 8px) var(--c-gutter)
     }
 
     .nav {
@@ -391,9 +397,9 @@
     }
 
     .wrap {
-      max-width: 1200px;
+      width: var(--c-max);
       margin: 0 auto;
-      padding: 0 16px;
+      padding-inline: var(--c-gutter);
       position: relative;
       z-index: 10
     }
@@ -432,7 +438,8 @@
 
     .hero h1 {
       font-family: var(--fd);
-      font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+      /* fluid: grows smoothly from 320px up, caps on large screens */
+      font-size: clamp(1.7rem, 4.5vw, 3.5rem);
       line-height: 1.05;
       color: #fff;
       margin-bottom: 12px
@@ -449,7 +456,7 @@
     .hero p {
       color: #c4b5fd;
       line-height: 1.65;
-      font-size: .98rem;
+      font-size: clamp(.9rem, 2.4vw, .98rem);
       margin-bottom: 18px
     }
 
@@ -572,7 +579,7 @@
 
     .sec-head h2 {
       font-family: var(--fd);
-      font-size: clamp(1.5rem, 2.6vw, 2rem);
+      font-size: clamp(1.35rem, 3.2vw, 2.1rem);
       color: #fff
     }
 
@@ -845,7 +852,7 @@
 
     .gallery-item .g-text h3 {
       font-family: var(--fd);
-      font-size: 1.4rem;
+      font-size: clamp(1.2rem, 3vw, 1.5rem);
       color: #fff;
       text-shadow: 0 0 16px rgba(168, 85, 247, .5);
       margin-bottom: 8px
@@ -1089,7 +1096,7 @@
 
     .cta h2 {
       font-family: var(--fd);
-      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-size: clamp(1.5rem, 4vw, 2.4rem);
       color: #fff;
       margin-bottom: 8px
     }
@@ -2625,6 +2632,185 @@
       -webkit-user-drag: none;
       user-select: none
     }
+
+    /* ===== MOBILE-FIRST RESPONSIVE LAYER =====
+       Base styles target small screens (320px-480px) by default.
+       min-width media queries add complexity upward.
+       Runs after all base rules so overrides land cleanly. */
+
+    /* --- MOBILE BASE (320-640px) --- */
+    .nav-links { display: none }
+    .badge-live, .nav-staff { display: none }
+    .nav-cta .btn-primary { display: none }
+    .hamburger { display: block }
+
+    .nav {
+      gap: 6px;
+      padding: 6px 8px 6px 10px
+    }
+
+    .hero {
+      grid-template-columns: 1fr;
+      gap: 18px;
+      padding: 18px 0 24px
+    }
+
+    .hero-copy {
+      padding: 18px;
+      border-radius: 16px
+    }
+
+    .hero-meta {
+      flex-wrap: wrap;
+      gap: 8px
+    }
+
+    .meta { flex: 1 1 30% }
+
+    .stage {
+      order: -1;
+      height: 240px
+    }
+
+    .moon-svg { width: 150px; height: 150px }
+    .orbit { width: 200px; height: 200px }
+
+    .bot-teaser { grid-template-columns: 1fr }
+    .bot-teaser-left::after { display: none }
+    .bot-teaser-right { border-top: 1px solid var(--border) }
+    .bot-teaser-right img { width: 130px }
+    .bot-teaser-left { padding: 18px }
+
+    .gallery-item {
+      grid-template-columns: 1fr;
+      gap: 14px
+    }
+    .gallery-item.reverse { direction: ltr }
+    .gallery-item video.g-video { max-width: 100%; max-height: 280px }
+    .gallery-item .g-text { text-align: center }
+
+    .stacked-card-wrap {
+      max-width: 100%;
+      max-height: 280px;
+      margin: 0 auto
+    }
+
+    .rules-strip {
+      scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch
+    }
+    .rule {
+      flex: 0 0 78%;
+      scroll-snap-align: start
+    }
+    .rule h3 { font-size: 1.05rem }
+
+    .roster-grid { grid-template-columns: 1fr }
+    .roster-card--wild { grid-column: auto }
+
+    .booster-grid { grid-template-columns: repeat(2, 1fr) }
+
+    .gb-form .gb-name { flex: 1 1 100% }
+    .gb-form .gb-msg { min-width: 100% }
+
+    .sec {
+      margin: clamp(28px, 6vw, 56px) 0 clamp(12px, 3vw, 18px)
+    }
+
+    /* Journey (Cara Apply) */
+    .journey { margin-top: 20px }
+    .j-step, .j-step:nth-child(even) {
+      display: flex;
+      flex-direction: column;
+      gap: 14px
+    }
+    .j-step .j-media, .j-step:nth-child(even) .j-media {
+      width: 100%; grid-column: auto; grid-row: auto; order: 1
+    }
+    .j-step .j-text, .j-step:nth-child(even) .j-text {
+      grid-column: auto; grid-row: auto; text-align: left; order: 2
+    }
+    .j-node {
+      position: absolute; top: 50%; left: 16px;
+      transform: translate(-50%, -50%);
+      grid-column: auto; grid-row: auto; justify-self: auto; align-self: auto
+    }
+    .journey::before { left: 8px }
+    .j-step { padding-left: 28px }
+
+    /* Luminary strip */
+    .lum-strip { gap: 4px; overflow-x: auto }
+    .lum-strip .lum-item, .lum-strip .lum-slot { height: 280px }
+
+    /* --- TABLET PORTRAIT (641px+) --- */
+    @media (min-width: 641px) {
+      .nav-links { display: flex }
+      .badge-live, .nav-staff { display: inline-flex }
+      .nav-cta .btn-primary { display: inline-flex }
+      .hamburger { display: none }
+      .nav { gap: 12px; padding: 8px 10px 8px 14px }
+
+      .hero { grid-template-columns: 1fr; gap: 22px }
+      .stage { order: -1; height: 300px }
+      .moon-svg { width: 190px; height: 190px }
+      .orbit { width: 250px; height: 250px }
+
+      .rule { flex-basis: 46% }
+      .booster-grid { grid-template-columns: repeat(3, 1fr) }
+    }
+
+    /* --- TABLET LANDSCAPE (861px+) --- */
+    @media (min-width: 861px) {
+      .hero {
+        grid-template-columns: 1.15fr .85fr;
+        gap: 28px;
+        padding: 44px 0 36px
+      }
+      .stage { order: 0; height: 360px }
+      .moon-svg { width: 210px; height: 210px }
+      .orbit { width: 280px; height: 280px }
+
+      .rule { flex-basis: 31% }
+
+      .bot-teaser { grid-template-columns: 1.1fr .9fr }
+      .bot-teaser-left::after { display: block }
+      .bot-teaser-right { border-top: 0 }
+
+      .gallery-item {
+        grid-template-columns: 1fr 1fr;
+        gap: 28px
+      }
+      .gallery-item.reverse { direction: rtl }
+      .gallery-item.reverse > * { direction: ltr }
+      .gallery-item .g-text { text-align: left }
+      .gallery-item video.g-video { max-height: none }
+
+      .roster-grid { grid-template-columns: repeat(2, 1fr) }
+      .roster-card--wild { grid-column: 1 / -1 }
+
+      .gb-form .gb-name { flex: 0 0 180px }
+      .gb-form .gb-msg { min-width: 200px }
+    }
+
+    /* --- DESKTOP SMALL (1025px+) --- */
+    @media (min-width: 1025px) {
+      .booster-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr))
+      }
+    }
+
+    /* --- DESKTOP LARGE (1600px+) --- */
+    @media (min-width: 1600px) {
+      .hero { padding-top: 56px }
+      .sec { margin-top: 64px }
+    }
+
+    /* --- ULTRA-WIDE (1920px+) --- */
+    @media (min-width: 1920px) {
+      .moon-svg { width: 240px; height: 240px }
+      .orbit { width: 310px; height: 310px }
+      .stage { height: 400px }
+    }
   </style>
 </head>
 
@@ -3306,6 +3492,17 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof lucide !== 'undefined') lucide.createIcons();
+      // Ticker: duplicate content until it spans >=2 viewports so the
+      // translateX(-50%) loop is seamless on any screen width.
+      (function () {
+        var t = document.querySelector('.ticker span');
+        if (!t) return;
+        var src = t.innerHTML;
+        var guard = 16;
+        while (t.scrollWidth < window.innerWidth * 2 && guard-- > 0) {
+          t.innerHTML += src;
+        }
+      })();
       document.querySelectorAll('video.g-video').forEach(v => {
         v.muted = true;
         const p = v.play();
