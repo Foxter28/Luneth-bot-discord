@@ -9,7 +9,14 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('streakleaderboard')
     .setDescription('🔥 See the top streak holders (admin: manage with /streak)'),
-  aliases: ['slb'],
+  // Prefix aliases — these all work with the main prefix (e.g. "lulbs", "luslb",
+  // "lustreaklb", "lustreakleaderboard"):
+  //   "lulbs"  = lu + lbs
+  //   "luslb"  = lu + slb
+  //   "lustreaklb" = lu + streaklb
+  //   "lustreakleaderboard" = lu + streakleaderboard
+  //   "lustreakboard" = lu + streakboard
+  aliases: ['slb', 'lbs', 'streaklb', 'streakleaderboard', 'streakboard'],
 
   async execute(interaction) {
     const top = await getStreakLeaderboard(10);

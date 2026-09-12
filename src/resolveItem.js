@@ -81,4 +81,37 @@ function resolveItem(query) {
   return bestMatch || null;
 }
 
-module.exports = { resolveItem, normalize, tokenize };
+/**
+ * Suggest up to `limit` items similar to a (possibly misspelled) query, ranked by
+ * token overlap. Used to make "item not found" errors actionable for users.
+ */
+function suggestItems(query, limit = 5) {
+  const qTokens = tokenize(query);
+  if (qTokens.length === 0) return [];
+  const scored = shopItems
+    .map((i) => {
+      const itemTokens = [...tokenize(i.id), ...tokenize(i.name)];
+      let score = 0;
+      for (const qt of qTokens) {
+        if (itemTokens.some((it) => it.includes(qt) || qt.includes(it))) score += 1;
+      }
+      return { item: i, score };
+    })
+    .filter((s) => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit);
+  return scored.map((s) => s.item);
+}
+
+/**
+ * A friendly "did you mean" hint for error messages, e.g.
+ *   Did you mean: Moon Fern (`moon_fern`), Moonstone (`moonstone`)?
+ * Returns '' when nothing is close enough.
+ */
+function formatSuggestions(query) {
+  const near = suggestItems(query, 5);
+  if (near.length === 0) return '';
+  return `\n• Did you mean: ${near.map((i) => `**${i.name}** (\`${i.id}\`)`).join(', ')}?`;
+}
+
+module.exports = { resolveItem, normalize, tokenize, suggestItems, formatSuggestions };

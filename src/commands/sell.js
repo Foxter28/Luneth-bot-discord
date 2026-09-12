@@ -7,7 +7,7 @@ const {
 } = require('discord.js');
 const { getUser, getInventory, updateBalance, removeItem, setEquip, incrementQuest } = require('../database');
 const shopItems = require('../shopItems');
-const { resolveItem } = require('../resolveItem');
+const { resolveItem, formatSuggestions } = require('../resolveItem');
 const config = require('../config');
 
 // Items sell back at 50% of shop price
@@ -62,9 +62,19 @@ module.exports = {
     ),
 
   async execute(interaction) {
-    let itemId = (interaction.options.getString('item') || '').toLowerCase();
+    let itemId = (interaction.options.getString('item') || '').trim().toLowerCase();
     const qty = interaction.options.getInteger('quantity') || 1;
-    const category = (interaction.options.getString('category') || '').toLowerCase();
+    let category = (interaction.options.getString('category') || '').trim().toLowerCase();
+
+    // The prefix parser drops an unlabeled word into the first string option
+    // (`item`), so "lu sell all" / "lu sell weapon" arrive as itemId, not
+    // category. Treat a category keyword as a category — otherwise "all" would
+    // fuzzy-match an item containing those letters (e.g. Starfall Guandao).
+    const validCats = [...new Set(shopItems.map((i) => i.category))];
+    if (!category && (itemId === 'all' || validCats.includes(itemId))) {
+      category = itemId;
+      itemId = '';
+    }
 
     const inv = await getInventory(interaction.user.id);
     if (inv.length === 0) {
@@ -80,7 +90,6 @@ module.exports = {
           return item ? { itemId: r.itemId, qty: r.quantity, name: item.name, emoji: item.emoji, value: sellPrice(item) * r.quantity } : null;
         }).filter(Boolean);
       } else {
-        const validCats = [...new Set(shopItems.map((i) => i.category))];
         if (!validCats.includes(category)) {
           return interaction.reply({
             content: `❌ Category **${category}** not found. Use \`all\` or one of: ${validCats.join(', ')}.`,
@@ -120,13 +129,23 @@ module.exports = {
 
     const item = resolveItem(itemId);
     if (!item) {
-      return interaction.reply({ content: `❌ Item **${itemId}** not found. Check /inventory for item names.`, flags: 64 });
+      return interaction.reply({
+        content:
+          `❌ Item **${itemId}** not found.` +
+          formatSuggestions(itemId) +
+          `\nTip: sell a whole group with \`/sell category:all\` or \`/sell category:material\`.`,
+        flags: 64,
+      });
     }
     itemId = item.id;
 
     const owned = inv.find((r) => r.itemId === itemId);
     if (!owned || owned.quantity < qty) {
-      return interaction.reply({ content: `❌ You don't have **${qty}x ${item.name}**.`, flags: 64 });
+      const have = owned ? owned.quantity : 0;
+      return interaction.reply({
+        content: `❌ You only have **${have}x ${item.name}** — can't sell **${qty}x**.`,
+        flags: 64,
+      });
     }
 
     const price = sellPrice(item) * qty;

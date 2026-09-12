@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { getInventory, removeItem, addItem } = require('../database');
 const craftRecipes = require('../craftRecipes');
-const { resolveItem } = require('../resolveItem');
+const { resolveItem, formatSuggestions } = require('../resolveItem');
 const config = require('../config');
 
 module.exports = {
@@ -18,8 +18,12 @@ module.exports = {
     const recipe = item ? craftRecipes.recipes.find((r) => r.item.id === item.id) : null;
 
     if (!recipe) {
+      const craftable = craftRecipes.recipes.map((r) => `**${r.item.name}** (\`${r.item.id}\`)`).join(', ');
       return interaction.reply({
-        content: '❌ Not a craftable item. Check `/recipes` for the list.',
+        content:
+          `❌ **${query}** is not craftable.` +
+          formatSuggestions(query) +
+          `\nCraftable items: ${craftable}`,
         flags: 64,
       });
     }

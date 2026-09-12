@@ -5,7 +5,7 @@ const { DUNGEONS } = require('./work');
 const { ORE_TARGETS, GEN_DROPS } = require('./mine');
 const { DROP_TABLE } = require('./battle');
 const config = require('../config');
-const { resolveItem } = require('../resolveItem');
+const { resolveItem, formatSuggestions } = require('../resolveItem');
 
 // Crate contents map (mirrored from open.js)
 const CRATE_CONTENTS = {
@@ -32,7 +32,10 @@ module.exports = {
 
     if (!item) {
       return interaction.reply({
-        content: `❌ Could not find any item matching **${query}**. Check \`/shop\` or \`/inventory\` for correct names.`,
+        content:
+          `❌ Could not find any item matching **${query}**.` +
+          formatSuggestions(query) +
+          `\nCheck \`/shop\` or \`/inventory\` for correct names.`,
         flags: 64
       });
     }

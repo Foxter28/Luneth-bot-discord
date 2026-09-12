@@ -7,7 +7,7 @@ const {
 } = require('discord.js');
 const { getUser, getInventory, updateBalance, addItem, removeItem, incrementQuest } = require('../database');
 const shopItems = require('../shopItems');
-const { resolveItem } = require('../resolveItem');
+const { resolveItem, formatSuggestions } = require('../resolveItem');
 const config = require('../config');
 
 // In-memory trade listings: Map<listingId, { id, sellerId, itemId, qty, price, createdAt, messageId, channelId }>
@@ -241,7 +241,7 @@ module.exports = {
       if (qty < 1) return interaction.reply({ content: '❌ Quantity must be at least 1.', flags: 64 });
 
       const item = resolveItem(itemId);
-      if (!item) return interaction.reply({ content: `❌ Item **${itemId}** not found.`, flags: 64 });
+      if (!item) return interaction.reply({ content: `❌ Item **${itemId}** not found.` + formatSuggestions(itemId), flags: 64 });
       itemId = item.id;
 
       // Prevent trading craft-only locked items? Allow everything except nothing special.
@@ -371,7 +371,7 @@ module.exports = {
       }
 
       const item = resolveItem(itemId);
-      if (!item) return interaction.reply({ content: `❌ Item **${itemId}** not found.`, flags: 64 });
+      if (!item) return interaction.reply({ content: `❌ Item **${itemId}** not found.` + formatSuggestions(itemId), flags: 64 });
       itemId = item.id;
       if (item.category === 'legendary_craft') {
         return interaction.reply({

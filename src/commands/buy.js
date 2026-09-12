@@ -7,7 +7,7 @@ const {
 const shopItems = require('../shopItems');
 const { getUser, updateBalance, addItem, incrementQuest } = require('../database');
 const config = require('../config');
-const { resolveItem, normalize } = require('../resolveItem');
+const { resolveItem, normalize, formatSuggestions } = require('../resolveItem');
 
 const MAX_DROPDOWN_OPTIONS = 25; // Discord hard limit for select menu options
 
@@ -87,7 +87,10 @@ module.exports = {
     const item = findItem(query);
     if (!item) {
       return interaction.reply({
-        content: `❌ Could not find item **${query}**. Try \`/buy\` to browse, or check \`/shop\`.`,
+        content:
+          `❌ Could not find item **${query}**.` +
+          formatSuggestions(query) +
+          `\nTry \`/buy\` (no name) to browse, or see \`/shop\`.`,
         flags: 64,
       });
     }
