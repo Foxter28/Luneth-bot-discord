@@ -190,25 +190,16 @@ async function ensureSchema() {
   await addIfMissing('level', 'level INTEGER NOT NULL DEFAULT 1');
   await addIfMissing('xp', 'xp INTEGER NOT NULL DEFAULT 0');
 
-  // Streak table migration: migrate legacy columns (streak/lastHeartbeat/
-  // streakUpdatedAt/lastStreakNotifiedAt) to the WIB-date schema.
   const streakCols = (await dbAll("SELECT name FROM pragma_table_info('streak_registered')")).map((r) => r.name);
-  const addIfMissingStreak = (col, ddl) => {
-    if (!streakCols.includes(col)) {
-      return dbExec(`ALTER TABLE streak_registered ADD COLUMN ${ddl};`);
-    }
-    return Promise.resolve();
-  };
-  await addIfMissingStreak('guildId', 'guildId TEXT');
-  await addIfMissingStreak('frozen', 'frozen INTEGER NOT NULL DEFAULT 0');
-  await addIfMissingStreak('current_streak', 'current_streak INTEGER NOT NULL DEFAULT 0');
-  await addIfMissingStreak('longest_streak', 'longest_streak INTEGER NOT NULL DEFAULT 0');
-  await addIfMissingStreak('last_chat_date', 'last_chat_date TEXT');
-
-  // Backfill: if this is a pre-existing table with legacy columns, migrate the
-  // data into the new WIB-date columns in place (keeps user IDs/streaks).
-  if (streakCols.includes('streak') && streakCols.includes('lastHeartbeat')) {
-    const legacyRows = await dbAll('SELECT userId, streak, lastHeartbeat, guildId, frozen FROM streak_registered');
+  const legacyMigrated = await dbGet("SELECT value FROM streak_settings WHERE key = 'legacy_streak_migrated'");
+  // One-time backfill from legacy columns, guarded by a flag. MUST NOT re-run on
+  // later boots: INSERT OR REPLACE from the new code leaves the legacy columns at
+  // their defaults (0/NULL), so a re-run would wipe freshly written streaks back
+  // to 0 and set last_chat_date to 1970-01-01 — looking exactly like a reset on
+  // every restart. Only legacy rows with a real streak value are migrated.
+  const hasLegacyCols = streakCols.includes('streak') && streakCols.includes('lastHeartbeat');
+  if (!legacyMigrated && hasLegacyCols) {
+    const legacyRows = await dbAll('SELECT userId, streak, lastHeartbeat, guildId, frozen FROM streak_registered WHERE streak > 0');
     for (const row of legacyRows) {
       const wibDate = new Date(row.lastHeartbeat + 7 * 60 * 60 * 1000).toISOString().slice(0, 10);
       await dbRun(
@@ -216,6 +207,7 @@ async function ensureSchema() {
         row.streak, row.streak, wibDate, row.guildId, row.frozen, row.userId
       );
     }
+    await dbRun("INSERT OR REPLACE INTO streak_settings (key, value) VALUES ('legacy_streak_migrated', '1')");
     console.log(`✅ Streak migration: backfilled ${legacyRows.length} legacy streak rows to WIB-date format.`);
   }
 
