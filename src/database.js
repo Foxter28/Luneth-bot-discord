@@ -38,6 +38,16 @@ if (TURSO_URL) {
   nodeDb.exec('PRAGMA busy_timeout = 5000;');
   nodeDb.exec('PRAGMA synchronous = NORMAL;');
   console.log('✅ Using local SQLite database (economy.db). Set TURSO_DATABASE_URL to use Turso cloud instead.');
+  // Render's filesystem is ephemeral: the local DB is wiped on every deploy/restart.
+  // If we're on Render without Turso configured, the bot silently loses all data —
+  // warn loudly so it's impossible to miss.
+  if (process.env.RENDER) {
+    console.warn(
+      '⚠️⚠️  WARNING: Running on Render WITHOUT Turso! The local SQLite file is EPHEMERAL and ' +
+      'will be WIPED on every deploy/restart. Set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN ' +
+      'in the Render service environment to persist data.'
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------
