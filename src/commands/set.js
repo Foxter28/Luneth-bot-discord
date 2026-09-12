@@ -65,7 +65,7 @@ module.exports = {
       title: '🔥 Streak Set!',
       description:
         `<@${target.id}> — streak kamu diatur ke **${value} hari** 🔥\n` +
-        `Streak langsung aktif! Chat sekarang untuk naik ke **${value + 1}**.`,
+        `Streak akan aktif setelah **<@${target.id}> chat di mana pun**. Chat pertama dihitung sebagai check-in (streak tetap ${value} hari).`,
       fields: [
         { name: 'Sebelumnya', value: oldLabel, inline: true },
         { name: 'Sekarang', value: `${value} hari`, inline: true },

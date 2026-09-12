@@ -717,12 +717,13 @@ async function deleteStreakUser(userId) {
   await dbRun('DELETE FROM streak_registered WHERE userId = ?', userId);
 }
 
-// Admin helper: set a user's streak to an arbitrary value and reset the clock
-// so the streak is immediately active (no wait, no freeze).
+// Admin helper: set a user's streak to an arbitrary value. The streak starts in
+// a "pending activation" state (last_chat_date = NULL) — it only becomes active
+// once the user chats in ANY channel (handled in streakService.heartbeatIfActive).
 async function setStreakForUser(userId, streak, guildId) {
   await dbRun(
-    'INSERT OR REPLACE INTO streak_registered (userId, guildId, current_streak, longest_streak, last_chat_date, frozen) VALUES (?, ?, ?, ?, ?, 0)',
-    userId, guildId, streak, streak, wibDateStr()
+    'INSERT OR REPLACE INTO streak_registered (userId, guildId, current_streak, longest_streak, last_chat_date, frozen) VALUES (?, ?, ?, ?, NULL, 0)',
+    userId, guildId, streak, streak
   );
 }
 

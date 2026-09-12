@@ -395,7 +395,7 @@ client.on(Events.MessageCreate, async (message) => {
 
   // Streak: real-time WIB heartbeat on every chat (any channel). Sends the
   // "streak day" message to the streak channel at most once per user per day.
-  const { heartbeatIfActive, sendStreakMessage } = require('./streakService');
+  const { heartbeatIfActive, sendStreakMessage, syncMilestoneRoles } = require('./streakService');
   const streakRes = await heartbeatIfActive(message.author.id, message.guild?.id).catch((e) => {
     console.error('[STREAK] heartbeatIfActive threw:', e?.message || e);
     return null;
@@ -403,6 +403,7 @@ client.on(Events.MessageCreate, async (message) => {
   if (streakRes && streakRes.counted && streakRes.shouldNotify) {
     try {
       await sendStreakMessage(client, streakRes.row.guildId, message.author.id, streakRes.streak, message.author.username);
+      if (message.member) await syncMilestoneRoles(message.member, streakRes.streak, config);
     } catch (err) {
       console.error('[STREAK] sendStreakMessage failed:', err.message);
     }

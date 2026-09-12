@@ -40,9 +40,7 @@ function yesterdayWIB(ts = Date.now()) {
   return wibDateStr(ts - DAY_MS);
 }
 
-function isRegistered(row) {
-  return !!row && !!row.last_chat_date;
-}
+
 
 // ---------------------------------------------------------------------------
 // Milestone roles (kept for /register, /set, /restore)
@@ -140,7 +138,18 @@ async function sendStreakMessage(client, guildId, userId, streak, username) {
 async function heartbeatIfActive(userId, guildId) {
   const { getStreakUser, upsertStreak } = require('./database');
   const row = await getStreakUser(userId);
-  if (!isRegistered(row) || row.frozen) {
+  // Unregistered or frozen -> ignored. A null last_chat_date means the user was
+  // set via /set streak but hasn't chatted yet ("pending activation"): their
+  // first chat anywhere activates the streak (same value, today's date) and
+  // notifies — without incrementing.
+  if (!row || !row.last_chat_date) {
+    if (row && !row.frozen && row.current_streak > 0) {
+      const fresh = await upsertStreak(userId, guildId || row.guildId, row.current_streak, wibDateStr());
+      return { counted: true, streak: fresh.current_streak, shouldNotify: true, row: fresh };
+    }
+    return { counted: false, streak: 0, shouldNotify: false, row: null };
+  }
+  if (row.frozen) {
     return { counted: false, streak: 0, shouldNotify: false, row: null };
   }
 
