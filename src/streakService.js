@@ -106,14 +106,13 @@ async function getReminderChannel(client, guildId) {
   return guild.channels.cache.get(raw) || null;
 }
 
-// "🔥 [Username] streak-nya sekarang: X hari!" — sent to the streak channel,
+// "🔥 <@user> streak-nya sekarang: X hari!" — sent to the streak channel,
 // not the channel where the user chatted. At most once per user per WIB day.
-async function sendStreakMessage(client, guildId, userId, streak, username) {
+async function sendStreakMessage(client, guildId, userId, streak) {
   const channel = await getReminderChannel(client, guildId);
   if (!channel) return false;
-  const name = username || `<@${userId}>`;
   try {
-    await channel.send(`🔥 **${name}** streak-nya sekarang: **${streak} hari**!`);
+    await channel.send(`🔥 <@${userId}> streak-nya sekarang: **${streak} hari**!`);
     return true;
   } catch (err) {
     console.error(`⚠️ Streak message failed in guild ${guildId}:`, err.message);
@@ -187,8 +186,8 @@ async function sendReminder(client, config) {
   const users = await getAllStreakUsers();
   const today = wibDateStr();
 
-  // Group "not chatted today" users by guild (all registered users — the
-  // reminder role is what catches eyeballs; we also mention offenders).
+  // Group "not chatted today" users by guild — the reminder role is what
+  // catches eyeballs; only guilds with pending users get the reminder.
   const byGuild = new Map();
   for (const row of users) {
     if (!row.guildId) continue;
@@ -202,14 +201,12 @@ async function sendReminder(client, config) {
     .map((id) => `<@&${id}>`)
     .join(' ');
 
-  for (const [guildId, rows] of byGuild) {
+  for (const [guildId] of byGuild) {
     const channel = await getReminderChannel(client, guildId);
     if (!channel) continue; // not configured -> don't spam random channels
 
-    const mentions = rows.slice(0, 5).map((r) => `<@${r.userId}>`).join(' ');
     const text =
       `⏰ **Reminder Streak!** Hai ${roleMention}, jangan lupa chat hari ini biar streak-mu tetap hidup! 🔥` +
-      (mentions ? `\nBelum chat hari ini: ${mentions}` : '') +
       `\nCek status: \`/streak register\``;
 
     try {

@@ -402,7 +402,7 @@ client.on(Events.MessageCreate, async (message) => {
   });
   if (streakRes && streakRes.counted && streakRes.shouldNotify) {
     try {
-      await sendStreakMessage(client, streakRes.row.guildId, message.author.id, streakRes.streak, message.author.username);
+      await sendStreakMessage(client, streakRes.row.guildId, message.author.id, streakRes.streak);
       if (message.member) await syncMilestoneRoles(message.member, streakRes.streak, config);
     } catch (err) {
       console.error('[STREAK] sendStreakMessage failed:', err.message);
