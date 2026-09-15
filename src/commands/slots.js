@@ -17,13 +17,15 @@ function resolveBet(raw, balance) {
 
 // Slot symbol definitions: emoji, payout multiplier (3 in a row), and drop weight.
 // Higher weight = more common. Chance % shown in /gambling info is derived from these weights.
+// ponytail: these weights are tuned (not fair) — hit-rate ~27%/spin, RTP ~82% so the house
+// still wins long-run while wins feel frequent and readable. Re-simulate with scratch/slots_odds.js before retuning.
 const SYMBOL_TABLE = [
-  { emoji: '🍒', multiplier: 2, weight: 30 },
-  { emoji: '🍋', multiplier: 3, weight: 24 },
-  { emoji: '🍇', multiplier: 4, weight: 18 },
-  { emoji: '⭐', multiplier: 5, weight: 13 },
-  { emoji: '🌙', multiplier: 7, weight: 9 },
-  { emoji: '💎', multiplier: 10, weight: 6 },
+  { emoji: '🍒', multiplier: 2, weight: 34 },
+  { emoji: '🍋', multiplier: 3, weight: 26 },
+  { emoji: '🍇', multiplier: 4, weight: 17 },
+  { emoji: '⭐', multiplier: 6, weight: 11 },
+  { emoji: '🌙', multiplier: 8, weight: 6 },
+  { emoji: '💎', multiplier: 12, weight: 6 },
 ];
 
 // Payout multiplier map, derived from SYMBOL_TABLE
