@@ -50,6 +50,7 @@ function buildEmbed(gw) {
   }
 
   const desc =
+    (gw.message ? `💬 **Pesan:** ${gw.message}\n\n` : '') +
     `**Prize:** ${config.currencySymbol} **${gw.prize.toLocaleString('id-ID')} ${config.currencyName}**\n` +
     `**Winners:** ${gw.winnersCount} (each receives the full prize)\n` +
     `**Ends:** <t:${Math.floor(gw.endsAt / 1000)}:R>\n` +
@@ -149,8 +150,13 @@ async function postGiveaway(gw, channelId, client) {
   const channel = await client.channels.fetch(channelId).catch(() => null);
   if (!channel?.isTextBased()) return null;
 
+  const mention = '<@&1549311883251556352>';
+  const content = gw.message
+    ? `🎉 **GIVEAWAY!** 👋 ${mention}\n💬 ${gw.message}`
+    : `🎉 **GIVEAWAY!** 👋 ${mention} — klik tombol di bawah!`;
+
   const msg = await channel.send({
-    content: `🎉 **GIVEAWAY!** 👋 @everyone — klik tombol di bawah!`,
+    content,
     embeds: [buildEmbed(gw)],
     components: [buildJoinButton(gw.id)],
   });
@@ -179,6 +185,7 @@ module.exports = {
         .addIntegerOption((opt) => opt.setName('duration').setDescription('Durasi dalam menit').setRequired(true).setMinValue(MIN_DURATION_MIN).setMaxValue(MAX_DURATION_MIN))
         .addIntegerOption((opt) => opt.setName('winners').setDescription('Jumlah pemenang').setRequired(true).setMinValue(1).setMaxValue(MAX_WINNERS))
         .addChannelOption((opt) => opt.setName('channel').setDescription('Channel tujuan (default: channel ini)').setRequired(false))
+        .addStringOption((opt) => opt.setName('message').setDescription('Pesan tambahan giveaway (opsional)').setRequired(false))
     )
     .addSubcommand((sub) =>
       sub
@@ -201,6 +208,7 @@ module.exports = {
       const durationMin = interaction.options.getInteger('duration');
       const winnersCount = interaction.options.getInteger('winners');
       const channel = interaction.options.getChannel('channel') || interaction.channel;
+      const message = interaction.options.getString('message');
 
       const id = nextId++;
       const endsAt = Date.now() + durationMin * 60000;
@@ -209,6 +217,7 @@ module.exports = {
         prize,
         winnersCount,
         endsAt,
+        message,
         entrants: new Set(),
         finished: false,
         messageId: null,
