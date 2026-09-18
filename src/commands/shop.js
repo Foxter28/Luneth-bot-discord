@@ -72,7 +72,8 @@ function buildItemsEmbed(activeCat = null) {
       })
       .join('\n\n');
     return new EmbedBuilder()
-      .setTitle(`🛒 ${meta.emoji} ${meta.label}`)
+      .setThumbnail('https://cdn.discordapp.com/emojis/1547167662658953306.png')
+      .setTitle(`${meta.emoji} ${meta.label}`)
       .setColor(0x9b59b6)
       .setDescription(`> ${CATEGORY_DESC[activeCat]}\n\n${desc}`)
       .setFooter({ text: 'Pick an item below to buy it' });
@@ -90,7 +91,8 @@ function buildItemsEmbed(activeCat = null) {
   }).join('\n\n');
 
   return new EmbedBuilder()
-    .setTitle('🛒 Luneth Market')
+    .setThumbnail('https://cdn.discordapp.com/emojis/1547167662658953306.png')
+    .setTitle('Luneth Market')
     .setColor(0x9b59b6)
     .setDescription(`> *Moon & fantasy goods.* 🌙\n\n${lines}\n\n${ROLE_LEGEND}`)
     .setFooter({ text: 'Pick a category below to see all items' });
@@ -352,7 +354,8 @@ function buildBoughtEmbed(item, qty, balance) {
   lines.unshift(`${cat ? cat.emoji + ' ' + cat.label : item.category}`);
   if (balance < total) lines.push('', '⚠️ **Insufficient balance!**');
   return new EmbedBuilder()
-    .setTitle(`🛒 ${item.emoji} ${item.name}`)
+    .setThumbnail('https://cdn.discordapp.com/emojis/1547167662658953306.png')
+    .setTitle(`${item.emoji} ${item.name}`)
     .setColor(0x9b59b6)
     .setDescription(lines.join('\n'));
 }
