@@ -570,7 +570,9 @@
 
     /* section header — varied styles */
     .sec {
-      margin: 56px 0 18px
+      margin: 56px 0 18px;
+      content-visibility: auto;
+      contain-intrinsic-size: auto 500px;
     }
 
     .sec-head {
@@ -743,7 +745,9 @@
     }
 
     .bot-teaser-right img {
-      width: 170px;
+      width: 300px;
+      max-width: 100%;
+      height: auto;
       filter: drop-shadow(0 0 22px rgba(168, 85, 247, .6))
     }
 
@@ -1238,139 +1242,19 @@
     }
 
 
-    /* ── LUMINARY PROFILES — tall vertical bars, expand on hover ── */
+    /* ── LUMINARY PROFILES — tall vertical bars, expand on hover or tap ── */
     .lum-strip {
       margin: 28px 0 32px;
       width: max-content;
       max-width: 100%;
       display: flex;
-      gap: 6px;
+      gap: 8px;
       background: transparent;
       border: none;
-      padding: 0
-    }
-
-    .lum-strip .lum-item {
-      width: 56px;
-      height: 320px;
-      overflow: hidden;
-      cursor: pointer;
-      border-radius: 6px;
-      transition: width .5s cubic-bezier(.25, .8, .25, 1);
-      background: linear-gradient(180deg, #1a0f2e 0%, #2b1a54 40%, #3b1d6e 100%);
-      border: 1px solid rgba(168, 85, 247, .25);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      align-items: center;
-      position: relative
-    }
-
-    .lum-strip .lum-item:hover {
-      width: 260px;
-      background: rgba(14, 8, 28, .92);
-      border-color: var(--color-accent-2);
-      box-shadow: 0 8px 28px rgba(56, 189, 248, .18)
-    }
-
-    /* collapsed vertical label */
-    .lum-strip .lum-item .lum-vlabel {
-      min-width: 14em;
-      padding: .5em;
-      text-align: center;
-      transform: rotate(-90deg);
-      transform-origin: center center;
-      transition: all .5s cubic-bezier(.25, .8, .25, 1);
-      text-transform: uppercase;
-      font-family: var(--fd);
-      font-size: .72rem;
-      letter-spacing: .12em;
-      color: var(--glow);
-      text-shadow: 0 1px 4px rgba(0, 0, 0, .9);
-      white-space: nowrap;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      margin-top: -50px
-    }
-
-    .lum-strip .lum-item:hover .lum-vlabel {
-      opacity: 0;
-      transform: rotate(0);
-      pointer-events: none
-    }
-
-    /* expanded discord-style profile */
-    .lum-strip .lum-item .lum-profile {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      align-items: center;
-      padding: 14px 10px;
-      opacity: 0;
-      transition: all .4s .08s ease;
-      pointer-events: none;
-      z-index: 2
-    }
-
-    .lum-strip .lum-item:hover .lum-profile {
-      opacity: 1
-    }
-
-    .lum-strip .lum-item .lum-banner {
-      position: absolute;
-      inset: 0;
-      background: url('/asset/background-profile-card.webp') center / cover no-repeat;
-      opacity: 0;
-      transition: opacity .4s ease
-    }
-
-    .lum-strip .lum-item:hover .lum-banner {
-      opacity: 1
-    }
-
-    .lum-strip .lum-item .lum-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid rgba(14, 8, 28, 1);
-      background: #2e1065;
-      position: relative;
-      z-index: 1;
-      margin-bottom: 5px;
-      flex: 0 0 auto;
-      opacity: 0;
-      transition: opacity .4s ease
-    }
-
-    .lum-strip .lum-item:hover .lum-avatar {
-      opacity: 1
-    }
-
-    .lum-strip .lum-item .lum-name {
-      font-family: var(--fd);
-      font-size: .85rem;
-      color: var(--color-text);
-      line-height: 1.1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, .7);
-      text-align: center
-    }
-
-    .lum-strip .lum-item .lum-role {
-      font-family: var(--fp);
-      font-size: .58rem;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--glow);
-      margin-top: 2px;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, .7);
-      text-align: center
+      padding: 4px 2px 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
     }
 
     /* open slot — dashed border */
@@ -1379,21 +1263,28 @@
       height: 320px;
       overflow: hidden;
       cursor: pointer;
-      border-radius: 6px;
-      transition: width .5s cubic-bezier(.25, .8, .25, 1);
+      border-radius: 8px;
+      flex-shrink: 0;
+      transition: width .45s cubic-bezier(.25, .8, .25, 1), background .3s ease, border-color .3s ease, box-shadow .3s ease;
       background: linear-gradient(180deg, #1a0f2e 0%, #2b1a54 40%, #3b1d6e 100%);
       border: 2px dashed rgba(168, 85, 247, .35);
       display: flex;
       justify-content: center;
       align-items: center;
-      position: relative
+      position: relative;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
     }
 
-    .lum-strip .lum-slot:hover {
+    .lum-strip .lum-slot:hover,
+    .lum-strip .lum-slot.is-active,
+    .lum-strip .lum-slot:focus-visible {
       width: 260px;
-      background: rgba(14, 8, 28, .92);
+      background: rgba(14, 8, 28, .95);
       border-color: var(--color-gold);
-      box-shadow: 0 8px 28px rgba(253, 224, 71, .12)
+      box-shadow: 0 8px 28px rgba(253, 224, 71, .16);
     }
 
     /* generic span rule for OPEN slots only — not filled */
@@ -1403,33 +1294,37 @@
       text-align: center;
       transform: rotate(-90deg);
       transform-origin: center center;
-      transition: all .5s cubic-bezier(.25, .8, .25, 1);
+      transition: all .45s cubic-bezier(.25, .8, .25, 1);
       text-transform: uppercase;
       font-family: var(--fd);
       font-size: .72rem;
       letter-spacing: .12em;
       color: var(--color-muted);
-      text-shadow: 0 1px 4px rgba(0, 0, 0, .9)
+      text-shadow: 0 1px 4px rgba(0, 0, 0, .9);
     }
 
-    .lum-strip .lum-slot:not(.is-filled):hover span {
+    .lum-strip .lum-slot:not(.is-filled):hover span,
+    .lum-strip .lum-slot:not(.is-filled).is-active span,
+    .lum-strip .lum-slot:not(.is-filled):focus-visible span {
       transform: rotate(0);
-      color: var(--color-gold)
+      color: var(--color-gold);
     }
 
     /* FILLED slot — purple glow, profile overlay */
     .lum-strip .lum-slot.is-filled {
       border: 2px solid rgba(168, 85, 247, 0.7);
-      box-shadow: 0 0 14px rgba(168, 85, 247, 0.35), inset 0 0 20px rgba(168, 85, 247, 0.1)
+      box-shadow: 0 0 14px rgba(168, 85, 247, 0.35), inset 0 0 20px rgba(168, 85, 247, 0.1);
     }
 
     .lum-strip .lum-slot.is-filled span {
-      color: var(--glow)
+      color: var(--glow);
     }
 
-    .lum-strip .lum-slot.is-filled:hover {
+    .lum-strip .lum-slot.is-filled:hover,
+    .lum-strip .lum-slot.is-filled.is-active,
+    .lum-strip .lum-slot.is-filled:focus-visible {
       box-shadow: 0 0 24px rgba(168, 85, 247, 0.55), inset 0 0 28px rgba(168, 85, 247, 0.15);
-      background: rgba(14, 8, 28, .92)
+      background: rgba(14, 8, 28, .95);
     }
 
     /* vertical label inside filled slots — always visible (flex child like open slots) */
@@ -1439,7 +1334,7 @@
       text-align: center;
       transform: rotate(-90deg);
       transform-origin: center center;
-      transition: all .5s cubic-bezier(.25, .8, .25, 1);
+      transition: all .45s cubic-bezier(.25, .8, .25, 1);
       text-transform: uppercase;
       font-family: var(--fd);
       font-size: .72rem;
@@ -1448,16 +1343,18 @@
       text-shadow: 0 1px 4px rgba(0, 0, 0, .9);
       white-space: nowrap;
       position: relative;
-      z-index: 2
+      z-index: 2;
     }
 
-    .lum-strip .lum-slot.is-filled:hover .lum-vlabel {
+    .lum-strip .lum-slot.is-filled:hover .lum-vlabel,
+    .lum-strip .lum-slot.is-filled.is-active .lum-vlabel,
+    .lum-strip .lum-slot.is-filled:focus-visible .lum-vlabel {
       opacity: 0;
       transform: rotate(0);
-      pointer-events: none
+      pointer-events: none;
     }
 
-    /* profile overlay — hidden until hover */
+    /* profile overlay — hidden until hover or active */
     .lum-strip .lum-slot.is-filled .lum-profile {
       position: absolute;
       inset: 0;
@@ -1467,13 +1364,18 @@
       align-items: center;
       padding: 14px 10px;
       opacity: 0;
-      transition: all .4s .08s ease;
+      transition: opacity .35s ease, transform .35s ease;
+      transform: translateY(6px);
       pointer-events: none;
-      z-index: 3
+      z-index: 3;
     }
 
-    .lum-strip .lum-slot.is-filled:hover .lum-profile {
-      opacity: 1
+    .lum-strip .lum-slot.is-filled:hover .lum-profile,
+    .lum-strip .lum-slot.is-filled.is-active .lum-profile,
+    .lum-strip .lum-slot.is-filled:focus-visible .lum-profile {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
     }
 
     .lum-strip .lum-slot.is-filled .lum-banner {
@@ -1481,11 +1383,13 @@
       inset: 0;
       background: url('/asset/background-profile-card.webp') center / cover no-repeat;
       opacity: 0;
-      transition: opacity .4s ease
+      transition: opacity .35s ease;
     }
 
-    .lum-strip .lum-slot.is-filled:hover .lum-banner {
-      opacity: 1
+    .lum-strip .lum-slot.is-filled:hover .lum-banner,
+    .lum-strip .lum-slot.is-filled.is-active .lum-banner,
+    .lum-strip .lum-slot.is-filled:focus-visible .lum-banner {
+      opacity: 1;
     }
 
     .lum-strip .lum-slot.is-filled .lum-avatar {
@@ -1500,11 +1404,13 @@
       margin-bottom: 5px;
       flex: 0 0 auto;
       opacity: 0;
-      transition: opacity .4s ease
+      transition: opacity .35s ease;
     }
 
-    .lum-strip .lum-slot.is-filled:hover .lum-avatar {
-      opacity: 1
+    .lum-strip .lum-slot.is-filled:hover .lum-avatar,
+    .lum-strip .lum-slot.is-filled.is-active .lum-avatar,
+    .lum-strip .lum-slot.is-filled:focus-visible .lum-avatar {
+      opacity: 1;
     }
 
     .lum-strip .lum-slot.is-filled .lum-name {
@@ -1518,7 +1424,7 @@
       text-shadow: 0 1px 3px rgba(0, 0, 0, .7);
       text-align: center;
       position: relative;
-      z-index: 1
+      z-index: 1;
     }
 
     .lum-strip .lum-slot.is-filled .lum-role {
@@ -1531,28 +1437,32 @@
       text-shadow: 0 1px 3px rgba(0, 0, 0, .7);
       text-align: center;
       position: relative;
-      z-index: 1
+      z-index: 1;
     }
 
     /* OPEN/EMPTY slot — attention-grabbing pulse */
     .lum-strip .lum-slot:not(.is-filled) {
-      animation: slotPulse 2.6s ease-in-out infinite
+      animation: slotPulse 2.6s ease-in-out infinite;
     }
 
     .lum-strip .lum-slot:not(.is-filled) span {
-      color: var(--color-gold)
+      color: var(--color-gold);
     }
 
     @keyframes slotPulse {
-      0%, 100% { border-color: rgba(168, 85, 247, 0.25); box-shadow: 0 0 0 0 rgba(168, 85, 247, 0) }
-      50% { border-color: rgba(168, 85, 247, 0.6); box-shadow: 0 0 18px rgba(168, 85, 247, 0.25) }
+      0%, 100% {
+        border-color: rgba(168, 85, 247, 0.25);
+        box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
+      }
+      50% {
+        border-color: rgba(168, 85, 247, 0.6);
+        box-shadow: 0 0 18px rgba(168, 85, 247, 0.25);
+      }
     }
 
     @media(max-width:640px) {
-
-      .lum-strip .lum-item,
       .lum-strip .lum-slot {
-        height: 240px
+        height: 240px;
       }
     }
 
@@ -2647,10 +2557,22 @@
        Runs after all base rules so overrides land cleanly. */
 
     /* --- MOBILE BASE (320-640px) --- */
-    .nav-links { display: none }
-    .badge-live, .nav-staff { display: none }
-    .nav-cta .btn-primary { display: none }
-    .hamburger { display: block }
+    .nav-links {
+      display: none
+    }
+
+    .badge-live,
+    .nav-staff {
+      display: none
+    }
+
+    .nav-cta .btn-primary {
+      display: none
+    }
+
+    .hamburger {
+      display: block
+    }
 
     .nav {
       gap: 6px;
@@ -2673,29 +2595,63 @@
       gap: 8px
     }
 
-    .meta { flex: 1 1 30% }
+    .meta {
+      flex: 1 1 30%
+    }
 
     .stage {
       order: -1;
       height: 240px
     }
 
-    .moon-svg { width: 150px; height: 150px }
-    .orbit { width: 200px; height: 200px }
+    .moon-svg {
+      width: 150px;
+      height: 150px
+    }
 
-    .bot-teaser { grid-template-columns: 1fr }
-    .bot-teaser-left::after { display: none }
-    .bot-teaser-right { border-top: 1px solid var(--border) }
-    .bot-teaser-right img { width: 130px }
-    .bot-teaser-left { padding: 18px }
+    .orbit {
+      width: 200px;
+      height: 200px
+    }
+
+    .bot-teaser {
+      grid-template-columns: 1fr
+    }
+
+    .bot-teaser-left::after {
+      display: none
+    }
+
+    .bot-teaser-right {
+      border-top: 1px solid var(--border)
+    }
+
+    .bot-teaser-right img {
+      width: 160px;
+      max-width: 80%
+    }
+
+    .bot-teaser-left {
+      padding: 18px
+    }
 
     .gallery-item {
       grid-template-columns: 1fr;
       gap: 14px
     }
-    .gallery-item.reverse { direction: ltr }
-    .gallery-item video.g-video { max-width: 100%; max-height: 280px }
-    .gallery-item .g-text { text-align: center }
+
+    .gallery-item.reverse {
+      direction: ltr
+    }
+
+    .gallery-item video.g-video {
+      max-width: 100%;
+      max-height: 280px
+    }
+
+    .gallery-item .g-text {
+      text-align: center
+    }
 
     .stacked-card-wrap {
       max-width: 100%;
@@ -2707,19 +2663,35 @@
       scroll-snap-type: x proximity;
       -webkit-overflow-scrolling: touch
     }
+
     .rule {
       flex: 0 0 78%;
       scroll-snap-align: start
     }
-    .rule h3 { font-size: 1.05rem }
 
-    .roster-grid { grid-template-columns: 1fr }
-    .roster-card--wild { grid-column: auto }
+    .rule h3 {
+      font-size: 1.05rem
+    }
 
-    .booster-grid { grid-template-columns: repeat(2, 1fr) }
+    .roster-grid {
+      grid-template-columns: 1fr
+    }
 
-    .gb-form .gb-name { flex: 1 1 100% }
-    .gb-form .gb-msg { min-width: 100% }
+    .roster-card--wild {
+      grid-column: auto
+    }
+
+    .booster-grid {
+      grid-template-columns: repeat(2, 1fr)
+    }
+
+    .gb-form .gb-name {
+      flex: 1 1 100%
+    }
+
+    .gb-form .gb-msg {
+      min-width: 100%
+    }
 
     .sec {
       margin: clamp(28px, 6vw, 56px) 0 clamp(12px, 3vw, 18px)
@@ -2727,16 +2699,26 @@
 
     /* Journey (Cara Apply) — Mobile base (max-width: 860px) */
     @media (max-width: 860px) {
-      .journey { margin-top: 20px; padding: 10px 0 20px }
-      .journey::before { left: 12px }
-      .j-step, .j-step:nth-child(even) {
+      .journey {
+        margin-top: 20px;
+        padding: 10px 0 20px
+      }
+
+      .journey::before {
+        left: 12px
+      }
+
+      .j-step,
+      .j-step:nth-child(even) {
         display: flex;
         flex-direction: column;
         gap: 14px;
         padding-left: 36px;
         margin-bottom: 32px
       }
-      .j-step .j-media, .j-step:nth-child(even) .j-media {
+
+      .j-step .j-media,
+      .j-step:nth-child(even) .j-media {
         width: 100%;
         max-width: min(100%, 360px);
         aspect-ratio: 16/10;
@@ -2746,13 +2728,16 @@
         justify-self: start;
         margin: 0
       }
-      .j-step .j-text, .j-step:nth-child(even) .j-text {
+
+      .j-step .j-text,
+      .j-step:nth-child(even) .j-text {
         grid-column: auto;
         grid-row: auto;
         text-align: left;
         order: 2;
         margin: 0
       }
+
       .j-node {
         position: absolute;
         top: 24px;
@@ -2765,12 +2750,14 @@
       }
 
       /* Step 5 Warning — Centered on mobile */
-      .j-step.j-step--warn, .j-step.j-step--warn:nth-child(even) {
+      .j-step.j-step--warn,
+      .j-step.j-step--warn:nth-child(even) {
         padding-left: 0;
         align-items: center;
         text-align: center;
         margin: 16px auto 0
       }
+
       .j-step.j-step--warn .j-node {
         position: relative;
         top: auto;
@@ -2779,40 +2766,87 @@
         margin: 0 auto 14px;
         order: 1
       }
-      .j-step.j-step--warn .j-media, .j-step.j-step--warn:nth-child(even) .j-media {
+
+      .j-step.j-step--warn .j-media,
+      .j-step.j-step--warn:nth-child(even) .j-media {
         order: 2;
         margin: 0 auto 14px;
         justify-self: center
       }
-      .j-step.j-step--warn .j-text, .j-step.j-step--warn:nth-child(even) .j-text {
+
+      .j-step.j-step--warn .j-text,
+      .j-step.j-step--warn:nth-child(even) .j-text {
         order: 3;
         text-align: center;
         margin: 0 auto
       }
+
       .j-step.j-step--warn .j-badge {
         margin: 0 auto 10px
       }
     }
 
     /* Luminary strip */
-    .lum-strip { gap: 4px; overflow-x: auto }
-    .lum-strip .lum-item, .lum-strip .lum-slot { height: 280px }
+    .lum-strip {
+      gap: 4px;
+      overflow-x: auto
+    }
+
+    .lum-strip .lum-slot {
+      height: 280px
+    }
 
     /* --- TABLET PORTRAIT (641px+) --- */
     @media (min-width: 641px) {
-      .nav-links { display: flex }
-      .badge-live, .nav-staff { display: inline-flex }
-      .nav-cta .btn-primary { display: inline-flex }
-      .hamburger { display: none }
-      .nav { gap: 12px; padding: 8px 10px 8px 14px }
+      .nav-links {
+        display: flex
+      }
 
-      .hero { grid-template-columns: 1fr; gap: 22px }
-      .stage { order: -1; height: 300px }
-      .moon-svg { width: 190px; height: 190px }
-      .orbit { width: 250px; height: 250px }
+      .badge-live,
+      .nav-staff {
+        display: inline-flex
+      }
 
-      .rule { flex-basis: 46% }
-      .booster-grid { grid-template-columns: repeat(3, 1fr) }
+      .nav-cta .btn-primary {
+        display: inline-flex
+      }
+
+      .hamburger {
+        display: none
+      }
+
+      .nav {
+        gap: 12px;
+        padding: 8px 10px 8px 14px
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 22px
+      }
+
+      .stage {
+        order: -1;
+        height: 300px
+      }
+
+      .moon-svg {
+        width: 190px;
+        height: 190px
+      }
+
+      .orbit {
+        width: 250px;
+        height: 250px
+      }
+
+      .rule {
+        flex-basis: 46%
+      }
+
+      .booster-grid {
+        grid-template-columns: repeat(3, 1fr)
+      }
     }
 
     /* --- TABLET LANDSCAPE (861px+) --- */
@@ -2822,40 +2856,86 @@
         gap: 28px;
         padding: 44px 0 36px
       }
-      .stage { order: 0; height: 360px }
-      .moon-svg { width: 210px; height: 210px }
-      .orbit { width: 280px; height: 280px }
 
-      .rule { flex-basis: 31% }
+      .stage {
+        order: 0;
+        height: 360px
+      }
 
-      .bot-teaser { grid-template-columns: 1.1fr .9fr }
-      .bot-teaser-left::after { display: block }
-      .bot-teaser-right { border-top: 0 }
+      .moon-svg {
+        width: 210px;
+        height: 210px
+      }
+
+      .orbit {
+        width: 280px;
+        height: 280px
+      }
+
+      .rule {
+        flex-basis: 31%
+      }
+
+      .bot-teaser {
+        grid-template-columns: 1.1fr .9fr
+      }
+
+      .bot-teaser-left::after {
+        display: block
+      }
+
+      .bot-teaser-right {
+        border-top: 0
+      }
 
       .gallery-item {
         grid-template-columns: 1fr 1fr;
         gap: 28px
       }
-      .gallery-item.reverse { direction: rtl }
-      .gallery-item.reverse > * { direction: ltr }
-      .gallery-item .g-text { text-align: left }
-      .gallery-item video.g-video { max-height: none }
 
-      .roster-grid { grid-template-columns: repeat(2, 1fr) }
-      .roster-card--wild { grid-column: 1 / -1 }
+      .gallery-item.reverse {
+        direction: rtl
+      }
 
-      .gb-form .gb-name { flex: 0 0 180px }
-      .gb-form .gb-msg { min-width: 200px }
+      .gallery-item.reverse>* {
+        direction: ltr
+      }
+
+      .gallery-item .g-text {
+        text-align: left
+      }
+
+      .gallery-item video.g-video {
+        max-height: none
+      }
+
+      .roster-grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .roster-card--wild {
+        grid-column: 1 / -1
+      }
+
+      .gb-form .gb-name {
+        flex: 0 0 180px
+      }
+
+      .gb-form .gb-msg {
+        min-width: 200px
+      }
 
       /* Journey (Cara Apply) — Zigzag Desktop (861px+) */
       .journey {
         margin-top: 36px;
         padding: 10px 0 26px
       }
+
       .journey::before {
         left: 50%;
         transform: translateX(-50%)
       }
+
       .j-step,
       .j-step:nth-child(even) {
         display: grid;
@@ -2866,6 +2946,7 @@
         margin-bottom: 44px;
         max-width: none
       }
+
       /* Step 1, 3: Foto di kiri, node di tengah, teks di kanan */
       .j-step .j-media {
         grid-column: 1;
@@ -2877,6 +2958,7 @@
         aspect-ratio: 16/10;
         margin: 0
       }
+
       .j-step .j-text {
         grid-column: 3;
         grid-row: 1;
@@ -2885,6 +2967,7 @@
         margin: 0;
         max-width: none
       }
+
       /* Step 2, 4: Teks di kiri, node di tengah, foto di kanan */
       .j-step:nth-child(even) .j-media {
         grid-column: 3;
@@ -2896,6 +2979,7 @@
         aspect-ratio: 16/10;
         margin: 0
       }
+
       .j-step:nth-child(even) .j-text {
         grid-column: 1;
         grid-row: 1;
@@ -2904,6 +2988,7 @@
         margin: 0;
         max-width: none
       }
+
       .j-step .j-node,
       .j-step:nth-child(even) .j-node {
         position: relative;
@@ -2929,12 +3014,14 @@
         margin: 16px auto 0;
         padding-left: 0
       }
+
       .j-step.j-step--warn .j-node {
         margin: 0 auto 16px;
         order: 1;
         grid-column: auto;
         grid-row: auto
       }
+
       .j-step.j-step--warn .j-media,
       .j-step.j-step--warn:nth-child(even) .j-media {
         order: 2;
@@ -2946,6 +3033,7 @@
         grid-column: auto;
         grid-row: auto
       }
+
       .j-step.j-step--warn .j-text,
       .j-step.j-step--warn:nth-child(even) .j-text {
         order: 3;
@@ -2955,6 +3043,7 @@
         grid-column: auto;
         grid-row: auto
       }
+
       .j-step.j-step--warn .j-badge {
         margin: 0 auto 10px
       }
@@ -2969,16 +3058,34 @@
 
     /* --- DESKTOP LARGE (1600px+) --- */
     @media (min-width: 1600px) {
-      .hero { padding-top: 56px }
-      .sec { margin-top: 64px }
+      .hero {
+        padding-top: 56px
+      }
+
+      .sec {
+        margin-top: 64px
+      }
     }
 
     /* --- ULTRA-WIDE (1920px+) --- */
     @media (min-width: 1920px) {
-      .moon-svg { width: 240px; height: 240px }
-      .orbit { width: 310px; height: 310px }
-      .stage { height: 400px }
-      .j-step .j-media, .j-step:nth-child(even) .j-media, .j-step--warn .j-media {
+      .moon-svg {
+        width: 240px;
+        height: 240px
+      }
+
+      .orbit {
+        width: 310px;
+        height: 310px
+      }
+
+      .stage {
+        height: 400px
+      }
+
+      .j-step .j-media,
+      .j-step:nth-child(even) .j-media,
+      .j-step--warn .j-media {
         max-width: 480px
       }
     }
@@ -3233,7 +3340,7 @@
           <a href="/guide" class="btn btn-primary"><i data-lucide="book-open" style="width:14px;height:14px"></i> Buka
             Panduan Lengkap</a>
         </div>
-        <div class="bot-teaser-right"><img src="/asset/levelup.png" alt="Level up" loading="lazy" /></div>
+        <div class="bot-teaser-right"><img src="/asset/luneth-games.png" alt="Level up" loading="lazy" /></div>
       </div>
     </section>
 
@@ -3253,8 +3360,8 @@
             <h3>Ruang Bercengkrama</h3>
             <p>Berbagi cerita harian, meme, dan obrolan ringan hingga larut malam. Selalu ada teman mengobrol.</p>
           </div>
-          <video class="g-video" src="/asset/activity/2.webm" alt="General Chat" autoplay muted loop playsinline
-            preload="auto"></video>
+          <video class="g-video" src="/asset/activity/2.webm" muted loop playsinline
+            preload="metadata"></video>
         </div>
         <div class="gallery-item reverse">
           <div class="g-text">
@@ -3264,13 +3371,13 @@
           </div>
           <!-- STACKED CARD SWIPE -->
           <div class="stacked-card-wrap" id="stacked-card-nobar" aria-label="Stacked card swipe — voice & nobar">
-            <!-- Card A: 2.webm — starts as FRONT -->
+            <!-- Card A: 3.webm — starts as FRONT -->
             <div class="sc-card sc-front" id="sc-card-a">
-              <video src="/asset/activity/3.webm" autoplay loop muted playsinline preload="auto"></video>
+              <video src="/asset/activity/3.webm" loop muted playsinline preload="metadata"></video>
             </div>
-            <!-- Card B: 2.1.webm — starts as BACK -->
+            <!-- Card B: 3.1.webm — starts as BACK -->
             <div class="sc-card sc-back" id="sc-card-b">
-              <video src="/asset/activity/3.1.webm" autoplay loop muted playsinline preload="auto"></video>
+              <video src="/asset/activity/3.1.webm" loop muted playsinline preload="metadata"></video>
             </div>
             <!-- floating moon sticker stays on top -->
             <img class="g-icon-sticker" src="/asset/activity/moon.gif" alt="Moon" style="z-index:10" />
@@ -3282,8 +3389,8 @@
             <h3>Arena RPG</h3>
             <p>Pamer kartu level, adu dungeon, dan berburu peti misteri bersama Luneth bot.</p>
           </div>
-          <video class="g-video" src="/asset/activity/1.webm" alt="Luneth Bot" autoplay muted loop playsinline
-            preload="auto"></video>
+          <video class="g-video" src="/asset/activity/1.webm" muted loop playsinline
+            preload="metadata"></video>
         </div>
       </div>
     </section>
@@ -3323,9 +3430,9 @@
       <div class="roster-rule"><span>🔒</span><span>Setiap peran cuma untuk 1 orang — begitu terisi, slotnya
           tertutup.</span></div>
 
-      <!-- LUMINARY PROFILES — expand-on-hover Discord profile cards -->
-      <div class="lum-strip">
-        <div class="lum-slot is-filled" data-roster-lum="announcer">
+      <!-- LUMINARY PROFILES — expand-on-hover / tap Discord profile cards -->
+      <div class="lum-strip" aria-label="Luminary profile cards">
+        <div class="lum-slot is-filled" data-roster-lum="announcer" tabindex="0" role="button" aria-expanded="false" aria-label="Profil Luminary Announcer">
           <span class="lum-vlabel">Luminary<br /><small>Announcer</small></span>
           <span class="lum-profile">
             <span class="lum-banner" data-roster-banner="announcer"></span>
@@ -3335,7 +3442,7 @@
             <small class="lum-role">Announcer</small>
           </span>
         </div>
-        <div class="lum-slot is-filled" data-roster-lum="talkactive">
+        <div class="lum-slot is-filled" data-roster-lum="talkactive" tabindex="0" role="button" aria-expanded="false" aria-label="Profil Luminary TalkActive">
           <span class="lum-vlabel">Luminary<br /><small>TalkActive</small></span>
           <span class="lum-profile">
             <span class="lum-banner" data-roster-banner="talkactive"></span>
@@ -3345,8 +3452,8 @@
             <small class="lum-role">TalkActive</small>
           </span>
         </div>
-        <div class="lum-slot"><span>＋ Watcher<br /><small>Slot Terbuka</small></span></div>
-        <div class="lum-slot"><span>＋ Creator<br /><small>Slot Terbuka</small></span></div>
+        <div class="lum-slot" data-roster-open="watcher" tabindex="0" role="button" aria-expanded="false" aria-label="Slot Terbuka: Watcher — klik untuk info apply"><span>＋ Watcher<br /><small>Slot Terbuka</small></span></div>
+        <div class="lum-slot" data-roster-open="creator" tabindex="0" role="button" aria-expanded="false" aria-label="Slot Terbuka: Creator — klik untuk info apply"><span>＋ Creator<br /><small>Slot Terbuka</small></span></div>
       </div>
 
       <div class="roster-grid">
@@ -3422,7 +3529,7 @@
       </div>
 
       <!-- HOW TO APPLY — placeholder (detail &amp; images added manually later) -->
-      <div class="roster-apply">
+      <div class="roster-apply" id="cara-apply">
         <h3>Cara Apply</h3>
         <p style="color:var(--color-text-2);font-size:.9rem;max-width:560px">Menarik? Berikut perjalanan menjadi
           bagian dari Luminary — ikuti jalurnya langkah demi langkah.</p>
@@ -3641,24 +3748,42 @@
     document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal('nobar'); closeModal('fjb'); closeModal('staff') } })
     function toggleDrawer() { document.getElementById('drawer')?.classList.toggle('open'); document.getElementById('backdrop')?.classList.toggle('open') }
 
-    // parallax stars — pointer + scroll
+    // parallax stars & moon — throttled with requestAnimationFrame
     const stage = document.getElementById('stage');
     const stars = document.querySelectorAll('.star[data-depth]');
-    function parallax(x, y) {
+    const moonSvg = document.querySelector('.moon-svg');
+    let starRaf = false, pendingX = 0, pendingY = 0;
+    function renderStars() {
       stars.forEach(s => {
         const d = parseFloat(s.dataset.depth || 0.4);
-        s.style.transform = `translate(${x * d * 18}px, ${y * d * 12}px)`;
-        s.style.transition = 'transform .35s ease-out';
+        s.style.transform = `translate3d(${pendingX * d * 18}px, ${pendingY * d * 12}px, 0)`;
+      });
+      starRaf = false;
+    }
+    if (stage && window.matchMedia('(hover: hover)').matches) {
+      let stageRect = null;
+      stage.addEventListener('mouseenter', () => { stageRect = stage.getBoundingClientRect(); });
+      stage.addEventListener('mousemove', e => {
+        if (!stageRect) stageRect = stage.getBoundingClientRect();
+        pendingX = (e.clientX - stageRect.left) / stageRect.width - .5;
+        pendingY = (e.clientY - stageRect.top) / stageRect.height - .5;
+        if (!starRaf) { starRaf = true; requestAnimationFrame(renderStars); }
+      }, { passive: true });
+      stage.addEventListener('mouseleave', () => {
+        pendingX = 0; pendingY = 0;
+        if (!starRaf) { starRaf = true; requestAnimationFrame(renderStars); }
       });
     }
-    stage?.addEventListener('mousemove', e => {
-      const r = stage.getBoundingClientRect();
-      parallax((e.clientX - r.left) / r.width - .5, (e.clientY - r.top) / r.height - .5);
-    });
-    stage?.addEventListener('mouseleave', () => parallax(0, 0));
+    let scrollRaf = false;
     window.addEventListener('scroll', () => {
-      const y = Math.min(1, window.scrollY / 600);
-      document.querySelector('.moon-svg').style.transform = `translateY(${y * 10}px)`;
+      if (!scrollRaf && moonSvg) {
+        scrollRaf = true;
+        requestAnimationFrame(() => {
+          const y = Math.min(1, window.scrollY / 600);
+          moonSvg.style.transform = `translate3d(0, ${y * 10}px, 0)`;
+          scrollRaf = false;
+        });
+      }
     }, { passive: true });
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -3674,11 +3799,78 @@
           t.innerHTML += src;
         }
       })();
-      document.querySelectorAll('video.g-video').forEach(v => {
-        v.muted = true;
-        const p = v.play();
-        if (p) p.catch(() => { });
-      });
+
+      // Lazy video playback: play only when in viewport to conserve device CPU/GPU/battery
+      if ('IntersectionObserver' in window) {
+        const videoIo = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            const v = entry.target;
+            if (entry.isIntersecting) {
+              if (!v.closest('.sc-back')) {
+                const p = v.play();
+                if (p) p.catch(() => { });
+              }
+            } else {
+              v.pause();
+            }
+          });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('video').forEach(v => {
+          v.muted = true;
+          videoIo.observe(v);
+        });
+      } else {
+        document.querySelectorAll('video.g-video').forEach(v => {
+          v.muted = true;
+          const p = v.play();
+          if (p) p.catch(() => { });
+        });
+      }
+
+      // Luminary Roster strip — touch & click interactions for iPad, tablet, and mobile
+      (function () {
+        const strip = document.querySelector('.lum-strip');
+        if (!strip) return;
+        const slots = Array.from(strip.querySelectorAll('.lum-slot'));
+        if (!slots.length) return;
+
+        function closeAll(except) {
+          slots.forEach(s => {
+            if (s !== except) {
+              s.classList.remove('is-active');
+              s.setAttribute('aria-expanded', 'false');
+            }
+          });
+        }
+
+        slots.forEach(slot => {
+          function toggle(e) {
+            const isActive = slot.classList.contains('is-active');
+            closeAll(slot);
+            if (!isActive) {
+              slot.classList.add('is-active');
+              slot.setAttribute('aria-expanded', 'true');
+            } else {
+              slot.classList.remove('is-active');
+              slot.setAttribute('aria-expanded', 'false');
+            }
+          }
+
+          slot.addEventListener('click', toggle);
+          slot.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              toggle(e);
+            }
+          });
+        });
+
+        document.addEventListener('click', e => {
+          if (!e.target.closest('.lum-strip')) {
+            closeAll(null);
+          }
+        });
+      })();
       fetch('/api/widget').then(r => r.json()).then(d => {
         const online = d.presenceCount || d.presence_count;
         const vc = d.voiceCount || 0;
@@ -3937,13 +4129,23 @@
         sf.setAttribute('y1', y); sf.setAttribute('y2', y);
       }
 
-      var shimmerId;
+      var shimmerId, shimmerRaf;
       function startShimmer() {
-        shimmerId = setInterval(function () {
+        if (rm) {
+          shimmerId = setInterval(function () {
+            if (done) return;
+            phase += .06;
+            setLevel(BOTTOM - (BOTTOM - TOP) * progress());
+          }, 200);
+          return;
+        }
+        function step() {
           if (done) return;
           phase += .06;
           setLevel(BOTTOM - (BOTTOM - TOP) * progress());
-        }, rm ? 200 : 40);
+          shimmerRaf = requestAnimationFrame(step);
+        }
+        shimmerRaf = requestAnimationFrame(step);
       }
 
       function progress() {
@@ -3954,6 +4156,7 @@
       function finish() {
         if (done) return; done = true;
         clearInterval(shimmerId);
+        if (shimmerRaf) cancelAnimationFrame(shimmerRaf);
         setLevel(TOP);
         setTimeout(function () {
           ov.classList.add('hide');
@@ -4035,27 +4238,41 @@
       }
 
       function poll() {
+        if (document.hidden) return;
         fetch('/api/widget').then(function (r) { return r.json() }).then(render).catch(function () { });
       }
       poll();
       setInterval(poll, 10000);
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) poll();
+      });
     })();
 
-    // ── Stacked Card Swipe: 2.webm & 2.1.webm alternate every 3s ──
+    // ── Stacked Card Swipe: alternate every 3s ──
     (function () {
       var cardA = document.getElementById('sc-card-a');
       var cardB = document.getElementById('sc-card-b');
       if (!cardA || !cardB) return;
+      var vidA = cardA.querySelector('video');
+      var vidB = cardB.querySelector('video');
 
       // true = A is front, false = B is front
       var aIsFront = true;
+      if (vidB) vidB.pause();
 
       setInterval(function () {
+        if (document.hidden) return;
         var front = aIsFront ? cardA : cardB;
         var back = aIsFront ? cardB : cardA;
+        var frontVid = aIsFront ? vidA : vidB;
+        var backVid = aIsFront ? vidB : vidA;
 
         // Step 1: elevate back card's z-index above front so it can visually cross over
         back.classList.add('sc-rising');
+        if (backVid) {
+          var p = backVid.play();
+          if (p) p.catch(function () { });
+        }
 
         // Step 2: after a frame, swap the visual classes so CSS transition fires
         requestAnimationFrame(function () {
@@ -4065,10 +4282,11 @@
             front.classList.remove('sc-front');
             front.classList.add('sc-back');
 
-            // Step 3: once transition ends, remove the temporary elevation helper
+            // Step 3: once transition ends, remove the temporary elevation helper and pause hidden video
             back.addEventListener('transitionend', function handler() {
               back.removeEventListener('transitionend', handler);
               back.classList.remove('sc-rising');
+              if (frontVid) frontVid.pause();
             });
 
             aIsFront = !aIsFront;

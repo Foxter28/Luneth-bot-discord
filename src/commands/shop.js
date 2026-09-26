@@ -12,15 +12,15 @@ const config = require('../config');
 
 const CATEGORY_ORDER = ['common_weapon', 'rare_weapon', 'legendary_weapon', 'material', 'armor', 'offhand', 'relic', 'special_role', 'crate'];
 const CATEGORY_LABELS = {
-  common_weapon: { label: '🟢 Common Weapons', emoji: '⚔️', role: '⚔️ Equip' },
-  rare_weapon: { label: '🟣 Rare Weapons', emoji: '🗡️', role: '⚔️ Equip' },
-  legendary_weapon: { label: '🔴 Legendary Weapons', emoji: '🌟', role: '⚔️ Equip' },
-  material: { label: '🧱 Materials', emoji: '🧱', role: '🧪 Material' },
-  armor: { label: '🛡️ Armor', emoji: '🛡️', role: '🛡️ Equip' },
-  offhand: { label: '🛡️ Off-hand', emoji: '🛡️', role: '🛡️ Equip' },
-  relic: { label: '💠 Relics', emoji: '💠', role: '💠 Material' },
-  special_role: { label: '👑 Special Roles', emoji: '👑', role: '🏷️ Server Role' },
-  crate: { label: '🎁 Crates', emoji: '📦', role: '📦 Crate' },
+  common_weapon: { label: 'Common Weapons', emoji: '⚔️', role: '⚔️ Equip' },
+  rare_weapon: { label: 'Rare Weapons', emoji: '🗡️', role: '⚔️ Equip' },
+  legendary_weapon: { label: 'Legendary Weapons', emoji: '🌟', role: '⚔️ Equip' },
+  material: { label: 'Materials', emoji: '🧱', role: '🧪 Material' },
+  armor: { label: 'Armor', emoji: '🛡️', role: '🛡️ Equip' },
+  offhand: { label: 'Off-hand', emoji: '🛡️', role: '🛡️ Equip' },
+  relic: { label: 'Relics', emoji: '💠', role: '💠 Material' },
+  special_role: { label: 'Special Roles', emoji: '👑', role: '🏷️ Server Role' },
+  crate: { label: 'Crates', emoji: '📦', role: '📦 Crate' },
 };
 
 // Legend explaining what each role means, shown in the shop overview.
