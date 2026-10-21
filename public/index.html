@@ -1138,12 +1138,16 @@
       max-height: 90vh;
       display: flex;
       flex-direction: column;
-      background: #0f0a1e;
-      border: 1px solid var(--glow);
-      border-radius: 16px;
+      background: #0d081e;
+      border: 1px solid rgba(168, 85, 247, .32);
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, .6);
-      animation: pop .2s ease
+      box-shadow: 0 24px 80px rgba(0, 0, 0, .8), 0 0 40px rgba(168, 85, 247, .12);
+      animation: pop .22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-staff-dialog {
+      max-width: 700px;
     }
 
     @keyframes pop {
@@ -1159,48 +1163,63 @@
     }
 
     .modal-head {
-      background: linear-gradient(90deg, #2e1065, #3b0764);
-      border-bottom: 1px solid var(--border);
-      padding: 10px 14px;
+      background: linear-gradient(90deg, #1b0d36, #29084d);
+      border-bottom: 1px solid rgba(168, 85, 247, .22);
+      padding: 12px 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-family: var(--fp);
+      font-family: var(--fb);
       color: #f3e8ff;
-      font-size: .9rem
+      font-size: .92rem;
     }
 
     .x {
-      background: #ef4444;
-      border: 1px solid #fff;
-      color: #fff;
-      width: 24px;
-      height: 24px;
-      border-radius: 6px;
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid rgba(255, 255, 255, .16);
+      color: #cbd5e1;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      font-size: .88rem;
       font-weight: 700;
-      cursor: pointer
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .2s ease;
+    }
+
+    .x:hover {
+      background: rgba(239, 68, 68, .22);
+      border-color: rgba(239, 68, 68, .45);
+      color: #fca5a5;
+      transform: scale(1.05);
     }
 
     .modal-body {
-      padding: 20px;
-      overflow: auto;
-      color: #e9d5ff;
-      font-size: .9rem;
-      line-height: 1.6
+      padding: 22px;
+      overflow-y: auto;
+      color: #cbd5e1;
+      font-size: .92rem;
+      line-height: 1.65;
+      font-family: var(--fb);
     }
 
     .modal-body h3 {
-      font-family: var(--fd);
-      color: var(--gold);
-      margin-bottom: 8px
+      font-family: var(--fb);
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
     }
 
     .modal-body h4 {
       color: #fff;
-      margin: 14px 0 6px;
+      margin: 16px 0 8px;
       border-bottom: 1px dashed rgba(168, 85, 247, .3);
       padding-bottom: 4px;
-      font-family: var(--fd)
+      font-family: var(--fb);
+      font-weight: 700;
     }
 
     .modal-body code {
@@ -1209,7 +1228,340 @@
       padding: 1px 5px;
       border-radius: 4px;
       font-family: var(--fp);
-      color: var(--cyan)
+      color: var(--cyan);
+    }
+
+    /* ── STAFF RECRUITMENT MODAL ENHANCEMENTS ── */
+    .staff-badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--fp);
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      color: #fde047;
+      background: rgba(253, 224, 71, .12);
+      border: 1px solid rgba(253, 224, 71, .35);
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    .staff-badge-status .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fde047;
+      box-shadow: 0 0 8px #fde047;
+      animation: pulse 1.8s infinite;
+    }
+
+    .staff-intro-banner {
+      background: linear-gradient(135deg, rgba(168, 85, 247, .12), rgba(59, 7, 100, .25));
+      border: 1px solid rgba(168, 85, 247, .25);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .staff-intro-banner::before {
+      content: '';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, rgba(192, 132, 252, .2), transparent 70%);
+      pointer-events: none;
+    }
+
+    .staff-intro-tag {
+      font-family: var(--fp);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      color: #c084fc;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .staff-intro-title {
+      font-family: var(--fb);
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: #fff;
+      margin: 0 0 6px;
+      letter-spacing: -.01em;
+    }
+
+    .staff-intro-desc {
+      color: #e2e8f0;
+      font-size: .9rem;
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    .staff-section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 20px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(168, 85, 247, .18);
+    }
+
+    .staff-section-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .staff-section-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #a855f7, #6b21a8);
+      color: #fff;
+      font-family: var(--fp);
+      font-size: .75rem;
+      font-weight: 700;
+    }
+
+    .staff-section-head h4 {
+      font-family: var(--fb);
+      font-size: .98rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+      border: none;
+      padding: 0;
+    }
+
+    .staff-section-pill {
+      font-size: .72rem;
+      color: #c084fc;
+      background: rgba(168, 85, 247, .1);
+      border: 1px solid rgba(168, 85, 247, .2);
+      border-radius: 999px;
+      padding: 2px 8px;
+    }
+
+    /* 4 Pillars Grid */
+    .staff-pillar-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    @media (max-width: 640px) {
+      .staff-pillar-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .staff-pillar-card {
+      background: rgba(22, 14, 42, .75);
+      border: 1px solid rgba(168, 85, 247, .2);
+      border-radius: 12px;
+      padding: 14px 15px;
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .staff-pillar-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(192, 132, 252, .45);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .4), 0 0 16px rgba(168, 85, 247, .15);
+    }
+
+    .sp-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sp-icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+      background: rgba(59, 7, 100, .6);
+      border: 1px solid rgba(168, 85, 247, .3);
+    }
+
+    .sp-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .sp-badge {
+      font-family: var(--fp);
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 1px 6px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 2px;
+    }
+
+    .sp-badge-amber {
+      background: rgba(251, 191, 36, .15);
+      color: #fde047;
+      border: 1px solid rgba(251, 191, 36, .35);
+    }
+
+    .sp-badge-purple {
+      background: rgba(168, 85, 247, .15);
+      color: #c084fc;
+      border: 1px solid rgba(168, 85, 247, .35);
+    }
+
+    .sp-badge-cyan {
+      background: rgba(56, 189, 248, .15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, .35);
+    }
+
+    .sp-badge-emerald {
+      background: rgba(52, 211, 153, .15);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, .35);
+    }
+
+    .sp-title {
+      font-weight: 700;
+      font-size: .88rem;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    .sp-body {
+      font-size: .84rem;
+      color: #cbd5e1;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    /* Checklist Grid */
+    .staff-req-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 640px) {
+      .staff-req-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .staff-req-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: rgba(18, 12, 34, .6);
+      border: 1px solid rgba(168, 85, 247, .16);
+      border-radius: 10px;
+      padding: 10px 12px;
+      transition: border-color .15s ease;
+    }
+
+    .staff-req-item:hover {
+      border-color: rgba(52, 211, 153, .35);
+    }
+
+    .req-check {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      background: rgba(52, 211, 153, .18);
+      border: 1px solid rgba(52, 211, 153, .4);
+      color: #34d399;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .req-text {
+      flex: 1;
+    }
+
+    .req-title {
+      font-size: .85rem;
+      font-weight: 600;
+      color: #f1f5f9;
+      line-height: 1.3;
+    }
+
+    .req-sub {
+      font-size: .75rem;
+      color: #94a3b8;
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* Staff Callout Note */
+    .staff-note {
+      background: linear-gradient(135deg, rgba(56, 189, 248, .08), rgba(168, 85, 247, .08));
+      border: 1px dashed rgba(56, 189, 248, .3);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .staff-note-icon {
+      font-size: 1.1rem;
+      line-height: 1;
+      margin-top: 2px;
+    }
+
+    .staff-note p {
+      margin: 0;
+      font-size: .83rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    .staff-note strong {
+      color: #38bdf8;
+    }
+
+    /* Actions Footer */
+    .staff-action-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      padding-top: 8px;
+    }
+
+    .staff-action-bar .btn {
+      padding: 9px 18px;
+      font-size: .88rem;
     }
 
     /* staff recruitment — prominent trigger, same shape as other modal buttons */
@@ -3696,42 +4048,161 @@
     </div>
   </div>
   <div class="overlay" id="modal-staff" onclick="if(event.target===this)closeModal('staff')">
-    <div class="modal">
-      <div class="modal-head"><span>🛡️ LOWONGAN STAFF DIBUKA</span><button class="x"
-          onclick="closeModal('staff')">✕</button></div>
+    <div class="modal modal-staff-dialog">
+      <div class="modal-head">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="staff-badge-status"><span class="pulse-dot"></span> LOWONGAN DIBUKA</span>
+          <span style="font-weight:700;letter-spacing:.02em">Rekrutmen Staff Lunera</span>
+        </div>
+        <button class="x" onclick="closeModal('staff')" aria-label="Tutup modal">✕</button>
+      </div>
       <div class="modal-body">
-        <h3>Rekrutmen Staff — Lunera</h3>
-        <p>Sebelum apply, ada baiknya kamu paham dulu apa yang sebenarnya kami cari dari seorang staff.
-          Kami bagi jadi dua bagian: hal yang paling krusial, dan standar umum yang perlu dipenuhi.</p>
-        <h4>Hal yang Paling Kami Perhatikan:</h4>
-        <ul>
-          <li><b>Integritas</b> — Rekam jejak yang bersih di server ini jadi pertimbangan utama. Staff memegang
-            kepercayaan dan akses yang lebih besar dibanding member biasa, jadi track record yang bermasalah dari awal
-            akan jadi risiko besar ke depannya.</li>
-          <li><b>Komitmen yang Nyata</b> — Niat saja tidak cukup tanpa waktu yang benar-benar bisa dialokasikan. Staff
-            yang aktif sebentar lalu menghilang berbulan-bulan justru lebih merepotkan dibanding slot yang memang
-            kosong,
-            karena posisinya jadi terisi tapi tidak produktif.</li>
-          <li><b>Kedewasaan dalam Menghadapi Konflik</b> — Kemampuan memediasi masalah tanpa memihak, serta tetap tenang
-            saat dikritik atau dihadapkan pada situasi yang memanas, adalah hal yang sering luput saat seseorang
-            direkrut
-            hanya karena terlihat aktif mengobrol.</li>
-          <li><b>Menjaga Kerahasiaan</b> — Staff akan terpapar informasi internal seperti laporan pelanggaran maupun
-            diskusi pengambilan keputusan. Kebocoran informasi ini, baik disengaja maupun tidak, dapat merusak
-            kepercayaan
-            seluruh tim dan komunitas.</li>
-        </ul>
-        <h4>Standar Umum:</h4>
-        <ul>
-          <li>Minimal berusia 15 tahun</li>
-          <li>Sudah menjadi member aktif minimal 2 minggu</li>
-          <li>Memahami dan mematuhi Rules Lunera serta Community Guidelines Discord</li>
-          <li>Tidak pernah menerima sanksi berat (warn, mute, atau ban) sebelumnya</li>
-          <li>Dikenal baik oleh komunitas, bukan sekadar member yang tiba-tiba muncul untuk mendaftar</li>
-          <li>Mampu berkomunikasi dengan jelas dan sopan, baik kepada member maupun sesama staff</li>
-        </ul>
-        <p>Kami memahami tidak ada kandidat yang sempurna, tapi keempat hal di bagian pertama adalah fondasi
-          yang akan terus kami perhatikan sepanjang proses seleksi maupun setelah bergabung.</p>
+        <!-- Hero Introduction Banner -->
+        <div class="staff-intro-banner">
+          <div class="staff-intro-tag">✨ PANDUAN CALON STAFF</div>
+          <h3 class="staff-intro-title">Mari Berkembang Bersama Lunera</h3>
+          <p class="staff-intro-desc">
+            Sebelum mendaftar, pahami apa yang kami cari dari seorang staff. Kami membaginya menjadi <strong>4 Nilai Krusial</strong> dan <strong>Kualifikasi Standar</strong> yang perlu dipenuhi.
+          </p>
+        </div>
+
+        <!-- Section 1: 4 Nilai Utama -->
+        <div class="staff-section-head">
+          <div class="staff-section-title-wrap">
+            <span class="staff-section-num">01</span>
+            <h4>Hal yang Paling Kami Perhatikan</h4>
+          </div>
+          <span class="staff-section-pill">Fondasi Utama</span>
+        </div>
+
+        <div class="staff-pillar-grid">
+          <div class="staff-pillar-card">
+            <div class="sp-header">
+              <div class="sp-icon-box">🛡️</div>
+              <div class="sp-info">
+                <span class="sp-badge sp-badge-amber">Prioritas Utama</span>
+                <div class="sp-title">Integritas & Rekam Jejak</div>
+              </div>
+            </div>
+            <p class="sp-body">
+              Rekam jejak bersih di server adalah pertimbangan utama. Staff memegang kepercayaan dan akses besar dibanding member biasa, sehingga track record bermasalah membawa risiko fatal.
+            </p>
+          </div>
+
+          <div class="staff-pillar-card">
+            <div class="sp-header">
+              <div class="sp-icon-box">⏳</div>
+              <div class="sp-info">
+                <span class="sp-badge sp-badge-purple">Konsistensi</span>
+                <div class="sp-title">Komitmen yang Nyata</div>
+              </div>
+            </div>
+            <p class="sp-body">
+              Niat baik harus disertai alokasi waktu yang pasti. Staff yang aktif sebentar lalu vakum berbulan-bulan lebih merepotkan dibanding slot kosong, karena posisi terisi namun pasif.
+            </p>
+          </div>
+
+          <div class="staff-pillar-card">
+            <div class="sp-header">
+              <div class="sp-icon-box">⚖️</div>
+              <div class="sp-info">
+                <span class="sp-badge sp-badge-cyan">Mediasi</span>
+                <div class="sp-title">Kedewasaan Menghadapi Konflik</div>
+              </div>
+            </div>
+            <p class="sp-body">
+              Mampu memediasi masalah secara objektif tanpa memihak, serta tetap berkepala dingin ketika dikritik atau menghadapi suasana obrolan yang sedang memanas.
+            </p>
+          </div>
+
+          <div class="staff-pillar-card">
+            <div class="sp-header">
+              <div class="sp-icon-box">🔒</div>
+              <div class="sp-info">
+                <span class="sp-badge sp-badge-emerald">Amanah</span>
+                <div class="sp-title">Menjaga Kerahasiaan</div>
+              </div>
+            </div>
+            <p class="sp-body">
+              Staff menangani informasi internal seperti laporan pelanggaran member dan diskusi privat. Menjaga kerahasiaan adalah kunci menjaga kepercayaan seluruh tim dan komunitas.
+            </p>
+          </div>
+        </div>
+
+        <!-- Section 2: Standar Umum -->
+        <div class="staff-section-head">
+          <div class="staff-section-title-wrap">
+            <span class="staff-section-num">02</span>
+            <h4>Standar & Kualifikasi Umum</h4>
+          </div>
+          <span class="staff-section-pill">Persyaratan Dasar</span>
+        </div>
+
+        <div class="staff-req-grid">
+          <div class="staff-req-item">
+            <div class="req-check">✓</div>
+            <div class="req-text">
+              <div class="req-title">Minimal Berusia 15 Tahun</div>
+              <span class="req-sub">Memiliki kematangan sikap dan emosional</span>
+            </div>
+          </div>
+
+          <div class="staff-req-item">
+            <div class="req-check">✓</div>
+            <div class="req-text">
+              <div class="req-title">Member Aktif Minimal 2 Minggu</div>
+              <span class="req-sub">Sudah beradaptasi dengan ritme server</span>
+            </div>
+          </div>
+
+          <div class="staff-req-item">
+            <div class="req-check">✓</div>
+            <div class="req-text">
+              <div class="req-title">Paham Rules & ToS Discord</div>
+              <span class="req-sub">Menjadi panutan kepatuhan aturan bersama</span>
+            </div>
+          </div>
+
+          <div class="staff-req-item">
+            <div class="req-check">✓</div>
+            <div class="req-text">
+              <div class="req-title">Bebas dari Sanksi Berat</div>
+              <span class="req-sub">Tidak pernah menerima warn, mute, atau ban</span>
+            </div>
+          </div>
+
+          <div class="staff-req-item">
+            <div class="req-check">✓</div>
+            <div class="req-text">
+              <div class="req-title">Dikenal Baik oleh Komunitas</div>
+              <span class="req-sub">Bukan akun asing yang mendadak muncul</span>
+            </div>
+          </div>
+
+          <div class="staff-req-item">
+            <div class="req-check">✓</div>
+            <div class="req-text">
+              <div class="req-title">Komunikasi Jelas & Santun</div>
+              <span class="req-sub">Solutif kepada member maupun sesama staf</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Note & Action -->
+        <div class="staff-note">
+          <span class="staff-note-icon">💡</span>
+          <p>
+            Kami memahami tidak ada kandidat yang sempurna, tapi <strong>4 nilai krusial</strong> di bagian pertama adalah fondasi yang akan terus kami perhatikan sepanjang seleksi maupun setelah bergabung.
+          </p>
+        </div>
+
+        <div class="staff-action-bar">
+          <button type="button" class="btn btn-ghost" onclick="closeModal('staff')">Tutup</button>
+          <a href="#cara-apply" onclick="closeModal('staff')" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:6px">
+            <span>Lihat Langkah Pendaftaran</span>
+            <span>↗</span>
+          </a>
+        </div>
       </div>
     </div>
   </div>

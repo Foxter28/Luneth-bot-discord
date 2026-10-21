@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { Client, GatewayIntentBits, Collection, Events, PermissionFlagsBits } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, Events, PermissionFlagsBits, ActivityType } = require('discord.js');
 require('dotenv').config();
 const config = require('./config');
 const { getActivePrefixes, getOrCreateUser, getSetting, deleteUser, getAllUserIds } = require('./database');
@@ -88,6 +88,15 @@ for (const file of commandFiles) {
 client.once(Events.ClientReady, async (c) => {
   console.log(`✅ Bot online as ${c.user.tag}`);
   console.log(`✅ Guilds: ${c.guilds.cache.size}`);
+
+  // Set bot status & activity
+  c.user.setPresence({
+    status: 'online',
+    activities: [{
+      name: 'Meta Quest 3',
+      type: ActivityType.Playing,
+    }],
+  });
 
   // Periodic check to keep Top 1 Leaderboard role synced
   const { getLeaderboard } = require('./database');
