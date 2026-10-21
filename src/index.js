@@ -15,6 +15,13 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent, // required to read prefix command message content
   ],
+  ws: {
+    properties: {
+      $os: 'android',
+      $browser: 'Discord VR',
+      $device: 'Meta Quest 3',
+    },
+  },
 });
 client.commands = new Collection();
 
