@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node --experimental-sqlite src/index.js",
     "deploy": "node src/deploy-commands.js",
-    "build": "npm install && node src/deploy-commands.js"
+    "build": "npm install && node src/deploy-commands.js",
+    "test:wordle": "node --experimental-sqlite tests/wordle.check.js"
   },
   "dependencies": {
     "@libsql/client": "^0.17.4",

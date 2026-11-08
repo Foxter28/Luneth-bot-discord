@@ -161,7 +161,53 @@ async function ensureSchema() {
       key TEXT PRIMARY KEY,
       value TEXT NOT NULL
     );
+
+    -- ── Lunethle (daily word puzzle) ──────────────────────────────────────
+    -- One persisted answer per WIB calendar date (never regenerated).
+    CREATE TABLE IF NOT EXISTS wordle_puzzles (
+      date TEXT PRIMARY KEY,
+      word TEXT NOT NULL
+    );
+
+    -- One game per user per date (PK enforces it at the DB level).
+    CREATE TABLE IF NOT EXISTS wordle_games (
+      userId TEXT NOT NULL,
+      date TEXT NOT NULL,
+      guesses TEXT NOT NULL DEFAULT '[]',
+      status TEXT NOT NULL DEFAULT 'playing',
+      reward INTEGER NOT NULL DEFAULT 0,
+      createdAt INTEGER NOT NULL,
+      updatedAt INTEGER NOT NULL,
+      PRIMARY KEY (userId, date)
+    );
+
+    CREATE TABLE IF NOT EXISTS wordle_stats (
+      userId TEXT PRIMARY KEY,
+      games INTEGER NOT NULL DEFAULT 0,
+      wins INTEGER NOT NULL DEFAULT 0,
+      losses INTEGER NOT NULL DEFAULT 0,
+      total_guesses INTEGER NOT NULL DEFAULT 0,
+      current_streak INTEGER NOT NULL DEFAULT 0,
+      best_streak INTEGER NOT NULL DEFAULT 0,
+      last_played_date TEXT,
+      last_won_date TEXT,
+      coins_earned INTEGER NOT NULL DEFAULT 0
+    );
+
+    -- Weekly salary ledger; PK (period, userId) makes duplicate payment impossible.
+    CREATE TABLE IF NOT EXISTS wordle_salary (
+      period TEXT NOT NULL,
+      userId TEXT NOT NULL,
+      rank INTEGER NOT NULL,
+      amount INTEGER NOT NULL,
+      status TEXT NOT NULL,
+      paid_at INTEGER,
+      PRIMARY KEY (period, userId)
+    );
   `);
+
+  await dbExec('CREATE INDEX IF NOT EXISTS idx_wordle_stats_streak ON wordle_stats (current_streak DESC, best_streak DESC, wins DESC);');
+  await dbExec('CREATE INDEX IF NOT EXISTS idx_wordle_games_date ON wordle_games (date);');
 
   // Guarded column migrations (only act when a column is missing). Harmless on
   // a freshly created table; needed if a pre-existing file database is opened.
@@ -730,6 +776,157 @@ async function setStreakForUser(userId, streak, guildId) {
 }
 
 // ---------------------------------------------------------------------------
+// Lunethle (daily word puzzle)
+// ---------------------------------------------------------------------------
+// The answer for a date is picked ONCE and persisted; every later call returns
+// the same word, so restarts and concurrent players can never diverge.
+async function getOrCreatePuzzle(date, pickWord) {
+  const existing = await dbGet('SELECT word FROM wordle_puzzles WHERE date = ?', date);
+  if (existing) return existing.word;
+  await dbRun('INSERT OR IGNORE INTO wordle_puzzles (date, word) VALUES (?, ?)', date, pickWord());
+  const row = await dbGet('SELECT word FROM wordle_puzzles WHERE date = ?', date);
+  return row.word;
+}
+
+async function getWordleGame(userId, date) {
+  const row = await dbGet('SELECT * FROM wordle_games WHERE userId = ? AND date = ?', userId, date);
+  if (!row) return null;
+  return { ...row, guesses: JSON.parse(row.guesses || '[]') };
+}
+
+async function createWordleGame(userId, date) {
+  const now = Date.now();
+  await dbRun(
+    "INSERT OR IGNORE INTO wordle_games (userId, date, guesses, status, reward, createdAt, updatedAt) VALUES (?, ?, '[]', 'playing', 0, ?, ?)",
+    userId, date, now, now
+  );
+  return getWordleGame(userId, date);
+}
+
+// Persist the in-progress guess list. Only touches rows that are still playing.
+async function saveWordleGuesses(userId, date, guesses) {
+  const r = await dbRun(
+    "UPDATE wordle_games SET guesses = ?, updatedAt = ? WHERE userId = ? AND date = ? AND status = 'playing'",
+    JSON.stringify(guesses), Date.now(), userId, date
+  );
+  return r.changes > 0;
+}
+
+// Atomically finish a game. The `status = 'playing'` guard makes this a
+// compare-and-swap: exactly one concurrent call can flip the row, so a reward
+// can never be granted twice.
+async function finishWordleGame(userId, date, status, reward, guesses) {
+  const r = await dbRun(
+    "UPDATE wordle_games SET status = ?, reward = ?, guesses = ?, updatedAt = ? WHERE userId = ? AND date = ? AND status = 'playing'",
+    status, reward, JSON.stringify(guesses), Date.now(), userId, date
+  );
+  return r.changes > 0;
+}
+
+async function getWordleStats(userId) {
+  const row = await dbGet('SELECT * FROM wordle_stats WHERE userId = ?', userId);
+  if (!row) {
+    return {
+      userId,
+      games: 0,
+      wins: 0,
+      losses: 0,
+      total_guesses: 0,
+      current_streak: 0,
+      best_streak: 0,
+      last_played_date: null,
+      last_won_date: null,
+      coins_earned: 0,
+    };
+  }
+  // Lazy streak expiry: a full missed WIB day kills the current streak. Computed
+  // on read (like the chat-streak system) so nothing needs a background job.
+  if (row.current_streak > 0 && row.last_won_date && dayDiffWIB(row.last_won_date, Date.now()) > 1) {
+    await dbRun('UPDATE wordle_stats SET current_streak = 0 WHERE userId = ?', userId);
+    row.current_streak = 0;
+  }
+  return row;
+}
+
+// Record one finished game. `won` is decided by the caller; streaks are
+// calendar-based: a win on consecutive WIB days extends, anything else restarts.
+async function recordWordleResult(userId, date, won, guessCount, reward) {
+  const s = await getWordleStats(userId);
+  let current = s.current_streak || 0;
+
+  if (won) {
+    current = s.last_won_date && dayDiffWIB(s.last_won_date, new Date(date + 'T12:00:00+07:00').getTime()) === 1
+      ? current + 1
+      : 1;
+  } else {
+    current = 0;
+  }
+
+  const best = Math.max(s.best_streak || 0, current);
+  const fields = {
+    games: (s.games || 0) + 1,
+    wins: (s.wins || 0) + (won ? 1 : 0),
+    losses: (s.losses || 0) + (won ? 0 : 1),
+    total_guesses: (s.total_guesses || 0) + guessCount,
+    current_streak: current,
+    best_streak: best,
+    last_played_date: date,
+    last_won_date: won ? date : s.last_won_date,
+    coins_earned: (s.coins_earned || 0) + reward,
+  };
+
+  await dbRun(
+    `INSERT OR REPLACE INTO wordle_stats
+       (userId, games, wins, losses, total_guesses, current_streak, best_streak, last_played_date, last_won_date, coins_earned)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    userId, fields.games, fields.wins, fields.losses, fields.total_guesses,
+    fields.current_streak, fields.best_streak, fields.last_played_date, fields.last_won_date, fields.coins_earned
+  );
+  return fields;
+}
+
+// Full stats table, ordered by the leaderboard priority. Expiry filtering is done
+// by the caller (it needs the "yesterday" reference date).
+async function getWordleStatsAll() {
+  return dbAll('SELECT * FROM wordle_stats WHERE games > 0 ORDER BY current_streak DESC, best_streak DESC, wins DESC');
+}
+
+// Number of puzzles a user participated in within [startDate, endDate).
+async function countWordleGamesBetween(userId, startDate, endDate) {
+  const row = await dbGet(
+    'SELECT COUNT(*) AS c FROM wordle_games WHERE userId = ? AND date >= ? AND date < ?',
+    userId, startDate, endDate
+  );
+  return row ? Number(row.c) : 0;
+}
+
+// Insert a salary row. Returns true only for the single call that actually
+// inserted it — the PK (period, userId) makes duplicate payment impossible.
+async function claimWordleSalary(period, userId, rank, amount) {
+  const r = await dbRun(
+    "INSERT OR IGNORE INTO wordle_salary (period, userId, rank, amount, status, paid_at) VALUES (?, ?, ?, ?, 'paid', ?)",
+    period, userId, rank, amount, Date.now()
+  );
+  return r.changes > 0;
+}
+
+async function getWordleSalaryRows(period) {
+  return dbAll('SELECT * FROM wordle_salary WHERE period = ?', period);
+}
+
+async function getLastWordleSalaryPeriod() {
+  return getSetting('wordle_salary_last_period', null);
+}
+
+async function setLastWordleSalaryPeriod(period) {
+  return setSetting('wordle_salary_last_period', period);
+}
+
+async function getWordleSalaryForUser(userId, limit = 5) {
+  return dbAll('SELECT * FROM wordle_salary WHERE userId = ? ORDER BY period DESC LIMIT ?', userId, limit);
+}
+
+// ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
 // Every public function runs inside dbQueue() so that concurrent command
@@ -790,6 +987,21 @@ module.exports = {
   setStreakSetting: (key, value) => dbQueue(() => setStreakSetting(key, value)),
   deleteStreakUser: (userId) => dbQueue(() => deleteStreakUser(userId)),
   setStreakForUser: (userId, streak, guildId) => dbQueue(() => setStreakForUser(userId, streak, guildId)),
+  // lunethle
+  getOrCreatePuzzle: (date, pickWord) => dbQueue(() => getOrCreatePuzzle(date, pickWord)),
+  getWordleGame: (userId, date) => dbQueue(() => getWordleGame(userId, date)),
+  createWordleGame: (userId, date) => dbQueue(() => createWordleGame(userId, date)),
+  saveWordleGuesses: (userId, date, g) => dbQueue(() => saveWordleGuesses(userId, date, g)),
+  finishWordleGame: (userId, date, status, reward, g) => dbQueue(() => finishWordleGame(userId, date, status, reward, g)),
+  getWordleStats: (userId) => dbQueue(() => getWordleStats(userId)),
+  recordWordleResult: (userId, date, won, n, reward) => dbQueue(() => recordWordleResult(userId, date, won, n, reward)),
+  getWordleStatsAll: () => dbQueue(() => getWordleStatsAll()),
+  countWordleGamesBetween: (userId, a, b) => dbQueue(() => countWordleGamesBetween(userId, a, b)),
+  claimWordleSalary: (p, u, r, a) => dbQueue(() => claimWordleSalary(p, u, r, a)),
+  getWordleSalaryRows: (p) => dbQueue(() => getWordleSalaryRows(p)),
+  getLastWordleSalaryPeriod: () => dbQueue(() => getLastWordleSalaryPeriod()),
+  setLastWordleSalaryPeriod: (p) => dbQueue(() => setLastWordleSalaryPeriod(p)),
+  getWordleSalaryForUser: (u, l) => dbQueue(() => getWordleSalaryForUser(u, l)),
   wibDateStr,
   dayDiffWIB,
 };

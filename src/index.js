@@ -54,7 +54,7 @@ function checkCooldown(userId, commandName, cooldownSeconds = 3) {
   const now = Date.now();
   const timestamps = cooldowns.get(commandName);
   const cooldownAmount = cooldownSeconds * 1000;
-  
+
   if (timestamps.has(userId)) {
     const expirationTime = timestamps.get(userId) + cooldownAmount;
     if (now < expirationTime) {
@@ -100,7 +100,7 @@ client.once(Events.ClientReady, async (c) => {
   c.user.setPresence({
     status: 'online',
     activities: [{
-      name: 'Meta Quest 3',
+      name: 'Agent LUNETH from LUNERA',
       type: ActivityType.Playing,
     }],
   });
@@ -156,7 +156,7 @@ client.once(Events.ClientReady, async (c) => {
       const collected = [];
       for (const guild of c.guilds.cache.values()) {
         // fetch to ensure cache is populated
-        await guild.members.fetch().catch(() => {});
+        await guild.members.fetch().catch(() => { });
         for (const m of guild.members.cache.values()) {
           if (m.premiumSince != null) {
             collected.push({
@@ -199,11 +199,26 @@ client.once(Events.ClientReady, async (c) => {
   const cron = require('node-cron');
   const { sendReminder } = require('./streakService');
   for (const { hour, minute } of config.streak.reminderCron) {
-    cron.schedule(`${minute} ${hour} * * *`, () => sendReminder(c, config).catch(() => {}), {
+    cron.schedule(`${minute} ${hour} * * *`, () => sendReminder(c, config).catch(() => { }), {
       timezone: 'Asia/Jakarta',
     });
     console.log(`✅ Streak reminder scheduled at ${hour}:${String(minute).padStart(2, '0')} Asia/Jakarta`);
   }
+
+  // Lunethle weekly salary: paid once per completed weekly period. The payout is
+  // idempotent (period marker + PK on wordle_salary), so running it at boot and
+  // daily is safe and a restart can never double-pay.
+  const { runWeeklySalary } = require('./wordleService');
+  const db = require('./database');
+  const salaryTick = () =>
+    runWeeklySalary(db)
+      .then(({ period, paid }) => {
+        if (paid.length) console.log(`💰 Lunethle salary ${period}: paid ${paid.length} player(s).`);
+      })
+      .catch((e) => console.error('⚠️ Lunethle salary error:', e.message || e));
+  salaryTick();
+  cron.schedule('5 0 * * *', salaryTick, { timezone: 'Asia/Jakarta' });
+  console.log('✅ Lunethle weekly salary scheduled at 00:05 Asia/Jakarta (daily check).');
 
   // Initial sync & intervals
   checkTop1();
@@ -253,7 +268,7 @@ client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
     }
     const seen = new Set();
     require('./boosterStore').setBoosters(collected.filter(b => { if (seen.has(b.id)) return false; seen.add(b.id); return true; }));
-  } catch {}
+  } catch { }
 });
 
 client.on(Events.Error, (err) => {
@@ -300,16 +315,16 @@ client.on(Events.InteractionCreate, async (interaction) => {
       interaction.customId
     );
     if (blocked) {
-      return interaction.reply({ content: MAINTENANCE_MESSAGE, flags: 64 }).catch(() => {});
+      return interaction.reply({ content: MAINTENANCE_MESSAGE, flags: 64 }).catch(() => { });
     }
 
     // Cegah user spam klik tombol/menu (cooldown 1.5 detik)
     const btnCdError = checkCooldown(interaction.user.id, 'component_interaction', 1.5);
     if (btnCdError) {
-      return interaction.reply({ content: "⏳ Please don't click too fast!", flags: 64 }).catch(() => {});
+      return interaction.reply({ content: "⏳ Please don't click too fast!", flags: 64 }).catch(() => { });
     }
 
-    const componentHandlers = ['equip', 'sell', 'trade', 'shop', 'giveaway', 'buy', 'bomber', 'customrole', 'panel'];
+    const componentHandlers = ['equip', 'sell', 'trade', 'shop', 'giveaway', 'buy', 'bomber', 'customrole', 'panel', 'wordle'];
     for (const name of componentHandlers) {
       const cmd = client.commands.get(name);
       if (!cmd?.handleComponent) continue;
@@ -320,6 +335,19 @@ client.on(Events.InteractionCreate, async (interaction) => {
         console.error(`❌ Error in ${name} component handler:`, err);
       }
     }
+  }
+
+  // Modal submits (Lunethle word guess). Routed before chat-input handling.
+  if (interaction.isModalSubmit()) {
+    const wordleCmd = client.commands.get('wordle');
+    if (wordleCmd?.handleModal) {
+      try {
+        if (await wordleCmd.handleModal(interaction)) return;
+      } catch (err) {
+        console.error('❌ Error in wordle modal handler:', err);
+      }
+    }
+    return;
   }
 
   if (interaction.isAutocomplete()) {
@@ -348,13 +376,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
     interaction.commandName
   );
   if (isBlocked) {
-    return interaction.reply({ content: MAINTENANCE_MESSAGE, flags: 64 }).catch(() => {});
+    return interaction.reply({ content: MAINTENANCE_MESSAGE, flags: 64 }).catch(() => { });
   }
 
   // Cegah spam slash command (cooldown 3 detik)
   const cdError = checkCooldown(interaction.user.id, command.data.name, 3);
   if (cdError) {
-    return interaction.reply({ content: cdError, flags: 64 }).catch(() => {});
+    return interaction.reply({ content: cdError, flags: 64 }).catch(() => { });
   }
 
   // On a brand-new player's first slash command, greet them with a tutorial.
@@ -456,13 +484,13 @@ client.on(Events.MessageCreate, async (message) => {
     command.data.name
   );
   if (isPrefixBlocked) {
-    return message.reply({ content: MAINTENANCE_MESSAGE }).catch(() => {});
+    return message.reply({ content: MAINTENANCE_MESSAGE }).catch(() => { });
   }
 
   // Cegah spam prefix command (cooldown 3 detik)
   const cdError = checkCooldown(message.author.id, command.data.name, 3);
   if (cdError) {
-    return message.reply({ content: cdError }).catch(() => {});
+    return message.reply({ content: cdError }).catch(() => { });
   }
 
   if (!hasRequiredPermission(message, command)) {

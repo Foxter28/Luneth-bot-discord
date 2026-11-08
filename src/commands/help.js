@@ -192,6 +192,14 @@ const COMMAND_INFO = [
         desc: '🔤 **Scramble Game** — Unscramble the word to win Coin rewards.',
     },
     {
+        name: 'wordle',
+        category: 'games',
+        emoji: '🟩',
+        usage: 'wordle [guess] | wordle stats | wordle leaderboard | wordle salary',
+        desc: '🟩 **Lunethle** — daily 5-letter word puzzle. Six guesses, same word for everyone, resets 00:00 WIB. Reward up to **500 Coin**.',
+        note: 'Prefix: luwordle · Streak leaderboard + weekly salary',
+    },
+    {
         name: 'recipes',
         category: 'adventure',
         emoji: '📜',
