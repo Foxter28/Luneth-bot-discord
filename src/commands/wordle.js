@@ -182,7 +182,7 @@ module.exports = {
     .addStringOption((opt) =>
       opt
         .setName('input')
-        .setDescription(T(userId, 'wordle.optionDesc'))
+        .setDescription('A 5-letter guess, or: stats | leaderboard | salary')
         .setRequired(false)
     ),
   aliases: ['wordle', 'lunethle'],
