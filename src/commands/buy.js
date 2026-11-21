@@ -193,7 +193,7 @@ module.exports = {
     if (item.category === 'special_role' && item.roleId) {
       if (interaction.member?.roles?.cache?.has(item.roleId)) {
         await interaction.editReply({
-          content: `❌ Kamu sudah memiliki role <@&${item.roleId}>!`,
+          content: `❌ You already have the role <@&${item.roleId}>!`,
         });
         return true;
       }
@@ -209,11 +209,11 @@ module.exports = {
         const member = await interaction.guild.members.fetch(interaction.user.id);
         if (member) {
           await member.roles.add(item.roleId);
-          roleNotice = `\n🎉 **Role <@&${item.roleId}> telah berhasil dipasang ke akun Discord kamu!**`;
+          roleNotice = `\n🎉 **Role <@&${item.roleId}> has been added to your Discord account!**`;
         }
       } catch (rErr) {
         console.error('❌ Failed to assign role on dropdown buy:', rErr);
-        roleNotice = `\n⚠️ Gagal memasang role secara otomatis (pastikan bot memiliki izin Manage Roles & posisi role bot di atas role tersebut).`;
+        roleNotice = `\n⚠️ Could not assign the role automatically (make sure the bot has Manage Roles permission and its role is positioned above that role).`;
       }
     }
 

@@ -17,6 +17,7 @@
 const path = require('path');
 const { EmbedBuilder } = require('discord.js');
 const STREAK_IMAGE = path.join(__dirname, '..', 'public', 'asset', 'streak.png');
+const { tSync: T } = require('./i18n');
 
 // ---------------------------------------------------------------------------
 // WIB helpers — single source of truth for "what day is it" (00:00 WIB)
@@ -112,7 +113,7 @@ async function sendStreakMessage(client, guildId, userId, streak) {
   const channel = await getReminderChannel(client, guildId);
   if (!channel) return false;
   try {
-    await channel.send(`🔥 <@${userId}> streak-nya sekarang: **${streak} hari**!`);
+    await channel.send(T(userId, 'streak.increased', { user: userId, n: streak }));
     return true;
   } catch (err) {
     console.error(`⚠️ Streak message failed in guild ${guildId}:`, err.message);
@@ -205,13 +206,15 @@ async function sendReminder(client, config) {
     const channel = await getReminderChannel(client, guildId);
     if (!channel) continue; // not configured -> don't spam random channels
 
-    const text =
-      `⏰ **Reminder Streak!** Hai ${roleMention}, jangan lupa chat hari ini biar streak-mu tetap hidup! 🔥` +
-      `\nCek status: \`/streak register\``;
+    const text = T('system', 'streak.reminder', { mention: roleMention });
 
     try {
       await channel.send({
-        content: text,
+        embeds: [
+          new EmbedBuilder()
+            .setDescription(text)
+            .setThumbnail('attachment://streak.png'),
+        ],
         files: [{ attachment: STREAK_IMAGE, name: 'streak.png' }],
       });
     } catch (err) {

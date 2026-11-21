@@ -1,6 +1,7 @@
 const path = require('path');
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { getStreakLeaderboard } = require('../database');
+const { tSync: T } = require('../i18n');
 
 const RANK_EMOJI = ['<:crown:1546422532117102593>', '🥈', '🥉', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
 const STREAK_IMAGE = path.join(__dirname, '..', '..', 'public', 'asset', 'streak.png');
@@ -26,7 +27,7 @@ module.exports = {
 
     const lines = top.map((u, i) => {
       const rank = RANK_EMOJI[i] ?? `\`#${i + 1}\``;
-      const days = `**${u.current_streak}** hari 🔥`;
+      const days = T(interaction.user.id, 'streakboard.days', { n: u.current_streak });
       if (i === 0) return `${rank}  __<@${u.userId}>__\n╰ ${days}`;
       if (i < 3) return `${rank}  <@${u.userId}>\n╰ ${days}`;
       return `${rank}  <@${u.userId}> — ${days}`;
@@ -42,7 +43,7 @@ module.exports = {
       const selfIndex = wider.findIndex((u) => u.userId === interaction.user.id);
       selfLine =
         selfIndex !== -1
-          ? `-# Your position: #${selfIndex + 1} • ${wider[selfIndex].current_streak} hari`
+          ? T(interaction.user.id, 'streakboard.selfPos', { rank: selfIndex + 1, n: wider[selfIndex].current_streak })
           : `-# You're not registered yet. Try \`/streak register\`!`;
     }
 

@@ -204,6 +204,12 @@ async function ensureSchema() {
       paid_at INTEGER,
       PRIMARY KEY (period, userId)
     );
+
+    -- Per-user language preference (i18n).
+    CREATE TABLE IF NOT EXISTS user_settings (
+      userId TEXT PRIMARY KEY,
+      lang TEXT NOT NULL DEFAULT 'en'
+    );
   `);
 
   await dbExec('CREATE INDEX IF NOT EXISTS idx_wordle_stats_streak ON wordle_stats (current_streak DESC, best_streak DESC, wins DESC);');
@@ -599,6 +605,16 @@ async function getSetting(key, fallback = null) {
   return row ? row.value : fallback;
 }
 
+// ── Per-user language (i18n) ───────────────────────────────────────────────
+async function getUserLang(userId) {
+  const row = await dbGet('SELECT lang FROM user_settings WHERE userId = ?', userId);
+  return row ? row.lang : 'en';
+}
+
+async function setUserLang(userId, lang) {
+  await dbRun('INSERT INTO user_settings (userId, lang) VALUES (?, ?) ON CONFLICT(userId) DO UPDATE SET lang = excluded.lang', userId, lang);
+}
+
 async function setSetting(key, value) {
   await dbRun('INSERT OR REPLACE INTO global_settings (key, value) VALUES (?, ?)', key, String(value));
 }
@@ -984,6 +1000,8 @@ module.exports = {
   getAllStreakUsers: () => dbQueue(() => getAllStreakUsers()),
   getStreakLeaderboard: (limit = 10) => dbQueue(() => getStreakLeaderboard(limit)),
   getStreakSetting: (key, fallback) => dbQueue(() => getStreakSetting(key, fallback)),
+  getUserLang: (userId) => dbQueue(() => getUserLang(userId)),
+  setUserLang: (userId, lang) => dbQueue(() => setUserLang(userId, lang)),
   setStreakSetting: (key, value) => dbQueue(() => setStreakSetting(key, value)),
   deleteStreakUser: (userId) => dbQueue(() => deleteStreakUser(userId)),
   setStreakForUser: (userId, streak, guildId) => dbQueue(() => setStreakForUser(userId, streak, guildId)),

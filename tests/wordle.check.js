@@ -34,9 +34,9 @@ assert.strictEqual(W.weekStart('2026-01-05'), '2026-01-05'); // Monday -> itself
 assert.strictEqual(W.wibDate(Date.parse('2026-01-05T16:59:00Z')), '2026-01-05');
 assert.strictEqual(W.wibDate(Date.parse('2026-01-05T17:00:00Z')), '2026-01-06'); // 00:00 WIB
 
-assert.strictEqual(W.REWARDS[1], 500);
-assert.strictEqual(W.REWARDS[6], 200);
-assert.strictEqual(W.MAX_REWARD, 500);
+assert.strictEqual(W.REWARDS[1], 20000);
+assert.strictEqual(W.REWARDS[6], 8000);
+assert.strictEqual(W.MAX_REWARD, 20000);
 assert.strictEqual(W.renderBoard([{ word: 'crane', colors: W.evaluate('crane', 'slate') }]).split('\n').length, 6);
 
 // ── 2. Fake interaction helper ────────────────────────────────────────────

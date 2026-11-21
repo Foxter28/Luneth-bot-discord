@@ -12,7 +12,7 @@ const WIB_OFFSET_MS = 7 * 60 * 60 * 1000;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 // Reward per winning guess count (1..6). Failure pays nothing.
-const REWARDS = { 1: 500, 2: 400, 3: 350, 4: 300, 5: 250, 6: 200 };
+const REWARDS = { 1: 20000, 2: 16000, 3: 14000, 4: 12000, 5: 10000, 6: 8000 };
 const MAX_REWARD = REWARDS[1];
 
 // Weekly salary, configurable.

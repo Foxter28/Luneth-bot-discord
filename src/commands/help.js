@@ -134,7 +134,7 @@ const COMMAND_INFO = [
         category: 'admin',
         emoji: '🎉',
         usage: 'giveaway create | list | cancel',
-        desc: 'Adakan giveaway berhadiah Coin — pilih hadiah, durasi, dan jumlah pemenang.',
+        desc: 'Run a Coin giveaway — pick the prize, duration, and number of winners.',
         note: 'Admin only',
     },
     {
@@ -166,7 +166,7 @@ const COMMAND_INFO = [
         category: 'admin',
         emoji: '🎛️',
         usage: 'panel send | list | preview | reload',
-        desc: 'Kirim dan kelola panel interaktif dinamis dengan tombol ephemeral.',
+        desc: 'Send and manage dynamic interactive panels with ephemeral buttons.',
         note: 'Admin only',
     },
     {
@@ -249,14 +249,14 @@ const COMMAND_INFO = [
         category: 'shop',
         emoji: '🔄',
         usage: 'trade create | list | cancel | offer',
-        desc: 'Marketplace pemain: jual beli item ke player lain, pasang listing, atau tawarkan item langsung.',
+        desc: 'Player marketplace: buy and sell items with other players, list items, or make direct offers.',
     },
     {
         name: 'streakleaderboard',
         category: 'economy',
         emoji: '🏆',
         usage: 'streakleaderboard',
-        desc: '🏆 **Streak Leaderboard** — lihat 10 pemegang streak terpanjang di server.',
+        desc: '🏆 **Streak Leaderboard** — see the top 10 longest streak holders in the server.',
         note: 'Alias prefix: luslb',
     },
     {
@@ -264,7 +264,7 @@ const COMMAND_INFO = [
         category: 'admin',
         emoji: '🛡️',
         usage: 'register streak user:<@member>',
-        desc: '🛡️ **(ADMIN)** — daftarkan member lain ke sistem streak.',
+        desc: '🛡️ **(ADMIN)** — register other members into the streak system.',
         note: 'Admin only · Alias: lureg streak / lu reg streak',
     },
     {
@@ -272,7 +272,7 @@ const COMMAND_INFO = [
         category: 'economy',
         emoji: '💸',
         usage: 'restore streak',
-        desc: `💸 Tebus streak yang hangus seharga **${config.streak.restoreCost.toLocaleString()} ${config.currencyName}** — streak balik, role dikembalikan.`,
+        desc: `💸 Redeem an expired streak for **${config.streak.restoreCost.toLocaleString()} ${config.currencyName}** — streak restored, role returned.`,
         note: 'Alias prefix: lurestore streak / lu restore streak',
     },
     {
@@ -280,7 +280,7 @@ const COMMAND_INFO = [
         category: 'economy',
         emoji: '🔥',
         usage: 'streak register | setchannel | channel',
-        desc: '🔥 Sistem streak.\n> • **register** — daftar sendiri (semua member)\n> • **setchannel** — **(ADMIN)** pilih channel reminder\n> • **channel** — **(ADMIN)** lihat channel aktif',
+        desc: '🔥 Streak system.\n> • **register** — register yourself (all members)\n> • **setchannel** — **(ADMIN)** pick the reminder channel\n> • **channel** — **(ADMIN)** view the active channel',
         note: 'Alias prefix: lustreak / lu streak',
     },
 ];

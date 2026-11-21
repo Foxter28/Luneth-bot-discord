@@ -50,7 +50,7 @@ function buildEmbed(gw) {
   }
 
   const desc =
-    (gw.message ? `💬 **Pesan:** ${gw.message}\n\n` : '') +
+    (gw.message ? `💬 **Message:** ${gw.message}\n\n` : '') +
     `**Prize:** ${config.currencySymbol} **${gw.prize.toLocaleString('id-ID')} ${config.currencyName}**\n` +
     `**Winners:** ${gw.winnersCount} (each receives the full prize)\n` +
     `**Ends:** <t:${Math.floor(gw.endsAt / 1000)}:R>\n` +
@@ -153,7 +153,7 @@ async function postGiveaway(gw, channelId, client) {
   const mention = '<@&1549311883251556352>';
   const content = gw.message
     ? `🎉 **GIVEAWAY!** 👋 ${mention}\n💬 ${gw.message}`
-    : `🎉 **GIVEAWAY!** 👋 ${mention} — klik tombol di bawah!`;
+    : `🎉 **GIVEAWAY!** 👋 ${mention} — click the button below!`;
 
   const msg = await channel.send({
     content,
@@ -175,30 +175,30 @@ async function postGiveaway(gw, channelId, client) {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('giveaway')
-    .setDescription('[Admin] Adakan giveaway berhadiah Koin')
+    .setDescription('[Admin] Run a Coin giveaway')
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addSubcommand((sub) =>
       sub
         .setName('create')
-        .setDescription('Mulai giveaway baru')
-        .addIntegerOption((opt) => opt.setName('prize').setDescription('Total hadiah Koin untuk tiap pemenang').setRequired(true).setMinValue(MIN_PRIZE))
-        .addIntegerOption((opt) => opt.setName('duration').setDescription('Durasi dalam menit').setRequired(true).setMinValue(MIN_DURATION_MIN).setMaxValue(MAX_DURATION_MIN))
-        .addIntegerOption((opt) => opt.setName('winners').setDescription('Jumlah pemenang').setRequired(true).setMinValue(1).setMaxValue(MAX_WINNERS))
-        .addChannelOption((opt) => opt.setName('channel').setDescription('Channel tujuan (default: channel ini)').setRequired(false))
-        .addStringOption((opt) => opt.setName('message').setDescription('Pesan tambahan giveaway (opsional)').setRequired(false))
+        .setDescription('Start a new giveaway')
+        .addIntegerOption((opt) => opt.setName('prize').setDescription('Coin prize for each winner').setRequired(true).setMinValue(MIN_PRIZE))
+        .addIntegerOption((opt) => opt.setName('duration').setDescription('Duration in minutes').setRequired(true).setMinValue(MIN_DURATION_MIN).setMaxValue(MAX_DURATION_MIN))
+        .addIntegerOption((opt) => opt.setName('winners').setDescription('Number of winners').setRequired(true).setMinValue(1).setMaxValue(MAX_WINNERS))
+        .addChannelOption((opt) => opt.setName('channel').setDescription('Target channel (default: this channel)').setRequired(false))
+        .addStringOption((opt) => opt.setName('message').setDescription('Extra giveaway message (optional)').setRequired(false))
     )
     .addSubcommand((sub) =>
       sub
         .setName('cancel')
-        .setDescription('Batalkan giveaway yang berjalan')
-        .addStringOption((opt) => opt.setName('id').setDescription('ID giveaway (lihat /giveaway list)').setRequired(true))
+        .setDescription('Cancel a running giveaway')
+        .addStringOption((opt) => opt.setName('id').setDescription('Giveaway ID (see /giveaway list)').setRequired(true))
     )
-    .addSubcommand((sub) => sub.setName('list').setDescription('Lihat giveaway yang sedang berjalan')),
+    .addSubcommand((sub) => sub.setName('list').setDescription('View running giveaways')),
 
   async execute(interaction) {
     // Extra guard (also covers the prefix path where slash permissions don't apply).
     if (!isAdmin(interaction)) {
-      return interaction.reply({ content: '❌ Command ini khusus admin.', flags: 64 });
+      return interaction.reply({ content: '❌ This command is admin-only.', flags: 64 });
     }
 
     const sub = interaction.options.getSubcommand();
@@ -232,28 +232,28 @@ module.exports = {
         const msg = await postGiveaway(gw, channel.id, interaction.client);
         if (!msg) {
           giveaways.delete(id);
-          return interaction.reply({ content: '❌ Tidak bisa kirim ke channel itu.', flags: 64 });
+          return interaction.reply({ content: '❌ Cannot send to that channel.', flags: 64 });
         }
         return interaction.reply({
-          content: `✅ Giveaway **#${id}** dimulai! Hadiah ${config.currencySymbol} **${prize.toLocaleString('id-ID')} ${config.currencyName}** × ${winnersCount} pemenang, berakhir dalam **${durationMin} menit**.`,
+          content: `✅ Giveaway **#${id}** started! Prize ${config.currencySymbol} **${prize.toLocaleString('en-US')} ${config.currencyName}** × ${winnersCount} winner(s), ends in **${durationMin} minutes**.`,
           flags: 64,
         });
       } catch (err) {
         giveaways.delete(id);
         console.error('❌ Error creating giveaway:', err);
-        return interaction.reply({ content: '❌ Gagal membuat giveaway.', flags: 64 });
+        return interaction.reply({ content: '❌ Failed to create the giveaway.', flags: 64 });
       }
     }
 
     if (sub === 'list') {
       const list = [...giveaways.values()].filter((g) => !g.finished);
       if (!list.length) {
-        return interaction.reply({ content: '📭 Tidak ada giveaway yang sedang berjalan.', flags: 64 });
+        return interaction.reply({ content: '📭 No giveaways are currently running.', flags: 64 });
       }
       const lines = list.map(
-        (g) => `**#${g.id}** — ${config.currencySymbol}${g.prize.toLocaleString('id-ID')} × ${g.winnersCount} pemenang · sisa <t:${Math.floor(g.endsAt / 1000)}:R> · ${g.entrants.size} peserta`
+        (g) => `**#${g.id}** — ${config.currencySymbol}${g.prize.toLocaleString('en-US')} × ${g.winnersCount} winner(s) · ends <t:${Math.floor(g.endsAt / 1000)}:R> · ${g.entrants.size} entrant(s)`
       );
-      return interaction.reply({ content: `📋 **Giveaway aktif:**\n${lines.join('\n')}`, flags: 64 });
+      return interaction.reply({ content: `📋 **Active giveaways:**\n${lines.join('\n')}`, flags: 64 });
     }
 
     if (sub === 'cancel') {
@@ -261,10 +261,10 @@ module.exports = {
       const id = Number(idStr);
       const gw = giveaways.get(id);
       if (!gw || gw.finished) {
-        return interaction.reply({ content: '❌ Giveaway itu tidak ditemukan / sudah selesai.', flags: 64 });
+        return interaction.reply({ content: '❌ That giveaway was not found / already ended.', flags: 64 });
       }
       await cancelGiveaway(gw);
-      return interaction.reply({ content: `✅ Giveaway **#${id}** dibatalkan.`, flags: 64 });
+      return interaction.reply({ content: `✅ Giveaway **#${id}** cancelled.`, flags: 64 });
     }
   },
 
@@ -276,7 +276,7 @@ module.exports = {
     const gwId = Number(interaction.customId.slice('giveaway_join_'.length));
     const gw = giveaways.get(gwId);
     if (!gw || gw.finished) {
-      await interaction.reply({ content: '❌ Giveaway tidak ditemukan / sudah selesai.', flags: 64 });
+      await interaction.reply({ content: '❌ Giveaway not found / already ended.', flags: 64 });
       return true;
     }
 
@@ -286,19 +286,19 @@ module.exports = {
     const exists = await userExists(userId);
     if (!exists) {
       await interaction.reply({
-        content: `❌ Kamu belum **/start**! Ketik \`/start\` dulu untuk membuat akun, lalu klik 🎉 lagi.`,
+        content: `❌ You haven't run **/start** yet! Type \`/start\` first to create an account, then click 🎉 again.`,
         flags: 64,
       });
       return true;
     }
 
     if (gw.entrants.has(userId)) {
-      await interaction.reply({ content: '⚠️ Kamu sudah ikut giveaway ini!', flags: 64 });
+      await interaction.reply({ content: '⚠️ You have already joined this giveaway!', flags: 64 });
       return true;
     }
 
     gw.entrants.add(userId);
-    await interaction.reply({ content: '🎉 Kamu berhasil masuk giveaway! Semoga beruntung!', flags: 64 });
+    await interaction.reply({ content: '🎉 You joined the giveaway! Good luck!', flags: 64 });
 
     // Refresh the participant count on the embed.
     try {

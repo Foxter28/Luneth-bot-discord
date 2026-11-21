@@ -72,7 +72,7 @@ module.exports = {
       { hour: 12, minute: 0 },
       { hour: 18, minute: 0 },
     ],
-    reminderRoleIds: ['1521728913376804955'], // <- isi role ID yang ingin di-tag saat reminder
+    reminderRoleIds: ['1521728913376804955'], // role IDs to ping on streak reminders
     milestoneRoles: [
       { days: 3,  roleId: '1521728913376804955' },
       { days: 7,  roleId: '1521728955047084162' },

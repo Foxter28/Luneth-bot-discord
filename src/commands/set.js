@@ -2,6 +2,7 @@ const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { getStreakUser, setStreakForUser } = require('../database');
 const { syncMilestoneRoles } = require('../streakService');
 const config = require('../config');
+const { tSync: T } = require('../i18n');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -57,18 +58,16 @@ module.exports = {
     }
 
     const oldLabel = old
-      ? `${old.current_streak} hari${old.frozen ? ' (frozen)' : ''}`
-      : 'belum terdaftar';
+      ? T(interaction.user.id, 'set.oldLabel', { n: old.current_streak, extra: old.frozen ? ' (frozen)' : '' })
+      : T(interaction.user.id, 'set.notRegistered');
 
     const embed = {
       color: 0x2ecc71,
-      title: '🔥 Streak Set!',
-      description:
-        `<@${target.id}> — streak kamu diatur ke **${value} hari** 🔥\n` +
-        `Streak akan aktif setelah **<@${target.id}> chat di mana pun**. Chat pertama dihitung sebagai check-in (streak tetap ${value} hari).`,
+      title: T(interaction.user.id, 'set.title'),
+      description: T(interaction.user.id, 'set.desc', { user: target.id, value }),
       fields: [
-        { name: 'Sebelumnya', value: oldLabel, inline: true },
-        { name: 'Sekarang', value: `${value} hari`, inline: true },
+        { name: T(interaction.user.id, 'set.previous'), value: oldLabel, inline: true },
+        { name: T(interaction.user.id, 'set.now'), value: T(interaction.user.id, 'set.days', { n: value }), inline: true },
       ],
       footer: { text: `Diset oleh ${interaction.user.tag}` },
       timestamp: new Date().toISOString(),

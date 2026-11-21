@@ -324,7 +324,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       return interaction.reply({ content: "⏳ Please don't click too fast!", flags: 64 }).catch(() => { });
     }
 
-    const componentHandlers = ['equip', 'sell', 'trade', 'shop', 'giveaway', 'buy', 'bomber', 'customrole', 'panel', 'wordle'];
+    const componentHandlers = ['equip', 'sell', 'trade', 'shop', 'giveaway', 'buy', 'bomber', 'customrole', 'panel', 'wordle', 'language'];
     for (const name of componentHandlers) {
       const cmd = client.commands.get(name);
       if (!cmd?.handleComponent) continue;

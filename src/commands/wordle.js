@@ -12,8 +12,8 @@ const db = require('../database');
 const config = require('../config');
 const { formatNumber } = require('../util');
 const W = require('../wordleService');
+const { tSync: T } = require('../i18n');
 
-const TITLE = 'LUNETHLE — DAILY WORD PUZZLE';
 const BRAND = 0x5865f2;
 
 // ── Embeds ────────────────────────────────────────────────────────────────
@@ -24,25 +24,25 @@ function buildGameEmbed(game, stats, userId) {
   const best = W.MAX_REWARD;
 
   const lines = [
-    `Explore today's hidden word!`,
+    T(userId, 'wordle.subtitle'),
     ``,
-    `**Date:** \`${game.date}\` (WIB)`,
-    `**Attempts:** \`${attempts}/${W.MAX_GUESSES}\``,
-    `**Maximum Reward:** \`${formatNumber(best)}\` ${config.currencySymbol}`,
-    `**Status:** ${game.status === 'won' ? '🎉 Solved' : game.status === 'lost' ? '💀 Failed' : '⏳ In Progress'}`,
+    `**${T(userId, 'wordle.date')}:** \`${game.date}\` (WIB)`,
+    `**${T(userId, 'wordle.attempts')}:** \`${attempts}/${W.MAX_GUESSES}\``,
+    `**${T(userId, 'wordle.maxReward')}:** \`${formatNumber(best)}\` ${config.currencySymbol}`,
+    `**${T(userId, 'wordle.status')}:** ${game.status === 'won' ? T(userId, 'wordle.solved') : game.status === 'lost' ? T(userId, 'wordle.failed') : T(userId, 'wordle.inProgress')}`,
   ];
 
   if (game.status === 'won') {
-    lines.push(`**Reward:** \`+${formatNumber(game.reward)}\` ${config.currencyName}`);
-    lines.push(`🔥 **Streak:** \`${stats.current_streak}\` · Best \`${stats.best_streak}\``);
+    lines.push(`**${T(userId, 'wordle.rewardEarned')}:** \`+${formatNumber(game.reward)}\` ${config.currencyName}`);
+    lines.push(`🔥 **${T(userId, 'wordle.streakCurrent')}:** \`${stats.current_streak}\` · ${T(userId, 'wordle.streakBest')} \`${stats.best_streak}\``);
   } else if (game.status === 'lost') {
     lines.push(`**Answer was:** ||\`${game.answer.toUpperCase()}\`||`);
-    lines.push(`🔥 **Streak:** \`0\` — reset`);
+    lines.push(`🔥 **${T(userId, 'wordle.streakCurrent')}:** \`0\` — reset`);
   } else {
-    lines.push(`**Remaining:** \`${W.MAX_GUESSES - attempts}\` attempts`);
+    lines.push(`**${T(userId, 'wordle.remaining')}:** \`${W.MAX_GUESSES - attempts}\``);
   }
 
-  lines.push('', '**Board**', '```', W.renderBoard(game.guesses), '```');
+  lines.push('', `**${T(userId, 'wordle.board')}**`, '```', W.renderBoard(game.guesses), '```');
 
   if (!done) {
     lines.push('🟩 right letter & spot · 🟨 right letter, wrong spot · ⬜ not in word');
@@ -52,7 +52,7 @@ function buildGameEmbed(game, stats, userId) {
 
   return new EmbedBuilder()
     .setColor(game.status === 'won' ? 0x2ecc71 : game.status === 'lost' ? 0xe74c3c : BRAND)
-    .setTitle(TITLE)
+    .setTitle(T(userId, 'wordle.title'))
     .setDescription(lines.join('\n'))
     .setFooter({ text: `Player: ${userId}` })
     .setTimestamp();
@@ -64,35 +64,34 @@ function buildPlayRow(game) {
     new ButtonBuilder()
       // Owner baked into the customId: a stray click can't drive someone else's game.
       .setCustomId(`wordle_guess:${game.userId}`)
-      .setLabel(done ? 'Puzzle finished' : 'Make a Guess')
+      .setLabel(done ? T(game.userId, 'wordle.buttonFinished') : T(game.userId, 'wordle.buttonGuess'))
       .setEmoji('🔤')
       .setStyle(ButtonStyle.Primary)
       .setDisabled(done)
   );
 }
 
-function buildStatsEmbed(stats) {
+function buildStatsEmbed(stats, userId) {
   const winRate = stats.games > 0 ? (stats.wins / stats.games) * 100 : 0;
   const avg = stats.wins > 0 ? stats.total_guesses / stats.games : 0;
 
   return new EmbedBuilder()
     .setColor(BRAND)
-    .setTitle(`${TITLE} — STATISTICS`)
+    .setTitle(`${T(userId, 'wordle.title')} — ${T(userId, 'wordle.statsTitle').split(' — ')[1]}`)
     .setDescription(
       [
-        `**Total Games:** \`${stats.games}\``,
-        `**Total Wins:** \`${stats.wins}\``,
-        `**Total Losses:** \`${stats.losses}\``,
-        `**Win Rate:** \`${winRate.toFixed(1)}%\``,
+        `**${T(userId, 'wordle.statsGames')}:** \`${stats.games}\``,
+        `**${T(userId, 'wordle.statsWins')}:** \`${stats.wins}\``,
+        `**${T(userId, 'wordle.statsLosses')}:** \`${stats.losses}\``,
+        `**${T(userId, 'wordle.statsWinRate')}:** \`${winRate.toFixed(1)}%\``,
         ``,
-        `🔥 **Current Streak:** \`${stats.current_streak}\``,
-        `🏆 **Best Streak:** \`${stats.best_streak}\``,
+        `🔥 **${T(userId, 'wordle.streakCurrent')}:** \`${stats.current_streak}\``,
+        `🏆 **${T(userId, 'wordle.streakBest')}:** \`${stats.best_streak}\``,
         ``,
-        `**Avg. Attempts:** \`${avg.toFixed(2)}\``,
-        `**Coin Earned:** \`${formatNumber(stats.coins_earned)}\` ${config.currencyName}`,
+        `**${T(userId, 'wordle.statsAvg')}:** \`${avg.toFixed(2)}\``,
+        `**${T(userId, 'wordle.statsCoins')}:** \`${formatNumber(stats.coins_earned)}\` ${config.currencyName}`,
       ].join('\n')
     )
-    .setFooter({ text: 'Lunethle — daily word puzzle' })
     .setTimestamp();
 }
 
@@ -100,8 +99,8 @@ function buildLeaderboardEmbed(board, viewerId) {
   if (board.length === 0) {
     return new EmbedBuilder()
       .setColor(BRAND)
-      .setTitle('LUNETHLE — STREAK LEADERBOARD')
-      .setDescription('No active streaks right now.\nBeat today\'s puzzle to claim the top spot.');
+      .setTitle(T(viewerId, 'wordle.lbTitle'))
+      .setDescription(T(viewerId, 'wordle.lbEmpty'));
   }
 
   const medals = ['🥇', '🥈', '🥉'];
@@ -113,9 +112,9 @@ function buildLeaderboardEmbed(board, viewerId) {
 
   return new EmbedBuilder()
     .setColor(0xf1c40f)
-    .setTitle('LUNETHLE — STREAK LEADERBOARD')
+    .setTitle(T(viewerId, 'wordle.lbTitle'))
     .setDescription(rows.join('\n'))
-    .setFooter({ text: 'Ranked by current streak → best streak → total wins' })
+    .setFooter({ text: T(viewerId, 'wordle.lbFooter') })
     .setTimestamp();
 }
 
@@ -136,19 +135,19 @@ async function applyGuess(userId, rawGuess) {
   const guess = String(rawGuess || '').trim().toLowerCase();
 
   if (guess.length !== W.WORD_LENGTH || !/^[a-z]+$/.test(guess)) {
-    return { error: `Words are exactly **${W.WORD_LENGTH}** letters, A–Z.` };
+    return { error: T(userId, 'wordle.mustBeLength', { n: W.WORD_LENGTH }) };
   }
   if (!W.isValidWord(guess)) {
-    return { error: `**${guess.toUpperCase()}** is not in the word list. Your attempts are untouched.` };
+    return { error: T(userId, 'wordle.notInList', { word: guess.toUpperCase() }) };
   }
 
   const { date, answer, game } = await loadSession(userId);
-  if (!game) return { error: 'Could not open a game session. Try again.' };
+  if (!game) return { error: T(userId, 'wordle.couldNotOpen') };
   if (game.status !== 'playing') {
     return { game, already: true };
   }
   if (game.guesses.some((g) => g.word === guess)) {
-    return { error: `You already guessed **${guess.toUpperCase()}**.`, game };
+    return { error: T(userId, 'wordle.alreadyGuessed', { word: guess.toUpperCase() }), game };
   }
 
   const colors = W.evaluate(answer, guess);
@@ -183,7 +182,7 @@ module.exports = {
     .addStringOption((opt) =>
       opt
         .setName('input')
-        .setDescription('A 5-letter guess, or: stats | leaderboard | salary')
+        .setDescription(T(userId, 'wordle.optionDesc'))
         .setRequired(false)
     ),
   aliases: ['wordle', 'lunethle'],
@@ -194,7 +193,7 @@ module.exports = {
 
     if (input === 'stats') {
       const stats = await db.getWordleStats(userId);
-      return interaction.reply({ embeds: [buildStatsEmbed(stats)] });
+      return interaction.reply({ embeds: [buildStatsEmbed(stats, userId)] });
     }
 
     if (input === 'leaderboard' || input === 'lb') {
@@ -224,7 +223,7 @@ module.exports = {
 
     const { game } = await loadSession(userId);
     if (!game) {
-      return interaction.reply({ content: '❌ Could not open the puzzle. Try again.', flags: 64 });
+      return interaction.reply({ content: `❌ ${T(userId, 'wordle.couldNotOpen')}`, flags: 64 });
     }
     const stats = await db.getWordleStats(userId);
     return interaction.reply({
@@ -240,19 +239,19 @@ module.exports = {
 
     const ownerId = interaction.customId.split(':')[1];
     if (ownerId && interaction.user.id !== ownerId) {
-      await interaction.reply({ content: '❌ This puzzle belongs to someone else. Run `luwordle` to start your own.', flags: 64 });
+      await interaction.reply({ content: `❌ ${T(userId, 'wordle.notOwner')}`, flags: 64 });
       return true;
     }
 
     const modal = new ModalBuilder()
       .setCustomId(`wordle_modal:${interaction.user.id}`)
-      .setTitle('LUNETHLE — Your Guess');
+      .setTitle(T(userId, 'wordle.modalTitle'));
 
     modal.addComponents(
       new ActionRowBuilder().addComponents(
         new TextInputBuilder()
           .setCustomId('wordle_input')
-          .setLabel('Enter a 5-letter English word')
+          .setLabel(T(userId, 'wordle.modalLabel'))
           .setStyle(TextInputStyle.Short)
           .setMinLength(5)
           .setMaxLength(5)
@@ -271,7 +270,7 @@ module.exports = {
     // A modal can only be opened by the button's owner, but re-check anyway —
     // it costs one comparison and rules out a replayed customId.
     if (interaction.user.id !== ownerId) {
-      await interaction.reply({ content: '❌ This puzzle belongs to someone else.', flags: 64 });
+      await interaction.reply({ content: `❌ ${T(userId, 'wordle.notOwner')}`, flags: 64 });
       return true;
     }
 
@@ -328,15 +327,15 @@ async function buildSalaryEmbed(userId) {
   const history = await db.getWordleSalaryForUser(userId, 3);
   const historyLines = history.length
     ? history.map((h) => `\`${h.period}\` — rank \`#${h.rank}\` · \`+${formatNumber(h.amount)}\` ${config.currencyName}`)
-    : ['*No salary received yet.*'];
+    : [T(userId, 'wordle.salaryNone')];
 
   return new EmbedBuilder()
     .setColor(0xf1c40f)
-    .setTitle('LUNETHLE — WEEKLY SALARY')
+    .setTitle(T(userId, 'wordle.salaryTitle'))
     .setDescription(
       [
         `**Period:** \`${period}\` → \`${W.addDays(periodEnd, -1)}\` (WIB)`,
-        `**Next distribution:** \`${nextDate}\` 00:00 WIB`,
+        `**${T(userId, 'wordle.salaryNext')}:** \`${nextDate}\` 00:00 WIB`,
         ``,
         '**Projected Top 3**',
         rows.length ? rows.join('\n') : '*Nobody qualifies yet.*',
@@ -344,10 +343,10 @@ async function buildSalaryEmbed(userId) {
         `**Your status:** \`${played}/${W.SALARY_MIN_PUZZLES}\` puzzles played — ${qualified ? '✅ qualified' : '❌ not yet qualified'}`,
         mine ? `**Your active streak:** \`${mine.current}\` 🔥` : '**Your active streak:** `0`',
         ``,
-        '**Salary history**',
+        T(userId, 'wordle.salaryHistory'),
         ...historyLines,
       ].join('\n')
     )
-    .setFooter({ text: 'Rank 1 · 5.000 · Rank 2 · 3.000 · Rank 3 · 1.500' })
+    .setFooter({ text: T(userId, 'wordle.salaryFooter') })
     .setTimestamp();
 }

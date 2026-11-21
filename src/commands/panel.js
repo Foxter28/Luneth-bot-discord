@@ -141,18 +141,18 @@ module.exports = {
     .addSubcommand((sub) =>
       sub
         .setName('send')
-        .setDescription('Kirim panel interaktif ke channel tertentu')
+        .setDescription('Send an interactive panel to a channel')
         .addStringOption((opt) =>
           opt
             .setName('panel_id')
-            .setDescription('ID panel dari konfigurasi panels.json')
+            .setDescription('Panel ID from the panels.json config')
             .setAutocomplete(true)
             .setRequired(true)
         )
         .addChannelOption((opt) =>
           opt
             .setName('channel')
-            .setDescription('Channel tujuan pengiriman panel (default: channel ini)')
+            .setDescription('Target channel to send the panel to (default: this channel)')
             .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
             .setRequired(false)
         )
@@ -160,16 +160,16 @@ module.exports = {
     .addSubcommand((sub) =>
       sub
         .setName('list')
-        .setDescription('Lihat daftar ID panel yang tersedia di konfigurasi')
+        .setDescription('List available panel IDs from the config')
     )
     .addSubcommand((sub) =>
       sub
         .setName('preview')
-        .setDescription('Preview tampilan panel (hanya bisa dilihat oleh Anda)')
+        .setDescription('Preview a panel (only visible to you)')
         .addStringOption((opt) =>
           opt
             .setName('panel_id')
-            .setDescription('ID panel yang ingin di-preview')
+            .setDescription('The panel ID to preview')
             .setAutocomplete(true)
             .setRequired(true)
         )
@@ -177,31 +177,31 @@ module.exports = {
     .addSubcommand((sub) =>
       sub
         .setName('attach')
-        .setDescription('Ambil embed pesan yang ada (Foxhook/Webhook) lalu pasangkan tombol panel')
+        .setDescription('Attach panel buttons to an existing message (Foxhook/Webhook embeds)')
         .addStringOption((opt) =>
           opt
             .setName('message_id')
-            .setDescription('ID pesan Discord yang ingin dipasangi tombol (Copy Message ID)')
+            .setDescription('The Discord message ID to attach buttons to (Copy Message ID)')
             .setRequired(true)
         )
         .addStringOption((opt) =>
           opt
             .setName('panel_id')
-            .setDescription('ID tombol dari panels.json yang ingin dipasang')
+            .setDescription('The button/panel ID from panels.json to attach')
             .setAutocomplete(true)
             .setRequired(true)
         )
         .addBooleanOption((opt) =>
           opt
             .setName('delete_original')
-            .setDescription('Hapus pesan lama setelah diganti? (Default: false)')
+            .setDescription('Delete the old message after replacing it? (Default: false)')
             .setRequired(false)
         )
     )
     .addSubcommand((sub) =>
       sub
         .setName('reload')
-        .setDescription('Muat ulang konfigurasi panel dari panels.json')
+        .setDescription('Reload the panel config from panels.json')
     ),
 
   async autocomplete(interaction) {
@@ -228,7 +228,7 @@ module.exports = {
 
     if (!button.reply) {
       await interaction.reply({
-        content: 'ℹ️ Tidak ada pesan balasan yang dikonfigurasi untuk tombol ini.',
+        content: 'ℹ️ No reply message is configured for this button.',
         flags: 64,
       });
       return true;
@@ -252,7 +252,7 @@ module.exports = {
 
     if (!isAdmin) {
       return interaction.reply({
-        content: '❌ Anda tidak memiliki izin Administrator untuk menggunakan command ini.',
+        content: '❌ You need Administrator permission to use this command.',
         flags: 64,
       });
     }
@@ -264,7 +264,7 @@ module.exports = {
       loadPanels();
       const count = Object.keys(panelsCache).length;
       return interaction.reply({
-        content: `✅ Konfigurasi panel berhasil dimuat ulang! Terdeteksi **${count}** panel.`,
+        content: `✅ Panel config reloaded! Found **${count}** panel(s).`,
         flags: 64,
       });
     }
@@ -273,24 +273,24 @@ module.exports = {
       const keys = Object.keys(panels);
       if (keys.length === 0) {
         return interaction.reply({
-          content: '⚠️ Belum ada panel yang terdaftar di `src/panels.json`.',
+          content: '⚠️ No panels are registered in `src/panels.json` yet.',
           flags: 64,
         });
       }
 
       const embed = new EmbedBuilder()
-        .setTitle('📋 Daftar Panel Interaktif')
+        .setTitle('📋 Interactive Panel List')
         .setColor(0x5865f2)
         .setDescription(
           keys
             .map((k) => {
               const p = panels[k];
               const btnCount = p.buttons?.length || 0;
-              const title = p.public?.title || '(Tanpa Judul)';
-              return `• **\`${k}\`** — ${title} (*${btnCount} tombol*)`;
+              const title = p.public?.title || '(Untitled)';
+              return `• **\`${k}\`** — ${title} (*${btnCount} button(s)*)`;
             })
             .join('\n') +
-            '\n\n*Gunakan `/panel send panel_id:<id>` untuk mengirim ke channel.*'
+            '\n\n*Use `/panel send panel_id:<id>` to send a panel to a channel.*'
         );
 
       return interaction.reply({ embeds: [embed], flags: 64 });
@@ -302,7 +302,7 @@ module.exports = {
 
       if (!panel) {
         return interaction.reply({
-          content: `❌ Panel dengan ID **\`${panelId}\`** tidak ditemukan di \`src/panels.json\`.\nGunakan \`/panel list\` untuk melihat daftar panel.`,
+          content: `❌ Panel **\`${panelId}\`** not found in \`src/panels.json\`.\nUse \`/panel list\` to see available panels.`,
           flags: 64,
         });
       }
@@ -330,7 +330,7 @@ module.exports = {
 
       if (!panel) {
         return interaction.reply({
-          content: `❌ Panel dengan ID **\`${panelId}\`** tidak ditemukan di \`src/panels.json\`.\nGunakan \`/panel list\` untuk melihat daftar panel.`,
+          content: `❌ Panel **\`${panelId}\`** not found in \`src/panels.json\`.\nUse \`/panel list\` to see available panels.`,
           flags: 64,
         });
       }
@@ -355,12 +355,12 @@ module.exports = {
           }
 
           return interaction.reply({
-            content: `✅ Panel **\`${panelId}\`** (Components V2) berhasil dikirim ke <#${targetChannel.id}>!`,
+            content: `✅ Panel **\`${panelId}\`** (Components V2) sent to <#${targetChannel.id}>!`,
             flags: 64,
           });
         } catch (err) {
           return interaction.reply({
-            content: `❌ Gagal mengirim panel ke <#${targetChannel.id}>: ${err.message}`,
+            content: `❌ Failed to send the panel to <#${targetChannel.id}>: ${err.message}`,
             flags: 64,
           });
         }
@@ -377,7 +377,7 @@ module.exports = {
         const embeds = buildEmbedsList(panel.public);
         if (embeds.length === 0 && rows.length === 0) {
           return interaction.reply({
-            content: `❌ Panel **\`${panelId}\`** tidak memiliki konten embed publik atau tombol yang valid.`,
+            content: `❌ Panel **\`${panelId}\`** has no public embed content or valid buttons.`,
             flags: 64,
           });
         }
@@ -391,12 +391,12 @@ module.exports = {
         await targetChannel.send(sendPayload);
 
         return interaction.reply({
-          content: `✅ Panel **\`${panelId}\`** berhasil dikirim ke <#${targetChannel.id}>!`,
+          content: `✅ Panel **\`${panelId}\`** sent to <#${targetChannel.id}>!`,
           flags: 64,
         });
       } catch (err) {
         return interaction.reply({
-          content: `❌ Gagal mengirim panel ke <#${targetChannel.id}>: ${err.message}`,
+          content: `❌ Failed to send the panel to <#${targetChannel.id}>: ${err.message}`,
           flags: 64,
         });
       }
@@ -410,7 +410,7 @@ module.exports = {
 
       if (!panel) {
         return interaction.reply({
-          content: `❌ Panel tombol **\`${panelId}\`** tidak ditemukan di \`src/panels.json\`.\nGunakan \`/panel list\` untuk melihat daftar panel tombol.`,
+          content: `❌ Button panel **\`${panelId}\`** not found in \`src/panels.json\`.\nUse \`/panel list\` to see available button panels.`,
           flags: 64,
         });
       }
@@ -420,7 +420,7 @@ module.exports = {
         targetMessage = await interaction.channel.messages.fetch(messageId);
       } catch (e) {
         return interaction.reply({
-          content: `❌ Gagal menemukan pesan dengan ID **\`${messageId}\`** di channel ini.\nPastikan Anda menjalankan command di channel yang sama dengan pesan tersebut.`,
+          content: `❌ Could not find a message with ID **\`${messageId}\`** in this channel.\nMake sure you run the command in the same channel as the message.`,
           flags: 64,
         });
       }
@@ -428,7 +428,7 @@ module.exports = {
       const rows = buildActionRows(panel.buttons);
       if (rows.length === 0) {
         return interaction.reply({
-          content: `❌ Panel **\`${panelId}\`** tidak memiliki tombol yang terkonfigurasi di \`src/panels.json\`.`,
+          content: `❌ Panel **\`${panelId}\`** has no buttons configured in \`src/panels.json\`.`,
           flags: 64,
         });
       }
@@ -438,12 +438,12 @@ module.exports = {
         try {
           await targetMessage.edit({ components: rows });
           return interaction.reply({
-            content: `✅ Tombol dari panel **\`${panelId}\`** berhasil ditempelkan langsung ke pesan bot!`,
+            content: `✅ Buttons from panel **\`${panelId}\`** attached directly to the bot message!`,
             flags: 64,
           });
         } catch (err) {
           return interaction.reply({
-            content: `❌ Gagal mengedit pesan bot: ${err.message}`,
+            content: `❌ Failed to edit the bot message: ${err.message}`,
             flags: 64,
           });
         }
@@ -460,7 +460,7 @@ module.exports = {
 
         if (!payload.content && payload.embeds.length === 0 && payload.files.length === 0) {
           return interaction.reply({
-            content: `❌ Pesan tersebut tidak memiliki konten atau embed untuk diduplikasi.`,
+            content: `❌ That message has no content or embed to duplicate.`,
             flags: 64,
           });
         }
@@ -472,12 +472,12 @@ module.exports = {
         }
 
         return interaction.reply({
-          content: `✅ Berhasil mengambil embed dari pesan Foxhook & mengirimkannya dengan tombol interaktif!${deleteOriginal ? ' *(Pesan lama dihapus)*' : ''}`,
+          content: `✅ Embed fetched from the Foxhook message and resent with interactive buttons!${deleteOriginal ? ' *(Old message deleted)*' : ''}`,
           flags: 64,
         });
       } catch (err) {
         return interaction.reply({
-          content: `❌ Gagal memproses pesan: ${err.message}`,
+          content: `❌ Failed to process the message: ${err.message}`,
           flags: 64,
         });
       }

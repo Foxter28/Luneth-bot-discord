@@ -11,7 +11,7 @@ module.exports = {
     const emojis = interaction.guild?.emojis.cache;
     if (!emojis || emojis.size === 0) {
       return interaction.reply({
-        content: '<:cannot:1546422441125879818> Tidak ada custom emoji yang ditemukan di server ini. Silakan upload dulu di Server Settings -> Emoji.',
+        content: '<:cannot:1546422441125879818> No custom emojis found in this server. Upload some first in Server Settings -> Emoji.',
         flags: 64,
       });
     }
@@ -25,10 +25,10 @@ module.exports = {
     const chunk = lines.slice(0, 25).join('\n');
 
     const embed = new EmbedBuilder()
-      .setTitle('✨ Daftar Custom Emoji Server')
+      .setTitle('✨ Server Custom Emojis')
       .setColor(0x3498db)
-      .setDescription(`Ditemukan **${emojis.size}** emoji:\n\n${chunk}`)
-      .setFooter({ text: 'Copy format teks <:name:id> untuk dimasukkan ke konfigurasi' });
+      .setDescription(`Found **${emojis.size}** emoji:\n\n${chunk}`)
+      .setFooter({ text: 'Copy the text format <:name:id> to use in configs' });
 
     return interaction.reply({ embeds: [embed] });
   },
