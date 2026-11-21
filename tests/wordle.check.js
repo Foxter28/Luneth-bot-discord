@@ -41,7 +41,7 @@ assert.strictEqual(W.renderBoard([{ word: 'crane', colors: W.evaluate('crane', '
 
 // ── 2. Fake interaction helper ────────────────────────────────────────────
 function fakeInteraction(userId, input) {
-  const out = { replies: [], edits: [] };
+  const out = { replies: [], edits: [], modals: [] };
   const mk = (store) => async (p) => { store.push(p); return {}; };
   return {
     user: { id: userId, username: 'tester' },
@@ -52,6 +52,10 @@ function fakeInteraction(userId, input) {
     message: { edit: mk(out.edits) },
     fields: { getTextInputValue: () => input },
     customId: 'x',
+    isButton: () => true,
+    component: { style: 1 },
+    respond: async (p) => { out.modals.push(p); },
+    showModal: async () => {},
     out,
   };
 }
@@ -129,6 +133,28 @@ const run = async () => {
   i = fakeInteraction('u1', 'salary');
   await cmd.execute(i);
   assert.ok(i.out.replies[0].embeds[0].data.description.includes('Next distribution'));
+
+  // ── 2b. Modal flow: 1-hour timeout + owner scoping ───────────────────────
+  const btn = fakeInteraction('u1', a1);
+  btn.customId = `wordle_guess:u1`;
+  assert.strictEqual(await cmd.handleComponent(btn), true);
+  assert.strictEqual(btn.out.modals[0].type, 9);
+  assert.strictEqual(btn.out.modals[0].data.timeout, 3600000);
+  assert.strictEqual(btn.out.modals[0].data.custom_id, 'wordle_modal:u1');
+
+  // Another user cannot open u1's modal.
+  const intruder = fakeInteraction('u2', a1);
+  intruder.customId = `wordle_guess:u1`;
+  assert.strictEqual(await cmd.handleComponent(intruder), true);
+  assert.strictEqual(intruder.out.modals.length, 0);
+  assert.ok(intruder.out.replies[0].content.includes('someone else'));
+
+  // A forged modal submit with u1's customId from u2 is rejected before any guess.
+  const forged = fakeInteraction('u2', a1);
+  forged.customId = 'wordle_modal:u1';
+  forged.isButton = () => false;
+  assert.strictEqual(await cmd.handleModal(forged), true);
+  assert.strictEqual((await db.getWordleGame('u1', date)).guesses.length, attempts);
 
   // ── 3. Persistence / atomicity / streak rules ───────────────────────────
   // A finished game can only flip once (no double reward).

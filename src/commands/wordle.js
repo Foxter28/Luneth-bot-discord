@@ -7,6 +7,8 @@ const {
   ModalBuilder,
   TextInputBuilder,
   TextInputStyle,
+  InteractionResponseType,
+  ComponentType,
 } = require('discord.js');
 const db = require('../database');
 const config = require('../config');
@@ -237,39 +239,50 @@ module.exports = {
   async handleComponent(interaction) {
     if (!interaction.isButton() || !interaction.customId.startsWith('wordle_guess')) return false;
 
+    const userId = interaction.user.id;
     const ownerId = interaction.customId.split(':')[1];
-    if (ownerId && interaction.user.id !== ownerId) {
+    if (ownerId && userId !== ownerId) {
       await interaction.reply({ content: `❌ ${T(userId, 'wordle.notOwner')}`, flags: 64 });
       return true;
     }
 
-    const modal = new ModalBuilder()
-      .setCustomId(`wordle_modal:${interaction.user.id}`)
-      .setTitle(T(userId, 'wordle.modalTitle'));
-
-    modal.addComponents(
-      new ActionRowBuilder().addComponents(
-        new TextInputBuilder()
-          .setCustomId('wordle_input')
-          .setLabel(T(userId, 'wordle.modalLabel'))
-          .setStyle(TextInputStyle.Short)
-          .setMinLength(5)
-          .setMaxLength(5)
-          .setRequired(true)
-      )
-    );
-
-    await interaction.showModal(modal);
+    // Raw modal payload: discord.js v14.27 has no ModalBuilder.setTimeout().
+    // Discord's API accepts `timeout` (ms, max 1 hour) directly on the modal.
+    await interaction.respond({
+      type: InteractionResponseType.Modal,
+      data: {
+        custom_id: `wordle_modal:${userId}`,
+        title: T(userId, 'wordle.modalTitle'),
+        timeout: 60 * 60 * 1000, // 1 hour
+        components: [
+          {
+            type: ComponentType.ActionRow,
+            components: [
+              {
+                type: ComponentType.TextInput,
+                custom_id: 'wordle_input',
+                label: T(userId, 'wordle.modalLabel'),
+                style: TextInputStyle.Short,
+                min_length: 5,
+                max_length: 5,
+                required: true,
+              },
+            ],
+          },
+        ],
+      },
+    });
     return true;
   },
 
   async handleModal(interaction) {
     if (!interaction.customId.startsWith('wordle_modal:')) return false;
 
+    const userId = interaction.user.id;
     const ownerId = interaction.customId.split(':')[1];
-    // A modal can only be opened by the button's owner, but re-check anyway —
-    // it costs one comparison and rules out a replayed customId.
-    if (interaction.user.id !== ownerId) {
+    // Re-check even though only the button's owner could open the modal —
+    // a replayed/forged customId must never drive another player's game.
+    if (userId !== ownerId) {
       await interaction.reply({ content: `❌ ${T(userId, 'wordle.notOwner')}`, flags: 64 });
       return true;
     }
@@ -277,7 +290,6 @@ module.exports = {
     // Acknowledge immediately: the DB round-trip may exceed Discord's 3s window.
     await interaction.deferUpdate().catch(() => {});
 
-    const userId = interaction.user.id;
     const guess = interaction.fields.getTextInputValue('wordle_input');
     const res = await applyGuess(userId, guess);
     const stats = await db.getWordleStats(userId);
