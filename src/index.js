@@ -220,6 +220,17 @@ client.once(Events.ClientReady, async (c) => {
   cron.schedule('5 0 * * *', salaryTick, { timezone: 'Asia/Jakarta' });
   console.log('✅ Lunethle weekly salary scheduled at 00:05 Asia/Jakarta (daily check).');
 
+  // Streak cleanup: delete users who haven't chatted for 3+ days to keep DB lean.
+  const streakCleanupTick = () =>
+    db.cleanupInactiveStreaks(3)
+      .then((count) => {
+        if (count > 0) console.log(`🧹 Streak cleanup: pruned ${count} inactive streak user(s) (>= 3 days inactive).`);
+      })
+      .catch((e) => console.error('⚠️ Streak cleanup error:', e.message || e));
+  streakCleanupTick();
+  cron.schedule('10 0 * * *', streakCleanupTick, { timezone: 'Asia/Jakarta' });
+  console.log('✅ Inactive streak cleaner scheduled at 00:10 Asia/Jakarta (daily).');
+
   // Initial sync & intervals
   checkTop1();
   syncBoosters();

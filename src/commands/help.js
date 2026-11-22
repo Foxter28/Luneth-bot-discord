@@ -279,8 +279,8 @@ const COMMAND_INFO = [
         name: 'streak',
         category: 'economy',
         emoji: '🔥',
-        usage: 'streak register | setchannel | channel',
-        desc: '🔥 Streak system.\n> • **register** — register yourself (all members)\n> • **setchannel** — **(ADMIN)** pick the reminder channel\n> • **channel** — **(ADMIN)** view the active channel',
+        usage: 'streak setchannel | channel',
+        desc: '🔥 Streak system.\n> • Automatic: chat in any channel daily to build your streak!\n> • **setchannel** — **(ADMIN)** pick the reminder channel\n> • **channel** — **(ADMIN)** view the active channel',
         note: 'Alias prefix: lustreak / lu streak',
     },
 ];

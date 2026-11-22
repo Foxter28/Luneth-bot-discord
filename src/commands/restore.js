@@ -19,7 +19,7 @@ module.exports = {
     const user = await getStreakUser(userId);
     if (!user) {
       return interaction.reply({
-        content: '❌ You are not registered in the streak system. Use `/streak register` first.',
+        content: '❌ You do not have an active streak record to restore. Chat in any channel to start your streak! 🔥',
         ephemeral: true,
       });
     }

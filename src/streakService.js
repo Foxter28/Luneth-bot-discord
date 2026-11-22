@@ -137,23 +137,29 @@ async function sendStreakMessage(client, guildId, userId, streak) {
  */
 async function heartbeatIfActive(userId, guildId) {
   const { getStreakUser, upsertStreak } = require('./database');
+  const today = wibDateStr();
   const row = await getStreakUser(userId);
-  // Unregistered or frozen -> ignored. A null last_chat_date means the user was
-  // set via /set streak but hasn't chatted yet ("pending activation"): their
-  // first chat anywhere activates the streak (same value, today's date) and
-  // notifies — without incrementing.
-  if (!row || !row.last_chat_date) {
-    if (row && !row.frozen && row.current_streak > 0) {
-      const fresh = await upsertStreak(userId, guildId || row.guildId, row.current_streak, wibDateStr());
+
+  // Auto-register on first chat in any channel
+  if (!row) {
+    const fresh = await upsertStreak(userId, guildId, 1, today);
+    return { counted: true, streak: fresh.current_streak, shouldNotify: true, row: fresh };
+  }
+
+  // Pending activation (e.g. from /set streak)
+  if (!row.last_chat_date) {
+    if (!row.frozen && row.current_streak > 0) {
+      const fresh = await upsertStreak(userId, guildId || row.guildId, row.current_streak, today);
       return { counted: true, streak: fresh.current_streak, shouldNotify: true, row: fresh };
     }
-    return { counted: false, streak: 0, shouldNotify: false, row: null };
+    const fresh = await upsertStreak(userId, guildId || row.guildId, 1, today);
+    return { counted: true, streak: fresh.current_streak, shouldNotify: true, row: fresh };
   }
+
   if (row.frozen) {
     return { counted: false, streak: 0, shouldNotify: false, row: null };
   }
 
-  const today = wibDateStr();
   const diff = dayDiffWIB(row.last_chat_date, Date.now());
 
   // Already active today — no change, never double count.

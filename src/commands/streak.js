@@ -1,18 +1,12 @@
-const path = require('path');
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-const { getStreakSetting, setStreakSetting, registerStreak, getStreakUser } = require('../database');
+const { getStreakSetting, setStreakSetting } = require('../database');
 
 const SETTING_KEY = (guildId) => `reminder_channel:${guildId}`;
-const STREAK_IMAGE = path.join(__dirname, '..', '..', 'public', 'asset', 'streak.png');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('streak')
-    .setDescription('🔥 Streak system — register, manage, and more')
-    .addSubcommand(sub =>
-      sub
-        .setName('register')
-        .setDescription('Register yourself for the streak system'))
+    .setDescription('🔥 Streak system — channel & settings')
     .addSubcommand(sub =>
       sub
         .setName('setchannel')
@@ -24,28 +18,17 @@ module.exports = {
   aliases: ['streak'],
 
   async execute(interaction) {
-    const sub = interaction.options.getSubcommand();
+    const sub = interaction.options.getSubcommand(false);
     const guildId = interaction.guild?.id;
     if (!guildId) {
       return interaction.reply({ content: '❌ This command can only be used in a server.', ephemeral: true });
     }
 
-    // ── /streak register (everyone) ───────────────────────────────────
+    // Handled if invoked via prefix "lustreak register"
     if (sub === 'register') {
-      const userId = interaction.user.id;
-      const existing = await getStreakUser(userId);
-      if (existing) {
-        return interaction.reply({
-          content: '✅ You are already registered in the streak system!',
-          ephemeral: true,
-        });
-      }
-
-      await registerStreak(userId, guildId);
-
       return interaction.reply({
-        content: '🔥 You have registered for the streak system! Keep chatting to maintain your streak.',
-        files: [{ attachment: STREAK_IMAGE, name: 'streak.png' }],
+        content: 'ℹ️ Registration is no longer required! Just chat in any channel daily and your streak will automatically count. 🔥',
+        ephemeral: true,
       });
     }
 
@@ -72,6 +55,9 @@ module.exports = {
       return interaction.reply({ content: `🔔 Streak reminder channel: <#${raw}>`, ephemeral: true });
     }
 
-    return interaction.reply({ content: '❌ Unknown subcommand.', ephemeral: true });
+    return interaction.reply({
+      content: '🔥 **Streak system is fully automatic!** Just chat in any channel daily to build your streak.\nCheck rankings with `/streakleaderboard`.',
+      ephemeral: true,
+    });
   },
 };

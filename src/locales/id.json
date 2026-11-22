@@ -76,7 +76,7 @@
   "buy.roleAdded": "\n🎉 **Role <@&{role}> telah berhasil dipasang ke akun Discord kamu!**",
   "buy.roleFailed": "\n⚠️ Gagal memasang role secara otomatis (pastikan bot memiliki izin Manage Roles & posisi role bot di atas role tersebut).",
 
-  "streak.reminder": "⏰ **Reminder Streak!** Hai {mention}, jangan lupa chat hari ini biar streak-mu tetap hidup! 🔥\nCek status: `/streak register`",
+  "streak.reminder": "⏰ **Reminder Streak!** Hai {mention}, jangan lupa chat hari ini biar streak-mu tetap hidup! 🔥",
   "streak.increased": "<@{user}> streak-mu sekarang: **{n} hari**!",
   "streakboard.days": "**{n}** hari 🔥",
   "streakboard.selfPos": "-# Posisimu: #{rank} • {n} hari",
@@ -123,5 +123,5 @@
   "help.streakLb": "🏆 **Streak Leaderboard** — lihat 10 pemegang streak terpanjang di server.",
   "help.registerOther": "🛡️ **(ADMIN)** — daftarkan member lain ke sistem streak.",
   "help.restore": "💸 Tebus streak yang hangus seharga **{cost} {coin}** — streak balik, role dikembalikan.",
-  "help.streak": "🔥 Sistem streak.\n> • **register** — daftar sendiri (semua member)\n> • **setchannel** — **(ADMIN)** pilih channel reminder\n> • **channel** — **(ADMIN)** lihat channel aktif"
+  "help.streak": "🔥 Sistem streak.\n> • Chat di channel mana saja setiap hari untuk menambah streak otomatis!\n> • **setchannel** — **(ADMIN)** pilih channel reminder\n> • **channel** — **(ADMIN)** lihat channel aktif"
 }

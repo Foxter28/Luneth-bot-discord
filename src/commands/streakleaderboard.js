@@ -22,7 +22,7 @@ module.exports = {
   async execute(interaction) {
     const top = await getStreakLeaderboard(10);
     if (top.length === 0) {
-      return interaction.reply('🔥 No streaks yet. Register with `/streak register`!');
+      return interaction.reply('🔥 No active streaks yet. Chat in any channel to start one! 🔥');
     }
 
     const lines = top.map((u, i) => {
@@ -44,7 +44,7 @@ module.exports = {
       selfLine =
         selfIndex !== -1
           ? T(interaction.user.id, 'streakboard.selfPos', { rank: selfIndex + 1, n: wider[selfIndex].current_streak })
-          : `-# You're not registered yet. Try \`/streak register\`!`;
+          : `-# You don't have an active streak yet. Chat anywhere to start! 🔥`;
     }
 
     const description = [

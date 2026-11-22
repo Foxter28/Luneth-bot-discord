@@ -76,7 +76,7 @@
   "buy.roleAdded": "\n🎉 **Role <@&{role}> has been added to your Discord account!**",
   "buy.roleFailed": "\n⚠️ Could not assign the role automatically (make sure the bot has Manage Roles permission and its role is positioned above that role).",
 
-  "streak.reminder": "⏰ **Streak Reminder!** Hey {mention}, don't forget to chat today to keep your streak alive! 🔥\nCheck your status: `/streak register`",
+  "streak.reminder": "⏰ **Streak Reminder!** Hey {mention}, don't forget to chat today to keep your streak alive! 🔥",
   "streak.increased": "<@{user}> your streak is now: **{n} day(s)**!",
   "streakboard.days": "**{n}** day(s) 🔥",
   "streakboard.selfPos": "-# Your position: #{rank} • {n} day(s)",
@@ -123,5 +123,5 @@
   "help.streakLb": "🏆 **Streak Leaderboard** — see the top 10 longest streak holders in the server.",
   "help.registerOther": "🛡️ **(ADMIN)** — register other members into the streak system.",
   "help.restore": "💸 Redeem an expired streak for **{cost} {coin}** — streak restored, role returned.",
-  "help.streak": "🔥 Streak system.\n> • **register** — register yourself (all members)\n> • **setchannel** — **(ADMIN)** pick the reminder channel\n> • **channel** — **(ADMIN)** view the active channel"
+  "help.streak": "🔥 Streak system.\n> • Chat in any channel daily to build your streak automatically!\n> • **setchannel** — **(ADMIN)** pick the reminder channel\n> • **channel** — **(ADMIN)** view the active channel"
 }

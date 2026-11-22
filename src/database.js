@@ -781,6 +781,19 @@ async function deleteStreakUser(userId) {
   await dbRun('DELETE FROM streak_registered WHERE userId = ?', userId);
 }
 
+// Clean up inactive streak records (default >= 3 days without chat)
+// Keeps database lean and handles automatic cleanup.
+async function cleanupInactiveStreaks(maxInactiveDays = 3) {
+  const cutoffDate = new Date(Date.now() + 7 * 60 * 60 * 1000 - maxInactiveDays * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
+  const result = await dbRun(
+    'DELETE FROM streak_registered WHERE last_chat_date IS NOT NULL AND last_chat_date <= ?',
+    cutoffDate
+  );
+  return result?.changes || 0;
+}
+
 // Admin helper: set a user's streak to an arbitrary value. The streak starts in
 // a "pending activation" state (last_chat_date = NULL) — it only becomes active
 // once the user chats in ANY channel (handled in streakService.heartbeatIfActive).
@@ -1004,6 +1017,7 @@ module.exports = {
   setUserLang: (userId, lang) => dbQueue(() => setUserLang(userId, lang)),
   setStreakSetting: (key, value) => dbQueue(() => setStreakSetting(key, value)),
   deleteStreakUser: (userId) => dbQueue(() => deleteStreakUser(userId)),
+  cleanupInactiveStreaks: (maxInactiveDays) => dbQueue(() => cleanupInactiveStreaks(maxInactiveDays)),
   setStreakForUser: (userId, streak, guildId) => dbQueue(() => setStreakForUser(userId, streak, guildId)),
   // lunethle
   getOrCreatePuzzle: (date, pickWord) => dbQueue(() => getOrCreatePuzzle(date, pickWord)),
