@@ -157,6 +157,12 @@ async function heartbeatIfActive(userId, guildId) {
   }
 
   if (row.frozen) {
+    // If user chats while already frozen on a new day (didn't restore it), restart at 1
+    const diffFromFreeze = dayDiffWIB(row.last_chat_date, Date.now());
+    if (diffFromFreeze > 1) {
+      const fresh = await upsertStreak(userId, guildId || row.guildId, 1, today);
+      return { counted: true, streak: 1, shouldNotify: true, row: fresh };
+    }
     return { counted: false, streak: 0, shouldNotify: false, row: null };
   }
 
@@ -167,8 +173,22 @@ async function heartbeatIfActive(userId, guildId) {
     return { counted: false, streak: row.current_streak, shouldNotify: false, row };
   }
 
-  // Chat yesterday -> streak +1. Missed one+ days -> restart at 1.
-  const nextStreak = diff === 1 ? row.current_streak + 1 : 1;
+  // Missed one+ days -> freeze streak so user can restore it with /restore streak!
+  if (diff > 1 && row.current_streak > 0) {
+    const { freezeStreak } = require('./database');
+    await freezeStreak(userId);
+    row.frozen = 1;
+    return {
+      counted: false,
+      streak: row.current_streak,
+      shouldNotify: true,
+      expired: true,
+      row,
+    };
+  }
+
+  // Chat yesterday -> streak +1.
+  const nextStreak = row.current_streak + 1;
   const fresh = await upsertStreak(userId, guildId || row.guildId, nextStreak, today);
 
   return {
@@ -235,6 +255,7 @@ module.exports = {
   sendReminder,
   syncMilestoneRoles,
   stripAllMilestoneRoles,
+  getReminderChannel,
   wibDateStr,
   yesterdayWIB,
   dayDiffWIB,

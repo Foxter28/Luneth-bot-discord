@@ -450,12 +450,24 @@ client.on(Events.MessageCreate, async (message) => {
 
   // Streak: real-time WIB heartbeat on every chat (any channel). Sends the
   // "streak day" message to the streak channel at most once per user per day.
-  const { heartbeatIfActive, sendStreakMessage, syncMilestoneRoles } = require('./streakService');
+  const { heartbeatIfActive, sendStreakMessage, syncMilestoneRoles, stripAllMilestoneRoles, getReminderChannel } = require('./streakService');
   const streakRes = await heartbeatIfActive(message.author.id, message.guild?.id).catch((e) => {
     console.error('[STREAK] heartbeatIfActive threw:', e?.message || e);
     return null;
   });
-  if (streakRes && streakRes.counted && streakRes.shouldNotify) {
+  if (streakRes && streakRes.expired && streakRes.shouldNotify) {
+    try {
+      const channel = await getReminderChannel(client, streakRes.row.guildId);
+      if (channel) {
+        await channel.send(
+          `🥀 <@${message.author.id}> your streak of **${streakRes.streak} day(s)** has expired! You can restore it with \`/restore streak\` for **${config.streak.restoreCost.toLocaleString()} ${config.currencyName}**.`
+        );
+      }
+      if (message.member) await stripAllMilestoneRoles(message.member, config);
+    } catch (err) {
+      console.error('[STREAK] streak expiry notice failed:', err.message);
+    }
+  } else if (streakRes && streakRes.counted && streakRes.shouldNotify) {
     try {
       await sendStreakMessage(client, streakRes.row.guildId, message.author.id, streakRes.streak);
       if (message.member) await syncMilestoneRoles(message.member, streakRes.streak, config);

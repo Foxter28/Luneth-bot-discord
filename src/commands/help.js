@@ -260,14 +260,6 @@ const COMMAND_INFO = [
         note: 'Alias prefix: luslb',
     },
     {
-        name: 'register',
-        category: 'admin',
-        emoji: '🛡️',
-        usage: 'register streak user:<@member>',
-        desc: '🛡️ **(ADMIN)** — register other members into the streak system.',
-        note: 'Admin only · Alias: lureg streak / lu reg streak',
-    },
-    {
         name: 'restore',
         category: 'economy',
         emoji: '💸',

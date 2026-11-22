@@ -121,7 +121,6 @@
   "help.panel": "Kirim dan kelola panel interaktif dinamis dengan tombol ephemeral.",
   "help.market": "Marketplace pemain: jual beli item ke player lain, pasang listing, atau tawarkan item langsung.",
   "help.streakLb": "🏆 **Streak Leaderboard** — lihat 10 pemegang streak terpanjang di server.",
-  "help.registerOther": "🛡️ **(ADMIN)** — daftarkan member lain ke sistem streak.",
   "help.restore": "💸 Tebus streak yang hangus seharga **{cost} {coin}** — streak balik, role dikembalikan.",
   "help.streak": "🔥 Sistem streak.\n> • Chat di channel mana saja setiap hari untuk menambah streak otomatis!\n> • **setchannel** — **(ADMIN)** pilih channel reminder\n> • **channel** — **(ADMIN)** lihat channel aktif"
 }
