@@ -27,11 +27,18 @@ function tSync(userId, key, params) {
 
 /** Async translate: ensures the user's lang is loaded, then translates. */
 async function t(userId, key, params) {
-  if (!cache.has(userId)) {
-    const lang = await db.getUserLang(userId);
-    cache.set(userId, lang);
-  }
+  await ensureUserLang(userId);
   return resolve(cache.get(userId), key, params);
+}
+
+/** Preload/cache a user's language so synchronous tSync calls work. */
+async function ensureUserLang(userId) {
+  if (!userId) return 'en';
+  if (!cache.has(userId)) {
+    const lang = await db.getUserLang(userId).catch(() => 'en');
+    cache.set(userId, lang || 'en');
+  }
+  return cache.get(userId);
 }
 
 /** Number formatting per locale (1,000 vs 1.000). */
@@ -44,4 +51,4 @@ async function setUserLang(userId, lang) {
   cache.set(userId, lang);
 }
 
-module.exports = { t, tSync, fmtNum, setUserLang, LANG_LABELS };
+module.exports = { t, tSync, fmtNum, setUserLang, ensureUserLang, LANG_LABELS };

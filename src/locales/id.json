@@ -78,8 +78,29 @@
 
   "streak.reminder": "⏰ **Reminder Streak!** Hai {mention}, jangan lupa chat hari ini biar streak-mu tetap hidup! 🔥",
   "streak.increased": "<@{user}> streak-mu sekarang: **{n} hari**!",
+  "streak.expired": "🥀 <@{user}> streak-mu sebanyak **{days} hari** telah hangus! Kamu bisa menebusnya dengan `/restore streak` seharga **{cost} {coin}**.",
+  "streak.guildOnly": "❌ Command ini hanya bisa digunakan di server.",
+  "streak.regNotNeeded": "ℹ️ Pendaftaran sudah tidak diperlukan! Cukup chat di channel mana saja setiap hari dan streak-mu otomatis terhitung. 🔥",
+  "streak.adminOnly": "❌ Hanya administrator yang dapat mengatur channel streak.",
+  "streak.setSuccess": "✅ Channel pengingat streak diatur ke <#{channel}>.",
+  "streak.noChannel": "❌ Belum ada channel pengingat streak yang diatur. Gunakan `/streak setchannel` di channel tujuan.",
+  "streak.channelInfo": "🔔 Channel pengingat streak: <#{channel}>",
+  "streak.autoInfo": "🔥 **Sistem streak sepenuhnya otomatis!** Cukup chat di channel mana saja setiap hari untuk menambah streak-mu.\nCek peringkat dengan `/streakleaderboard`.",
+
+  "streakboard.title": "# 🔥 Leaderboard Streak",
+  "streakboard.subtitle": "Peringkat pemain berdasarkan hari streak (chat 24 jam per hari)",
+  "streakboard.empty": "🔥 Belum ada streak aktif. Chat di channel mana saja untuk memulai! 🔥",
   "streakboard.days": "**{n}** hari 🔥",
+  "streakboard.top10": "-# Posisimu: #{rank} (10 besar! 🎉)",
   "streakboard.selfPos": "-# Posisimu: #{rank} • {n} hari",
+  "streakboard.notActive": "-# Kamu belum punya streak aktif. Chat di mana saja untuk memulai! 🔥",
+  "streakboard.footer": "Diminta oleh {user}",
+
+  "restore.unknown": "❌ Subcommand tidak dikenal.",
+  "restore.noRecord": "❌ Kamu tidak memiliki catatan streak untuk ditebus. Chat di channel mana saja untuk memulai streak! 🔥",
+  "restore.notExpired": "❌ Streak-mu belum hangus! Jaga agar tetap hidup dengan chat setiap hari.",
+  "restore.needCoins": "❌ Kamu butuh **{cost}** {coin} untuk menebus streak. Kamu punya **{bal}** {coin}.",
+  "restore.success": "🔥 Streak **{days} hari** milikmu telah ditebus! Kamu menghabiskan **{cost}** {coin}. Tetap chat untuk menjaganya!",
 
   "set.notRegistered": "belum terdaftar",
   "set.oldLabel": "{n} hari {extra}",
@@ -88,6 +109,7 @@
   "set.previous": "Sebelumnya",
   "set.now": "Sekarang",
   "set.days": "{n} hari",
+  "set.footer": "Diatur oleh {user}",
 
   "panel.noReply": "ℹ️ Tidak ada pesan balasan yang dikonfigurasi untuk tombol ini.",
   "panel.noAdmin": "❌ Anda tidak memiliki izin Administrator untuk menggunakan command ini.",

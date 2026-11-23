@@ -78,8 +78,29 @@
 
   "streak.reminder": "⏰ **Streak Reminder!** Hey {mention}, don't forget to chat today to keep your streak alive! 🔥",
   "streak.increased": "<@{user}> your streak is now: **{n} day(s)**!",
+  "streak.expired": "🥀 <@{user}> your streak of **{days} day(s)** has expired! You can restore it with `/restore streak` for **{cost} {coin}**.",
+  "streak.guildOnly": "❌ This command can only be used in a server.",
+  "streak.regNotNeeded": "ℹ️ Registration is no longer required! Just chat in any channel daily and your streak will automatically count. 🔥",
+  "streak.adminOnly": "❌ Only administrators can set the streak channel.",
+  "streak.setSuccess": "✅ Streak reminder channel set to <#{channel}>.",
+  "streak.noChannel": "❌ No streak reminder channel set yet. Use `/streak setchannel` in the target channel.",
+  "streak.channelInfo": "🔔 Streak reminder channel: <#{channel}>",
+  "streak.autoInfo": "🔥 **Streak system is fully automatic!** Just chat in any channel daily to build your streak.\nCheck rankings with `/streakleaderboard`.",
+
+  "streakboard.title": "# 🔥 Streak Leaderboard",
+  "streakboard.subtitle": "Player rankings by streak days (24h chat per day)",
+  "streakboard.empty": "🔥 No active streaks yet. Chat in any channel to start one! 🔥",
   "streakboard.days": "**{n}** day(s) 🔥",
+  "streakboard.top10": "-# Your position: #{rank} (top 10! 🎉)",
   "streakboard.selfPos": "-# Your position: #{rank} • {n} day(s)",
+  "streakboard.notActive": "-# You don't have an active streak yet. Chat anywhere to start! 🔥",
+  "streakboard.footer": "Requested by {user}",
+
+  "restore.unknown": "❌ Unknown subcommand.",
+  "restore.noRecord": "❌ You do not have an active streak record to restore. Chat in any channel to start your streak! 🔥",
+  "restore.notExpired": "❌ Your streak is not expired! Keep it alive by chatting daily.",
+  "restore.needCoins": "❌ You need **{cost}** {coin} to restore your streak. You have **{bal}** {coin}.",
+  "restore.success": "🔥 Your streak of **{days} day(s)** has been restored! You spent **{cost}** {coin}. Keep chatting to maintain it!",
 
   "set.notRegistered": "not registered",
   "set.oldLabel": "{n} day(s) {extra}",
@@ -88,6 +109,7 @@
   "set.previous": "Previous",
   "set.now": "Now",
   "set.days": "{n} day(s)",
+  "set.footer": "Set by {user}",
 
   "panel.noReply": "ℹ️ No reply message is configured for this button.",
   "panel.noAdmin": "❌ You need Administrator permission to use this command.",

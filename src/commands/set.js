@@ -69,7 +69,7 @@ module.exports = {
         { name: T(interaction.user.id, 'set.previous'), value: oldLabel, inline: true },
         { name: T(interaction.user.id, 'set.now'), value: T(interaction.user.id, 'set.days', { n: value }), inline: true },
       ],
-      footer: { text: `Diset oleh ${interaction.user.tag}` },
+      footer: { text: T(interaction.user.id, 'set.footer', { user: interaction.user.tag }) },
       timestamp: new Date().toISOString(),
     };
 

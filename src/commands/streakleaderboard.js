@@ -20,14 +20,15 @@ module.exports = {
   aliases: ['slb', 'lbs', 'streaklb', 'streakleaderboard', 'streakboard'],
 
   async execute(interaction) {
+    const userId = interaction.user.id;
     const top = await getStreakLeaderboard(10);
     if (top.length === 0) {
-      return interaction.reply('🔥 No active streaks yet. Chat in any channel to start one! 🔥');
+      return interaction.reply(T(userId, 'streakboard.empty'));
     }
 
     const lines = top.map((u, i) => {
       const rank = RANK_EMOJI[i] ?? `\`#${i + 1}\``;
-      const days = T(interaction.user.id, 'streakboard.days', { n: u.current_streak });
+      const days = T(userId, 'streakboard.days', { n: u.current_streak });
       if (i === 0) return `${rank}  __<@${u.userId}>__\n╰ ${days}`;
       if (i < 3) return `${rank}  <@${u.userId}>\n╰ ${days}`;
       return `${rank}  <@${u.userId}> — ${days}`;
@@ -35,21 +36,21 @@ module.exports = {
 
     // Caller's own position
     let selfLine = null;
-    const selfIndexInTop = top.findIndex((u) => u.userId === interaction.user.id);
+    const selfIndexInTop = top.findIndex((u) => u.userId === userId);
     if (selfIndexInTop !== -1) {
-      selfLine = `-# Your position: #${selfIndexInTop + 1} (top 10! 🎉)`;
+      selfLine = T(userId, 'streakboard.top10', { rank: selfIndexInTop + 1 });
     } else {
       const wider = await getStreakLeaderboard(100);
-      const selfIndex = wider.findIndex((u) => u.userId === interaction.user.id);
+      const selfIndex = wider.findIndex((u) => u.userId === userId);
       selfLine =
         selfIndex !== -1
-          ? T(interaction.user.id, 'streakboard.selfPos', { rank: selfIndex + 1, n: wider[selfIndex].current_streak })
-          : `-# You don't have an active streak yet. Chat anywhere to start! 🔥`;
+          ? T(userId, 'streakboard.selfPos', { rank: selfIndex + 1, n: wider[selfIndex].current_streak })
+          : T(userId, 'streakboard.notActive');
     }
 
     const description = [
-      '# 🔥 Streak Leaderboard',
-      'Player rankings by streak days (24h chat per day)',
+      T(userId, 'streakboard.title'),
+      T(userId, 'streakboard.subtitle'),
       '',
       lines.join('\n\n'),
       ...(selfLine ? ['', selfLine] : []),
@@ -59,7 +60,7 @@ module.exports = {
       .setColor(0xf1c40f)
       .setDescription(description)
       .setThumbnail('attachment://streak.png')
-      .setFooter({ text: `Requested by ${interaction.user.username}` })
+      .setFooter({ text: T(userId, 'streakboard.footer', { user: interaction.user.username }) })
       .setTimestamp();
 
     await interaction.reply({

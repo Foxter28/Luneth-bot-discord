@@ -7,6 +7,7 @@ const { getActivePrefixes, getOrCreateUser, getSetting, deleteUser, getAllUserId
 const { buildFakeInteraction, hasRequiredPermission } = require('./prefixAdapter');
 const { buildEmbed: buildHelpEmbed, buildSelectRow: buildHelpSelectRow } = require('./commands/help');
 const { buildWelcomeEmbed, buildWelcomeSelect } = require('./onboarding');
+const { ensureUserLang, tSync: T, fmtNum } = require('./i18n');
 
 const client = new Client({
   intents: [
@@ -295,6 +296,7 @@ client.on(Events.ShardReconnecting, (id) => {
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
+  if (interaction.user?.id) await ensureUserLang(interaction.user.id);
   // /help category filter dropdown — anyone viewing the message can use it.
   if (interaction.isStringSelectMenu() && interaction.customId === 'help_category_select') {
     const selected = interaction.values[0];
@@ -447,6 +449,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 // If an admin has set a custom prefix via "/prefix", only that custom prefix is active in that server.
 client.on(Events.MessageCreate, async (message) => {
   if (message.author.bot) return;
+  if (message.author?.id) await ensureUserLang(message.author.id);
 
   // Streak: real-time WIB heartbeat on every chat (any channel). Sends the
   // "streak day" message to the streak channel at most once per user per day.
@@ -460,7 +463,12 @@ client.on(Events.MessageCreate, async (message) => {
       const channel = await getReminderChannel(client, streakRes.row.guildId);
       if (channel) {
         await channel.send(
-          `🥀 <@${message.author.id}> your streak of **${streakRes.streak} day(s)** has expired! You can restore it with \`/restore streak\` for **${config.streak.restoreCost.toLocaleString()} ${config.currencyName}**.`
+          T(message.author.id, 'streak.expired', {
+            user: message.author.id,
+            days: streakRes.streak,
+            cost: fmtNum(message.author.id, config.streak.restoreCost),
+            coin: config.currencyName,
+          })
         );
       }
       if (message.member) await stripAllMilestoneRoles(message.member, config);

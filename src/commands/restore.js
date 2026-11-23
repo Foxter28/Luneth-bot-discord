@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { getStreakUser, unfreezeStreak, getUser, updateBalance } = require('../database');
 const { syncMilestoneRoles, dayDiffWIB } = require('../streakService');
+const { tSync: T, fmtNum } = require('../i18n');
 const config = require('../config');
 
 module.exports = {
@@ -13,16 +14,16 @@ module.exports = {
 
   async execute(interaction) {
     const sub = interaction.options?.getSubcommand ? interaction.options.getSubcommand(false) : null;
+    const userId = interaction.user.id;
     // Allow /restore, /restore streak, lurestore, or lurestore streak
     if (sub && sub !== 'streak') {
-      return interaction.reply({ content: '❌ Unknown subcommand.', ephemeral: true });
+      return interaction.reply({ content: T(userId, 'restore.unknown'), ephemeral: true });
     }
 
-    const userId = interaction.user.id;
     const user = await getStreakUser(userId);
     if (!user) {
       return interaction.reply({
-        content: '❌ You do not have an active streak record to restore. Chat in any channel to start your streak! 🔥',
+        content: T(userId, 'restore.noRecord'),
         ephemeral: true,
       });
     }
@@ -32,7 +33,7 @@ module.exports = {
 
     if (!isExpired) {
       return interaction.reply({
-        content: '❌ Your streak is not expired! Keep it alive by chatting daily.',
+        content: T(userId, 'restore.notExpired'),
         ephemeral: true,
       });
     }
@@ -41,7 +42,11 @@ module.exports = {
     const cost = config.streak?.restoreCost || 5000;
     if (account.balance < cost) {
       return interaction.reply({
-        content: `❌ You need **${cost.toLocaleString()}** ${config.currencyName} to restore your streak. You have **${account.balance.toLocaleString()}** ${config.currencyName}.`,
+        content: T(userId, 'restore.needCoins', {
+          cost: fmtNum(userId, cost),
+          coin: config.currencyName,
+          bal: fmtNum(userId, account.balance),
+        }),
         ephemeral: true,
       });
     }
@@ -63,7 +68,11 @@ module.exports = {
     }
 
     return interaction.reply({
-      content: `🔥 Your streak of **${user.current_streak} day(s)** has been restored! You spent **${cost.toLocaleString()}** ${config.currencyName}. Keep chatting to maintain it!`,
+      content: T(userId, 'restore.success', {
+        days: user.current_streak,
+        cost: fmtNum(userId, cost),
+        coin: config.currencyName,
+      }),
     });
   },
 };
