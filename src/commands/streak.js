@@ -23,21 +23,21 @@ module.exports = {
     const guildId = interaction.guild?.id;
     const userId = interaction.user.id;
     if (!guildId) {
-      return interaction.reply({ content: T(userId, 'streak.guildOnly'), ephemeral: true });
+      return interaction.reply({ content: T(userId, 'streak.guildOnly'), flags: 64 });
     }
 
     // Handled if invoked via prefix "lustreak register"
     if (sub === 'register') {
       return interaction.reply({
         content: T(userId, 'streak.regNotNeeded'),
-        ephemeral: true,
+        flags: 64,
       });
     }
 
     // ── /streak setchannel (admin) ────────────────────────────────────
     if (sub === 'setchannel') {
       if (!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator)) {
-        return interaction.reply({ content: T(userId, 'streak.adminOnly'), ephemeral: true });
+        return interaction.reply({ content: T(userId, 'streak.adminOnly'), flags: 64 });
       }
       await setStreakSetting(SETTING_KEY(guildId), interaction.channel.id);
       return interaction.reply({
@@ -51,15 +51,15 @@ module.exports = {
       if (!raw) {
         return interaction.reply({
           content: T(userId, 'streak.noChannel'),
-          ephemeral: true,
+          flags: 64,
         });
       }
-      return interaction.reply({ content: T(userId, 'streak.channelInfo', { channel: raw }), ephemeral: true });
+      return interaction.reply({ content: T(userId, 'streak.channelInfo', { channel: raw }), flags: 64 });
     }
 
     return interaction.reply({
       content: T(userId, 'streak.autoInfo'),
-      ephemeral: true,
+      flags: 64,
     });
   },
 };

@@ -6,6 +6,7 @@ const {
   ButtonBuilder,
   ButtonStyle,
   ChannelType,
+  GuildMember,
 } = require('discord.js');
 const { tSync: T } = require('../i18n');
 
@@ -36,11 +37,11 @@ module.exports = {
 
   async execute(interaction) {
     if (!interaction.guild) {
-      return interaction.reply({ content: '❌ Command ini hanya bisa digunakan di server.', ephemeral: true });
+      return interaction.reply({ content: '❌ Command ini hanya bisa digunakan di server.', flags: 64 });
     }
 
     if (!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator)) {
-      return interaction.reply({ content: '❌ Hanya administrator yang dapat menggunakan command ini.', ephemeral: true });
+      return interaction.reply({ content: '❌ Hanya administrator yang dapat menggunakan command ini.', flags: 64 });
     }
 
     const targetChannel =
@@ -70,7 +71,7 @@ module.exports = {
       await interaction.reply({ embeds: [embed], components: [row] });
     } else {
       await targetChannel.send({ embeds: [embed], components: [row] });
-      await interaction.reply({ content: `✅ Panel promosi voice berhasil dikirim ke <#${targetChannel.id}>!`, ephemeral: true });
+      await interaction.reply({ content: `✅ Panel promosi voice berhasil dikirim ke <#${targetChannel.id}>!`, flags: 64 });
     }
   },
 
@@ -80,11 +81,15 @@ module.exports = {
     const guild = interaction.guild;
     const userId = interaction.user.id;
     if (!guild) {
-      await interaction.reply({ content: '❌ Fitur ini hanya bisa digunakan di server.', ephemeral: true });
+      await interaction.reply({ content: '❌ Fitur ini hanya bisa digunakan di server.', flags: 64 });
       return true;
     }
 
-    const member = interaction.member;
+    // Ambil full member agar perms & voice state lengkap
+    const member =
+      interaction.member instanceof GuildMember
+        ? interaction.member
+        : await guild.members.fetch(userId).catch(() => interaction.member);
 
     const channels = guild.channels.cache.size ? guild.channels.cache : await guild.channels.fetch();
 
@@ -96,36 +101,48 @@ module.exports = {
     });
 
     // Voice channels yang aktif (memiliki member non-bot dan belum penuh)
+    // Cek voiceStates guild + c.members untuk deteksi akurat
     const activeVoices = voiceChannels.filter((c) => {
-      const humanCount = c.members.filter((m) => !m.user.bot).size;
-      const isFull = c.userLimit > 0 && c.members.size >= c.userLimit;
+      let voiceMembersCount = 0;
+      for (const vs of guild.voiceStates.cache.values()) {
+        if (vs.channelId === c.id && !vs.member?.user?.bot) {
+          voiceMembersCount++;
+        }
+      }
+      const channelMembersCount = c.members ? c.members.filter((m) => !m.user?.bot).size : 0;
+      const humanCount = Math.max(voiceMembersCount, channelMembersCount);
+      const isFull = c.userLimit > 0 && humanCount >= c.userLimit;
       return humanCount > 0 && !isFull;
     });
 
     if (activeVoices.size > 0) {
       const targetVoice = activeVoices.random();
+      const currentVoiceId = member.voice?.channelId || guild.voiceStates.cache.get(userId)?.channelId;
 
       // Jika user sudah berada di dalam voice channel di server
-      if (member.voice?.channelId) {
-        if (member.voice.channelId === targetVoice.id) {
+      if (currentVoiceId) {
+        if (currentVoiceId === targetVoice.id) {
           await interaction.reply({
             content: T(userId, 'promote.alreadyThere', { channel: targetVoice.id }),
-            ephemeral: true,
+            flags: 64,
           });
           return true;
         }
 
         try {
-          await member.voice.setChannel(targetVoice.id);
-          await interaction.reply({
-            content: T(userId, 'promote.moved', { channel: targetVoice.id }),
-            ephemeral: true,
-          });
-          return true;
+          if (member.voice?.setChannel) {
+            await member.voice.setChannel(targetVoice.id);
+            await interaction.reply({
+              content: T(userId, 'promote.moved', { channel: targetVoice.id }),
+              flags: 64,
+            });
+            return true;
+          }
         } catch {
+          // Fallback jika bot kekurangan permission Move Members
           await interaction.reply({
             content: T(userId, 'promote.activeFound', { channel: targetVoice.id }),
-            ephemeral: true,
+            flags: 64,
           });
           return true;
         }
@@ -134,19 +151,20 @@ module.exports = {
       // Jika user belum connect ke voice
       await interaction.reply({
         content: T(userId, 'promote.activeFound', { channel: targetVoice.id }),
-        ephemeral: true,
+        flags: 64,
       });
       return true;
     }
 
     // Jika tidak ada seorang pun di voice channel mana pun
-    const emptyVoice = voiceChannels.find((c) => !c.userLimit || c.members.size < c.userLimit);
+    const emptyVoice = voiceChannels.find((c) => !c.userLimit || (c.members?.size || 0) < c.userLimit);
     const suggestion = emptyVoice ? T(userId, 'promote.suggestTarget', { channel: emptyVoice.id }) : '';
 
     await interaction.reply({
       content: T(userId, 'promote.emptyVoice', { target: suggestion }),
-      ephemeral: true,
+      flags: 64,
     });
     return true;
   },
 };
+

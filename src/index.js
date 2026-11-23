@@ -15,6 +15,7 @@ const client = new Client({
     GatewayIntentBits.GuildMembers, // required to detect member leave and sync roster
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent, // required to read prefix command message content
+    GatewayIntentBits.GuildVoiceStates, // required to detect voice channels and members in voice
   ],
   ws: {
     properties: {
@@ -337,8 +338,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       return interaction.reply({ content: "⏳ Please don't click too fast!", flags: 64 }).catch(() => { });
     }
 
-    const componentHandlers = ['equip', 'sell', 'trade', 'shop', 'giveaway', 'buy', 'bomber', 'customrole', 'panel', 'wordle', 'language', 'promote'];
-    for (const name of componentHandlers) {
+    for (const name of ['equip', 'sell', 'trade', 'shop', 'giveaway', 'buy', 'bomber', 'customrole', 'panel', 'wordle', 'language', 'promote']) {
       const cmd = client.commands.get(name);
       if (!cmd?.handleComponent) continue;
       try {

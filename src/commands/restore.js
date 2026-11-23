@@ -17,14 +17,14 @@ module.exports = {
     const userId = interaction.user.id;
     // Allow /restore, /restore streak, lurestore, or lurestore streak
     if (sub && sub !== 'streak') {
-      return interaction.reply({ content: T(userId, 'restore.unknown'), ephemeral: true });
+      return interaction.reply({ content: T(userId, 'restore.unknown'), flags: 64 });
     }
 
     const user = await getStreakUser(userId);
     if (!user) {
       return interaction.reply({
         content: T(userId, 'restore.noRecord'),
-        ephemeral: true,
+        flags: 64,
       });
     }
 
@@ -34,7 +34,7 @@ module.exports = {
     if (!isExpired) {
       return interaction.reply({
         content: T(userId, 'restore.notExpired'),
-        ephemeral: true,
+        flags: 64,
       });
     }
 
@@ -47,7 +47,7 @@ module.exports = {
           coin: config.currencyName,
           bal: fmtNum(userId, account.balance),
         }),
-        ephemeral: true,
+        flags: 64,
       });
     }
 
