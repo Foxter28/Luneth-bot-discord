@@ -134,6 +134,12 @@
   "panel.processFailed": "❌ Failed to process the message: {err}",
   "panel.msgNotFound": "❌ Could not find a message with ID **`{id}`** in this channel.\nMake sure you run the command in the same channel as the message.",
 
+  "promote.alreadyThere": "🎧 You are already in this voice channel: <#{channel}>!",
+  "promote.moved": "🔊 You have been moved to <#{channel}>! Have fun chatting 🎉",
+  "promote.activeFound": "🎙️ People are chatting in <#{channel}>! Click the channel to join.",
+  "promote.suggestTarget": " Start in <#{channel}>!",
+  "promote.emptyVoice": "🎙️ No one is in voice right now, be the first one in voice!{target}",
+
   "emojis.none": "<:cannot:1546422441125879818> No custom emojis found in this server. Upload some first in Server Settings -> Emoji.",
   "emojis.title": "✨ Server Custom Emojis",
   "emojis.found": "Found **{n}** emoji:\n\n{list}",

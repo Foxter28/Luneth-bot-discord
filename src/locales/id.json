@@ -134,6 +134,12 @@
   "panel.processFailed": "❌ Gagal memproses pesan: {err}",
   "panel.msgNotFound": "❌ Gagal menemukan pesan dengan ID **`{id}`** di channel ini.\nPastikan Anda menjalankan command di channel yang sama dengan pesan tersebut.",
 
+  "promote.alreadyThere": "🎧 Kamu sudah berada di voice channel ini: <#{channel}>!",
+  "promote.moved": "🔊 Kamu berhasil dipindahkan ke <#{channel}>! Selamat mengobrol 🎉",
+  "promote.activeFound": "🎙️ Ada teman mengobrol di <#{channel}>! Klik channel tersebut untuk langsung bergabung.",
+  "promote.suggestTarget": " Ayo mulai di <#{channel}>!",
+  "promote.emptyVoice": "🎙️ Tidak ada orang di voice, jadilah orang pertama di voice!{target}",
+
   "emojis.none": "<:cannot:1546422441125879818> Tidak ada custom emoji yang ditemukan di server ini. Silakan upload dulu di Server Settings -> Emoji.",
   "emojis.title": "✨ Daftar Custom Emoji Server",
   "emojis.found": "Ditemukan **{n}** emoji:\n\n{list}",

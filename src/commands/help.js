@@ -170,6 +170,14 @@ const COMMAND_INFO = [
         note: 'Admin only',
     },
     {
+        name: 'promote',
+        category: 'admin',
+        emoji: '📢',
+        usage: 'promote voice [channel] [message]',
+        desc: 'Send a voice promotion panel with a Click Here button to join random active voice.',
+        note: 'Admin only',
+    },
+    {
         name: 'open',
         category: 'shop',
         emoji: '🗝️',
